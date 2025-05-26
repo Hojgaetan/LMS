@@ -1,6 +1,7 @@
 import os
 from utils.db_utils import DatabaseConnection
 
+
 class DatabaseController:
     """Controller class for database operations."""
 

@@ -3,6 +3,7 @@ from controllers.book_controller import BookController
 from views.menu_view import MenuView
 from views.book_view import BookView
 
+
 class LibraryManagementSystem:
     """Main application class for the Library Management System."""
 
@@ -94,22 +95,24 @@ class LibraryManagementSystem:
             # Display the main menu and get user choice
             choice = self.menu_view.display_main_menu()
 
-            if choice == '1':
+            if choice == "1":
                 self.add_new_book()
-            elif choice == '2':
+            elif choice == "2":
                 self.update_book()
-            elif choice == '3':
+            elif choice == "3":
                 self.remove_book()
-            elif choice == '4':
+            elif choice == "4":
                 self.menu_view.display_message("Thank you for using the Library Management System. Goodbye!")
                 break
             else:
                 self.menu_view.display_error("Invalid choice. Please try again.")
 
+
 def main():
     """Main entry point for the application."""
     app = LibraryManagementSystem()
     app.run()
+
 
 if __name__ == "__main__":
     main()

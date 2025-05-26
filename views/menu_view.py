@@ -20,54 +20,54 @@ class MenuView:
     def display_message(message):
         """
         Display a message to the user.
-        
+
         Args:
             message (str): The message to display
         """
         print(message)
-    
+
     @staticmethod
     def display_error(error):
         """
         Display an error message to the user.
-        
+
         Args:
             error (str): The error message to display
         """
         print(f"Error: {error}")
-    
+
     @staticmethod
     def display_success(message):
         """
         Display a success message to the user.
-        
+
         Args:
             message (str): The success message to display
         """
         print(f"Success: {message}")
-    
+
     @staticmethod
     def get_input(prompt):
         """
         Get input from the user with a prompt.
-        
+
         Args:
             prompt (str): The prompt to display
-            
+
         Returns:
             str: The user's input
         """
         return input(prompt)
-    
+
     @staticmethod
     def get_int_input(prompt, default=None):
         """
         Get integer input from the user with a prompt.
-        
+
         Args:
             prompt (str): The prompt to display
             default (int, optional): The default value to use if the user enters nothing
-            
+
         Returns:
             int or None: The user's input as an integer, or None if the input is invalid
         """
@@ -78,4 +78,3 @@ class MenuView:
             return int(value)
         except ValueError:
             return None
-

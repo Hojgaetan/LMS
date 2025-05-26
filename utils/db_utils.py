@@ -1,11 +1,12 @@
 import sqlite3
 import os
 
+
 class DatabaseConnection:
     """A utility class for managing database connections."""
 
-    _DB_NAME = 'library.db'
-#   _DB_NAME = '../library.db'
+    _DB_NAME = "library.db"
+    #   _DB_NAME = '../library.db'
 
     @classmethod
     def get_db_name(cls):
@@ -75,25 +76,30 @@ class DatabaseConnection:
         cursor = conn.cursor()
 
         # Create Authors table
-        cursor.execute('''
+        cursor.execute(
+            """
         CREATE TABLE authors (
             author_id INTEGER PRIMARY KEY AUTOINCREMENT,
             name TEXT NOT NULL,
             biography TEXT
         )
-        ''')
+        """
+        )
 
         # Create Categories/Genres table
-        cursor.execute('''
+        cursor.execute(
+            """
         CREATE TABLE categories (
             category_id INTEGER PRIMARY KEY AUTOINCREMENT,
             name TEXT NOT NULL,
             description TEXT
         )
-        ''')
+        """
+        )
 
         # Create Books table
-        cursor.execute('''
+        cursor.execute(
+            """
         CREATE TABLE books (
             book_id INTEGER PRIMARY KEY AUTOINCREMENT,
             title TEXT NOT NULL,
@@ -107,10 +113,12 @@ class DatabaseConnection:
             FOREIGN KEY (author_id) REFERENCES authors (author_id),
             FOREIGN KEY (category_id) REFERENCES categories (category_id)
         )
-        ''')
+        """
+        )
 
         # Create Members/Users table
-        cursor.execute('''
+        cursor.execute(
+            """
         CREATE TABLE members (
             member_id INTEGER PRIMARY KEY AUTOINCREMENT,
             name TEXT NOT NULL,
@@ -119,10 +127,12 @@ class DatabaseConnection:
             address TEXT,
             registration_date TEXT DEFAULT CURRENT_TIMESTAMP
         )
-        ''')
+        """
+        )
 
         # Create Borrowing records table
-        cursor.execute('''
+        cursor.execute(
+            """
         CREATE TABLE borrowings (
             borrowing_id INTEGER PRIMARY KEY AUTOINCREMENT,
             book_id INTEGER,
@@ -134,7 +144,8 @@ class DatabaseConnection:
             FOREIGN KEY (book_id) REFERENCES books (book_id),
             FOREIGN KEY (member_id) REFERENCES members (member_id)
         )
-        ''')
+        """
+        )
 
         conn.commit()
         conn.close()
@@ -146,32 +157,44 @@ class DatabaseConnection:
         cursor = conn.cursor()
 
         # Sample authors
-        cursor.execute("INSERT INTO authors (name, biography) VALUES (?, ?)",
-                       ("Victor Hugo", "French poet, novelist, and dramatist of the Romantic movement"))
-        cursor.execute("INSERT INTO authors (name, biography) VALUES (?, ?)",
-                       ("J.K. Rowling", "British author, philanthropist, film producer, and screenwriter"))
+        cursor.execute(
+            "INSERT INTO authors (name, biography) VALUES (?, ?)",
+            ("Victor Hugo", "French poet, novelist, and dramatist of the Romantic movement"),
+        )
+        cursor.execute(
+            "INSERT INTO authors (name, biography) VALUES (?, ?)",
+            ("J.K. Rowling", "British author, philanthropist, film producer, and screenwriter"),
+        )
 
         # Sample categories
-        cursor.execute("INSERT INTO categories (name, description) VALUES (?, ?)",
-                       ("Fiction", "Literary works created from the imagination"))
-        cursor.execute("INSERT INTO categories (name, description) VALUES (?, ?)",
-                       ("Science Fiction", "Fiction based on scientific discoveries or advanced technology"))
-        cursor.execute("INSERT INTO categories (name, description) VALUES (?, ?)",
-                       ("History", "Books about past events"))
+        cursor.execute(
+            "INSERT INTO categories (name, description) VALUES (?, ?)", ("Fiction", "Literary works created from the imagination")
+        )
+        cursor.execute(
+            "INSERT INTO categories (name, description) VALUES (?, ?)",
+            ("Science Fiction", "Fiction based on scientific discoveries or advanced technology"),
+        )
+        cursor.execute("INSERT INTO categories (name, description) VALUES (?, ?)", ("History", "Books about past events"))
 
         # Sample books
         cursor.execute(
             "INSERT INTO books (title, author_id, category_id, isbn, publication_year, publisher, quantity, available_quantity) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
-            ("Les Misérables", 1, 1, "9780451419439", 1862, "A. Lacroix", 3, 3))
+            ("Les Misérables", 1, 1, "9780451419439", 1862, "A. Lacroix", 3, 3),
+        )
         cursor.execute(
             "INSERT INTO books (title, author_id, category_id, isbn, publication_year, publisher, quantity, available_quantity) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
-            ("Harry Potter and the Philosopher's Stone", 2, 1, "9780747532699", 1997, "Bloomsbury", 5, 5))
+            ("Harry Potter and the Philosopher's Stone", 2, 1, "9780747532699", 1997, "Bloomsbury", 5, 5),
+        )
 
         # Sample members
-        cursor.execute("INSERT INTO members (name, email, phone, address) VALUES (?, ?, ?, ?)",
-                       ("Jean Dupont", "jean.dupont@email.com", "0123456789", "123 Rue de Paris"))
-        cursor.execute("INSERT INTO members (name, email, phone, address) VALUES (?, ?, ?, ?)",
-                       ("Marie Martin", "marie.martin@email.com", "9876543210", "456 Avenue des Champs"))
+        cursor.execute(
+            "INSERT INTO members (name, email, phone, address) VALUES (?, ?, ?, ?)",
+            ("Jean Dupont", "jean.dupont@email.com", "0123456789", "123 Rue de Paris"),
+        )
+        cursor.execute(
+            "INSERT INTO members (name, email, phone, address) VALUES (?, ?, ?, ?)",
+            ("Marie Martin", "marie.martin@email.com", "9876543210", "456 Avenue des Champs"),
+        )
 
         conn.commit()
         conn.close()
