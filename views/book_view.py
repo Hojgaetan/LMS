@@ -119,3 +119,74 @@ class BookView:
         print("\n===== Books =====")
         for book in books:
             print(f"{book.book_id}. {book.title} (ISBN: {book.isbn or 'N/A'})")
+
+    @staticmethod
+    def display_update_book_menu():
+        """
+        Display the menu for updating a book.
+        """
+        print("\n===== Update Book Information =====")
+
+    @staticmethod
+    def get_book_id_for_update():
+        """
+        Get the ID of the book to update.
+
+        Returns:
+            int or None: The book ID, or None if the input is invalid
+        """
+        try:
+            book_id = int(input("Enter the ID of the book to update: "))
+            return book_id
+        except ValueError:
+            print("Error: Please enter a valid book ID.")
+            return None
+
+    @staticmethod
+    def get_book_update_details():
+        """
+        Get updated book details from the user.
+
+        Returns:
+            dict: A dictionary containing the updated book details
+        """
+        print("\nEnter new book details (press Enter to keep current value):")
+
+        book_updates = {}
+
+        # Get optional fields
+        title = input("Title: ")
+        if title:
+            book_updates['title'] = title
+
+        try:
+            author_id = input("Author ID: ")
+            if author_id:
+                book_updates['author_id'] = int(author_id)
+
+            category_id = input("Category ID: ")
+            if category_id:
+                book_updates['category_id'] = int(category_id)
+
+            isbn = input("ISBN: ")
+            if isbn:
+                book_updates['isbn'] = isbn
+
+            pub_year = input("Publication Year: ")
+            if pub_year:
+                book_updates['publication_year'] = int(pub_year)
+
+            publisher = input("Publisher: ")
+            if publisher:
+                book_updates['publisher'] = publisher
+
+            quantity = input("Quantity: ")
+            if quantity:
+                book_updates['quantity'] = int(quantity)
+
+            return book_updates
+
+        except ValueError:
+            print(
+                "\nError: Please enter valid numeric values for Author ID, Category ID, Publication Year, and Quantity.")
+            return None

@@ -1,18 +1,19 @@
 class MenuView:
     """View class for displaying menus and handling user input."""
-    
+
     @staticmethod
     def display_main_menu():
         """
         Display the main menu of the Library Management System.
-        
+
         Returns:
             str: The user's choice
         """
         print("\n===== Library Management System =====")
         print("1. Add New Book")
-        print("2. Exit")
-        return input("Enter your choice (1-2): ")
+        print("2. Update Book Information")
+        print("3. Exit")
+        return input("Enter your choice (1-3): ")
     
     @staticmethod
     def display_message(message):
