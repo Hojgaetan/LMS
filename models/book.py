@@ -197,6 +197,33 @@ class Book(BaseModel):
         return []
 
     @classmethod
+    def search(cls, title=None, author_id=None, category_id=None, isbn=None):
+        """Search for books by title, author, category, or ISBN (all optional, partial match for title)."""
+        query = f"SELECT * FROM {cls.TABLE_NAME} WHERE 1=1"
+        params = []
+        if title:
+            query += " AND title LIKE ?"
+            params.append(f"%{title}%")
+        if author_id:
+            query += " AND author_id = ?"
+            params.append(author_id)
+        if category_id:
+            query += " AND category_id = ?"
+            params.append(category_id)
+        if isbn:
+            query += " AND isbn = ?"
+            params.append(isbn)
+        results = DatabaseConnection.execute_query(query, tuple(params))
+        if results:
+            conn = DatabaseConnection.get_connection()
+            cursor = conn.cursor()
+            cursor.execute(f"PRAGMA table_info({cls.TABLE_NAME})")
+            columns = [column[1] for column in cursor.fetchall()]
+            conn.close()
+            return [cls(**dict(zip(columns, result))) for result in results]
+        return []
+
+    @classmethod
     def delete(cls, book_id):
         """Delete a book by its ID."""
         if not cls.TABLE_NAME or not cls.PRIMARY_KEY:

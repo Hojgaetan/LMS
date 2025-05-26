@@ -89,29 +89,43 @@ class LibraryManagementSystem:
         """Handle the remove book functionality."""
         self.book_view.remove_book_menu()
 
-    def run(self):
-        """Run the main application loop."""
-        while True:
-            # Display the main menu and get user choice
-            choice = self.menu_view.display_main_menu()
+    def search_books(self):
+        """Handle the search books functionality."""
+        criteria = self.book_view.get_search_criteria()
+        books = self.book_controller.search_books(**criteria)
+        self.book_view.display_books(books)
 
-            if choice == "1":
-                self.add_new_book()
-            elif choice == "2":
-                self.update_book()
-            elif choice == "3":
-                self.remove_book()
-            elif choice == "4":
-                self.menu_view.display_message("Thank you for using the Library Management System. Goodbye!")
-                break
-            else:
-                self.menu_view.display_error("Invalid choice. Please try again.")
+    def run(self):
+        """Run the main application loop with exception handling."""
+        while True:
+            try:
+                # Display the main menu and get user choice
+                choice = self.menu_view.display_main_menu()
+
+                if choice == "1":
+                    self.add_new_book()
+                elif choice == "2":
+                    self.update_book()
+                elif choice == "3":
+                    self.remove_book()
+                elif choice == "4":
+                    self.search_books()
+                elif choice == "5":
+                    self.menu_view.display_message("Thank you for using the Library Management System. Goodbye!")
+                    break
+                else:
+                    self.menu_view.display_error("Invalid choice. Please try again.")
+            except Exception as e:
+                self.menu_view.display_error(f"An unexpected error occurred: {e}")
 
 
 def main():
-    """Main entry point for the application."""
-    app = LibraryManagementSystem()
-    app.run()
+    """Main entry point for the application with global exception handling."""
+    try:
+        app = LibraryManagementSystem()
+        app.run()
+    except Exception as e:
+        print(f"Fatal error: {e}")
 
 
 if __name__ == "__main__":

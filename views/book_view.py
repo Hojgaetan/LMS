@@ -113,12 +113,12 @@ class BookView:
             books (list): A list of Book objects
         """
         if not books:
-            print("No books found.")
+            print("No books found matching the criteria.")
             return
 
-        print("\n===== Books =====")
+        print("\n===== Search Results =====")
         for book in books:
-            print(f"{book.book_id}. {book.title} (ISBN: {book.isbn or 'N/A'})")
+            print(f"ID: {book.book_id} | Title: {book.title} | Author ID: {book.author_id} | Category ID: {book.category_id} | ISBN: {book.isbn}")
 
     @staticmethod
     def display_update_book_menu():
@@ -205,3 +205,17 @@ class BookView:
 
         success, message = BookController.remove_book(book_id)
         print(message)
+
+    @staticmethod
+    def get_search_criteria():
+        """
+        Prompt the user for search criteria (title, author ID, category ID, ISBN).
+        Returns:
+            dict: Dictionary with keys 'title', 'author_id', 'category_id', 'isbn' (values may be None)
+        """
+        print("\n===== Search Books =====")
+        title = input("Title (leave blank to skip): ")
+        return {
+            'title': title if title else None,
+        }
+

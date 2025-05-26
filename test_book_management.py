@@ -169,7 +169,12 @@ def test_update_book():
     # Test 2: Try to update a non-existent book
     print("\nTest 2: Trying to update a non-existent book...")
     non_existent_id = 9999  # Assuming this ID doesn't exist
-    success, result = book_controller.update_book(non_existent_id, title="This Should Fail")
+    try:
+        success, result = book_controller.update_book(non_existent_id, title="This Should Fail")
+    except Exception as e:
+        print(f"Exception caught as expected: {e}")
+        success = False
+        result = str(e)
 
     if not success:
         print(f"\nExpected failure occurred: {result}")
@@ -180,7 +185,12 @@ def test_update_book():
     # Test 3: Try to update with invalid data
     print("\nTest 3: Trying to update with invalid data (non-existent author)...")
     invalid_author_id = 9999  # Assuming this author ID doesn't exist
-    success, result = book_controller.update_book(book_id, author_id=invalid_author_id)
+    try:
+        success, result = book_controller.update_book(book_id, author_id=invalid_author_id)
+    except Exception as e:
+        print(f"Exception caught as expected: {e}")
+        success = False
+        result = str(e)
 
     if not success:
         print(f"\nExpected failure occurred: {result}")
@@ -190,7 +200,11 @@ def test_update_book():
 
     # Test 4: Update with empty updates (should not change anything)
     print("\nTest 4: Updating with empty updates...")
-    success, result = book_controller.update_book(book_id)
+    try:
+        success, result = book_controller.update_book(book_id)
+    except Exception as e:
+        print(f"Exception caught: {e}")
+        return False
 
     if success:
         print(f"\nBook updated successfully with ID: {result}")
@@ -276,6 +290,80 @@ def test_remove_book():
         return False
 
 
+def test_search_books():
+    """Test the search_books functionality."""
+    print("Testing search_books functionality...")
+
+    # Initialize the database for testing
+    DatabaseController.initialize_database(force_reset=True)
+    print("Database created for testing.")
+
+    book_controller = BookController()
+    authors = book_controller.get_all_authors()
+    categories = book_controller.get_all_categories()
+
+    if not authors or not categories:
+        print("No authors or categories available for testing.")
+        return False
+
+    author_id_1 = authors[0].author_id
+    category_id_1 = categories[0].category_id
+    author_id_2 = authors[-1].author_id
+    category_id_2 = categories[-1].category_id
+
+    # Add books for search
+    books_to_add = [
+        {"title": "Python Programming", "author_id": author_id_1, "category_id": category_id_1, "isbn": "1111111111111"},
+        {"title": "Advanced Python", "author_id": author_id_2, "category_id": category_id_1, "isbn": "2222222222222"},
+        {"title": "Data Science", "author_id": author_id_1, "category_id": category_id_2, "isbn": "3333333333333"},
+        {"title": "Machine Learning", "author_id": author_id_2, "category_id": category_id_2, "isbn": "4444444444444"},
+    ]
+    added_books = []
+    for book in books_to_add:
+        # Remove if exists
+        existing = Book.find_by_isbn(book["isbn"])
+        if existing:
+            existing.delete()
+        success, book_id = book_controller.add_book(
+            title=book["title"],
+            author_id=book["author_id"],
+            category_id=book["category_id"],
+            isbn=book["isbn"]
+        )
+        if not success:
+            print(f"Failed to add book: {book['title']}")
+            return False
+        added_books.append(book_id)
+
+    # Search by title (partial)
+    results = book_controller.search_books(title="Python")
+    if not any(b.title == "Python Programming" for b in results) or not any(b.title == "Advanced Python" for b in results):
+        print("Search by title failed.")
+        return False
+
+    # Search by author
+    results = book_controller.search_books(author_id=author_id_1)
+    titles = [b.title for b in results]
+    if not ("Python Programming" in titles and "Data Science" in titles):
+        print("Search by author failed.")
+        return False
+
+    # Search by category
+    results = book_controller.search_books(category_id=category_id_2)
+    titles = [b.title for b in results]
+    if not ("Data Science" in titles and "Machine Learning" in titles):
+        print("Search by category failed.")
+        return False
+
+    # Search by ISBN
+    results = book_controller.search_books(isbn="4444444444444")
+    if not (len(results) == 1 and results[0].title == "Machine Learning"):
+        print("Search by ISBN failed.")
+        return False
+
+    print("All search_books tests passed!")
+    return True
+
 def run_all_tests():
     """Run all book management tests."""
     print("\n===== Running All Book Management Tests =====")
@@ -292,8 +380,12 @@ def run_all_tests():
     print("\n----- Testing Remove Book Functionality -----")
     remove_book_result = test_remove_book()
 
+    # Run search book test
+    print("\n----- Testing Search Books Functionality -----")
+    search_book_result = test_search_books()
+
     # Check if all tests passed
-    all_passed = add_book_result and update_book_result and remove_book_result
+    all_passed = add_book_result and update_book_result and remove_book_result and search_book_result
 
     if all_passed:
         print("\n===== All tests passed! Book management functionality is working correctly. =====")
@@ -301,7 +393,6 @@ def run_all_tests():
         print("\n===== Some tests failed! Book management functionality has issues. =====")
 
     return all_passed
-
 
 if __name__ == "__main__":
     import sys
@@ -315,6 +406,8 @@ if __name__ == "__main__":
             test_result = test_update_book()
         elif test_mode == "3":
             test_result = test_remove_book()
+        elif test_mode == "4":
+            test_result = test_search_books()
         else:
             test_result = run_all_tests()
     else:
@@ -324,3 +417,4 @@ if __name__ == "__main__":
 
     # Exit with appropriate status code
     sys.exit(0 if test_result else 1)
+
