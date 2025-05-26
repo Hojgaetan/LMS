@@ -12,9 +12,10 @@ class MenuView:
         print("\n===== Library Management System =====")
         print("1. Add New Book")
         print("2. Update Book Information")
-        print("3. Exit")
-        return input("Enter your choice (1-3): ")
-    
+        print("3. Remove Book")
+        print("4. Exit")
+        return input("Enter your choice (1-4): ")
+
     @staticmethod
     def display_message(message):
         """
@@ -77,3 +78,4 @@ class MenuView:
             return int(value)
         except ValueError:
             return None
+

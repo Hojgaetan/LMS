@@ -190,3 +190,19 @@ class BookView:
             print(
                 "\nError: Please enter valid numeric values for Author ID, Category ID, Publication Year, and Quantity.")
             return None
+
+    @staticmethod
+    def remove_book_menu():
+        """
+        Display the menu for removing a book and handle user input.
+        """
+        print("\n===== Remove Book =====")
+        try:
+            book_id = int(input("Enter the Book ID to remove: "))
+        except ValueError:
+            print("Invalid input. Please enter a valid Book ID.")
+            return
+        from controllers.book_controller import BookController
+        success, message = BookController.remove_book(book_id)
+        print(message)
+

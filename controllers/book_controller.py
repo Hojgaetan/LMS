@@ -167,6 +167,27 @@ class BookController:
             return False, f"Failed to delete book: {str(e)}"
     
     @staticmethod
+    def remove_book(book_id):
+        """
+        Remove a book from the library by its ID.
+        Args:
+            book_id (int): The ID of the book to remove
+        Returns:
+            tuple: (success, message) where success is a boolean and message is a string
+        """
+        from models.book import Book
+        # Check if the book exists
+        book = Book.find_by_id(book_id)
+        if not book:
+            return False, f"Book with ID {book_id} does not exist."
+        # Delete the book
+        success = Book.delete(book_id)
+        if success:
+            return True, f"Book with ID {book_id} has been removed."
+        else:
+            return False, "Failed to remove the book."
+
+    @staticmethod
     def get_all_authors():
         """
         Get all authors in the library.
@@ -185,3 +206,4 @@ class BookController:
             list: A list of all categories
         """
         return Category.find_all()
+

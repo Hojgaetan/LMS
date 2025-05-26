@@ -217,6 +217,68 @@ def test_update_book():
     print("\nAll update book tests passed!")
     return True
 
+def test_remove_book():
+    """Test the remove_book functionality."""
+    print("Testing remove_book functionality...")
+
+    # Initialize the database for testing
+    DatabaseController.initialize_database(force_reset=True)
+    print("Database created for testing.")
+
+    # Create a book controller
+    book_controller = BookController()
+
+    # Get all authors and categories
+    authors = book_controller.get_all_authors()
+    categories = book_controller.get_all_categories()
+
+    # Add a book to remove
+    print("\nAdding a test book to remove...")
+    book_title = "Book To Remove"
+    author_id = 1
+    category_id = 1
+    isbn = "9780000000001"
+    publication_year = 2024
+    publisher = "Remove Publisher"
+    quantity = 2
+
+    # Remove any existing book with this ISBN
+    existing_book = Book.find_by_isbn(isbn)
+    if existing_book:
+        print(f"A book with ISBN {isbn} already exists. Removing it for the test...")
+        existing_book.delete()
+
+    # Add the book
+    success, book_id = book_controller.add_book(
+        title=book_title,
+        author_id=author_id,
+        category_id=category_id,
+        isbn=isbn,
+        publication_year=publication_year,
+        publisher=publisher,
+        quantity=quantity
+    )
+
+    if not success:
+        print(f"\nFailed to add book for remove test: {book_id}")
+        return False
+
+    print(f"\nBook added successfully with ID: {book_id}")
+
+    # Remove the book
+    print("\nRemoving the test book...")
+    success, message = book_controller.remove_book(book_id)
+    print(message)
+
+    # Verify the book was removed
+    removed_book = Book.find_by_id(book_id)
+    if removed_book is None:
+        print("\nVerification successful: Book was removed from database")
+        return True
+    else:
+        print("\nVerification failed: Book still exists in database")
+        return False
+
 def run_all_tests():
     """Run all book management tests."""
     print("\n===== Running All Book Management Tests =====")
@@ -229,8 +291,12 @@ def run_all_tests():
     print("\n----- Testing Update Book Functionality -----")
     update_book_result = test_update_book()
 
+    # Run remove book test
+    print("\n----- Testing Remove Book Functionality -----")
+    remove_book_result = test_remove_book()
+
     # Check if all tests passed
-    all_passed = add_book_result and update_book_result
+    all_passed = add_book_result and update_book_result and remove_book_result
 
     if all_passed:
         print("\n===== All tests passed! Book management functionality is working correctly. =====")
@@ -249,6 +315,8 @@ if __name__ == "__main__":
             test_result = test_add_book()
         elif test_mode == "2":
             test_result = test_update_book()
+        elif test_mode == "3":
+            test_result = test_remove_book()
         else:
             test_result = run_all_tests()
     else:

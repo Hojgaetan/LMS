@@ -84,6 +84,10 @@ class LibraryManagementSystem:
             else:
                 self.menu_view.display_error(result)
 
+    def remove_book(self):
+        """Handle the remove book functionality."""
+        self.book_view.remove_book_menu()
+
     def run(self):
         """Run the main application loop."""
         while True:
@@ -95,6 +99,8 @@ class LibraryManagementSystem:
             elif choice == '2':
                 self.update_book()
             elif choice == '3':
+                self.remove_book()
+            elif choice == '4':
                 self.menu_view.display_message("Thank you for using the Library Management System. Goodbye!")
                 break
             else:

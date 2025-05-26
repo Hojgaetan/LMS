@@ -185,6 +185,15 @@ class Book(BaseModel):
 
         return []
 
+    @classmethod
+    def delete(cls, book_id):
+        """Delete a book by its ID."""
+        if not cls.TABLE_NAME or not cls.PRIMARY_KEY:
+            raise NotImplementedError("TABLE_NAME and PRIMARY_KEY must be defined in subclass")
+        query = f"DELETE FROM {cls.TABLE_NAME} WHERE {cls.PRIMARY_KEY} = ?"
+        result = DatabaseConnection.execute_query(query, (book_id,))
+        return result is not None
+
     def get_author(self):
         """Get the author of this book."""
         from models.author import Author
@@ -225,3 +234,4 @@ class Book(BaseModel):
                 return False, f"A book with ISBN {self.isbn} already exists"
 
         return True, "Book is valid"
+
