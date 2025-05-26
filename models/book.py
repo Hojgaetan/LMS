@@ -1,15 +1,26 @@
 from models.base_model import BaseModel
 from utils.db_utils import DatabaseConnection
 
+
 class Book(BaseModel):
     """Model class for books."""
 
-    TABLE_NAME = 'books'
-    PRIMARY_KEY = 'book_id'
+    TABLE_NAME = "books"
+    PRIMARY_KEY = "book_id"
 
-    def __init__(self, book_id=None, title=None, author_id=None, category_id=None, 
-                 isbn=None, publication_year=None, publisher=None, quantity=1, 
-                 available_quantity=None, **kwargs):
+    def __init__(
+        self,
+        book_id=None,
+        title=None,
+        author_id=None,
+        category_id=None,
+        isbn=None,
+        publication_year=None,
+        publisher=None,
+        quantity=1,
+        available_quantity=None,
+        **kwargs,
+    ):
         """Initialize a Book instance."""
         super().__init__(**kwargs)
         self.book_id = book_id
@@ -25,92 +36,92 @@ class Book(BaseModel):
     @property
     def book_id(self):
         """Get the book ID."""
-        return self._get_attribute('book_id')
+        return self._get_attribute("book_id")
 
     @book_id.setter
     def book_id(self, value):
         """Set the book ID."""
-        self._set_attribute('book_id', value)
+        self._set_attribute("book_id", value)
 
     @property
     def title(self):
         """Get the book title."""
-        return self._get_attribute('title')
+        return self._get_attribute("title")
 
     @title.setter
     def title(self, value):
         """Set the book title."""
-        self._set_attribute('title', value)
+        self._set_attribute("title", value)
 
     @property
     def author_id(self):
         """Get the author ID."""
-        return self._get_attribute('author_id')
+        return self._get_attribute("author_id")
 
     @author_id.setter
     def author_id(self, value):
         """Set the author ID."""
-        self._set_attribute('author_id', value)
+        self._set_attribute("author_id", value)
 
     @property
     def category_id(self):
         """Get the category ID."""
-        return self._get_attribute('category_id')
+        return self._get_attribute("category_id")
 
     @category_id.setter
     def category_id(self, value):
         """Set the category ID."""
-        self._set_attribute('category_id', value)
+        self._set_attribute("category_id", value)
 
     @property
     def isbn(self):
         """Get the ISBN."""
-        return self._get_attribute('isbn')
+        return self._get_attribute("isbn")
 
     @isbn.setter
     def isbn(self, value):
         """Set the ISBN."""
-        self._set_attribute('isbn', value)
+        self._set_attribute("isbn", value)
 
     @property
     def publication_year(self):
         """Get the publication year."""
-        return self._get_attribute('publication_year')
+        return self._get_attribute("publication_year")
 
     @publication_year.setter
     def publication_year(self, value):
         """Set the publication year."""
-        self._set_attribute('publication_year', value)
+        self._set_attribute("publication_year", value)
 
     @property
     def publisher(self):
         """Get the publisher."""
-        return self._get_attribute('publisher')
+        return self._get_attribute("publisher")
 
     @publisher.setter
     def publisher(self, value):
         """Set the publisher."""
-        self._set_attribute('publisher', value)
+        self._set_attribute("publisher", value)
 
     @property
     def quantity(self):
         """Get the quantity."""
-        return self._get_attribute('quantity')
+        return self._get_attribute("quantity")
 
     @quantity.setter
     def quantity(self, value):
         """Set the quantity."""
-        self._set_attribute('quantity', value)
+        self._set_attribute("quantity", value)
 
     @property
     def available_quantity(self):
         """Get the available quantity."""
-        return self._get_attribute('available_quantity')
+        return self._get_attribute("available_quantity")
 
     @available_quantity.setter
     def available_quantity(self, value):
         """Set the available quantity."""
-        self._set_attribute('available_quantity', value)
+        self._set_attribute("available_quantity", value)
 
     @classmethod
     def find_by_isbn(cls, isbn):
@@ -197,11 +208,13 @@ class Book(BaseModel):
     def get_author(self):
         """Get the author of this book."""
         from models.author import Author
+
         return Author.find_by_id(self.author_id)
 
     def get_category(self):
         """Get the category of this book."""
         from models.category import Category
+
         return Category.find_by_id(self.category_id)
 
     def validate(self):
@@ -217,12 +230,14 @@ class Book(BaseModel):
 
         # Check if author exists
         from models.author import Author
+
         author = Author.find_by_id(self.author_id)
         if not author:
             return False, f"Author with ID {self.author_id} does not exist"
 
         # Check if category exists
         from models.category import Category
+
         category = Category.find_by_id(self.category_id)
         if not category:
             return False, f"Category with ID {self.category_id} does not exist"
@@ -234,4 +249,3 @@ class Book(BaseModel):
                 return False, f"A book with ISBN {self.isbn} already exists"
 
         return True, "Book is valid"
-

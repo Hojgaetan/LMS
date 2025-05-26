@@ -1,11 +1,12 @@
 from models.base_model import BaseModel
 from utils.db_utils import DatabaseConnection
 
+
 class Author(BaseModel):
     """Model class for authors."""
 
-    TABLE_NAME = 'authors'
-    PRIMARY_KEY = 'author_id'
+    TABLE_NAME = "authors"
+    PRIMARY_KEY = "author_id"
 
     def __init__(self, author_id=None, name=None, biography=None, **kwargs):
         """Initialize an Author instance."""
@@ -17,32 +18,32 @@ class Author(BaseModel):
     @property
     def author_id(self):
         """Get the author ID."""
-        return self._get_attribute('author_id')
+        return self._get_attribute("author_id")
 
     @author_id.setter
     def author_id(self, value):
         """Set the author ID."""
-        self._set_attribute('author_id', value)
+        self._set_attribute("author_id", value)
 
     @property
     def name(self):
         """Get the author name."""
-        return self._get_attribute('name')
+        return self._get_attribute("name")
 
     @name.setter
     def name(self, value):
         """Set the author name."""
-        self._set_attribute('name', value)
+        self._set_attribute("name", value)
 
     @property
     def biography(self):
         """Get the author biography."""
-        return self._get_attribute('biography')
+        return self._get_attribute("biography")
 
     @biography.setter
     def biography(self, value):
         """Set the author biography."""
-        self._set_attribute('biography', value)
+        self._set_attribute("biography", value)
 
     @classmethod
     def find_by_name(cls, name):
@@ -65,6 +66,7 @@ class Author(BaseModel):
     def get_books(self):
         """Get all books by this author."""
         from models.book import Book
+
         return Book.find_by_author(self.author_id)
 
     def validate(self):

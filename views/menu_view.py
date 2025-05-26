@@ -1,8 +1,16 @@
 class MenuView:
     """View class for displaying menus and handling user input."""
 
+    @classmethod
+    def clear(cls):
+        CSI("2J")
+
+    @classmethod
+    def goto_xy(cls, x, y):
+        CSI(f"{y};{x}H")
+
     @staticmethod
-    def display_main_menu():
+    async def display_main_menu():
         """
         Display the main menu of the Library Management System.
 
@@ -14,68 +22,67 @@ class MenuView:
         print("2. Update Book Information")
         print("3. Remove Book")
         print("4. Exit")
-        return input("Enter your choice (1-4): ")
+        return await aio.async_input("Enter your choice (1-4): ")
 
     @staticmethod
     def display_message(message):
         """
         Display a message to the user.
-        
+
         Args:
             message (str): The message to display
         """
         print(message)
-    
+
     @staticmethod
     def display_error(error):
         """
         Display an error message to the user.
-        
+
         Args:
             error (str): The error message to display
         """
         print(f"Error: {error}")
-    
+
     @staticmethod
     def display_success(message):
         """
         Display a success message to the user.
-        
+
         Args:
             message (str): The success message to display
         """
         print(f"Success: {message}")
-    
+
     @staticmethod
-    def get_input(prompt):
+    async def get_input(prompt):
         """
         Get input from the user with a prompt.
-        
+
         Args:
             prompt (str): The prompt to display
-            
+
         Returns:
             str: The user's input
         """
-        return input(prompt)
-    
+        return await aio.async_input(prompt)
+
     @staticmethod
-    def get_int_input(prompt, default=None):
+    async def get_int_input(prompt, default=None):
         """
         Get integer input from the user with a prompt.
-        
+
         Args:
             prompt (str): The prompt to display
             default (int, optional): The default value to use if the user enters nothing
-            
+
         Returns:
             int or None: The user's input as an integer, or None if the input is invalid
         """
         try:
-            value = input(prompt)
+            value = await aio.async_input(prompt)
             if value == "" and default is not None:
                 return default
             return int(value)
         except ValueError:
             return None
-

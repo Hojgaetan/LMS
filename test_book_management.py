@@ -3,6 +3,7 @@ from controllers.database_controller import DatabaseController
 from controllers.book_controller import BookController
 from models.book import Book
 
+
 def test_add_book():
     """Test the add_book functionality."""
     print("Testing add_book functionality...")
@@ -44,13 +45,13 @@ def test_add_book():
 
     # Add the book using the controller
     success, result = book_controller.add_book(
-        title=book_title, 
-        author_id=author_id, 
-        category_id=category_id, 
-        isbn=isbn, 
-        publication_year=publication_year, 
-        publisher=publisher, 
-        quantity=quantity
+        title=book_title,
+        author_id=author_id,
+        category_id=category_id,
+        isbn=isbn,
+        publication_year=publication_year,
+        publisher=publisher,
+        quantity=quantity,
     )
 
     # Verify the book was added
@@ -71,6 +72,7 @@ def test_add_book():
     else:
         print(f"\nFailed to add book: {result}")
         return False
+
 
 def test_update_book():
     """Test the update_book functionality."""
@@ -105,13 +107,13 @@ def test_update_book():
 
     # Add the book using the controller
     success, book_id = book_controller.add_book(
-        title=book_title, 
-        author_id=author_id, 
-        category_id=category_id, 
-        isbn=isbn, 
-        publication_year=publication_year, 
-        publisher=publisher, 
-        quantity=quantity
+        title=book_title,
+        author_id=author_id,
+        category_id=category_id,
+        isbn=isbn,
+        publication_year=publication_year,
+        publisher=publisher,
+        quantity=quantity,
     )
 
     if not success:
@@ -138,10 +140,7 @@ def test_update_book():
     updated_quantity = 5
 
     success, result = book_controller.update_book(
-        book_id,
-        title=updated_title,
-        publisher=updated_publisher,
-        quantity=updated_quantity
+        book_id, title=updated_title, publisher=updated_publisher, quantity=updated_quantity
     )
 
     if success:
@@ -150,9 +149,11 @@ def test_update_book():
         # Verify the book was updated correctly
         updated_book = Book.find_by_id(book_id)
 
-        if (updated_book.title == updated_title and 
-            updated_book.publisher == updated_publisher and 
-            updated_book.quantity == updated_quantity):
+        if (
+            updated_book.title == updated_title
+            and updated_book.publisher == updated_publisher
+            and updated_book.quantity == updated_quantity
+        ):
             print("\nVerification successful: Book updated correctly")
             print(f"Updated book details: {updated_book.__dict__}")
         else:
@@ -168,10 +169,7 @@ def test_update_book():
     # Test 2: Try to update a non-existent book
     print("\nTest 2: Trying to update a non-existent book...")
     non_existent_id = 9999  # Assuming this ID doesn't exist
-    success, result = book_controller.update_book(
-        non_existent_id,
-        title="This Should Fail"
-    )
+    success, result = book_controller.update_book(non_existent_id, title="This Should Fail")
 
     if not success:
         print(f"\nExpected failure occurred: {result}")
@@ -182,10 +180,7 @@ def test_update_book():
     # Test 3: Try to update with invalid data
     print("\nTest 3: Trying to update with invalid data (non-existent author)...")
     invalid_author_id = 9999  # Assuming this author ID doesn't exist
-    success, result = book_controller.update_book(
-        book_id,
-        author_id=invalid_author_id
-    )
+    success, result = book_controller.update_book(book_id, author_id=invalid_author_id)
 
     if not success:
         print(f"\nExpected failure occurred: {result}")
@@ -195,17 +190,17 @@ def test_update_book():
 
     # Test 4: Update with empty updates (should not change anything)
     print("\nTest 4: Updating with empty updates...")
-    success, result = book_controller.update_book(
-        book_id
-    )
+    success, result = book_controller.update_book(book_id)
 
     if success:
         print(f"\nBook updated successfully with ID: {result}")
         # The book should remain unchanged
         unchanged_book = Book.find_by_id(book_id)
-        if (unchanged_book.title == updated_title and 
-            unchanged_book.publisher == updated_publisher and 
-            unchanged_book.quantity == updated_quantity):
+        if (
+            unchanged_book.title == updated_title
+            and unchanged_book.publisher == updated_publisher
+            and unchanged_book.quantity == updated_quantity
+        ):
             print("\nVerification successful: Book remained unchanged")
         else:
             print("\nVerification failed: Book changed unexpectedly")
@@ -216,6 +211,7 @@ def test_update_book():
 
     print("\nAll update book tests passed!")
     return True
+
 
 def test_remove_book():
     """Test the remove_book functionality."""
@@ -256,7 +252,7 @@ def test_remove_book():
         isbn=isbn,
         publication_year=publication_year,
         publisher=publisher,
-        quantity=quantity
+        quantity=quantity,
     )
 
     if not success:
@@ -278,6 +274,7 @@ def test_remove_book():
     else:
         print("\nVerification failed: Book still exists in database")
         return False
+
 
 def run_all_tests():
     """Run all book management tests."""
@@ -304,6 +301,7 @@ def run_all_tests():
         print("\n===== Some tests failed! Book management functionality has issues. =====")
 
     return all_passed
+
 
 if __name__ == "__main__":
     import sys

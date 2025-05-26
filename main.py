@@ -1,7 +1,22 @@
+import asyncio
 from controllers.database_controller import DatabaseController
 from controllers.book_controller import BookController
 from views.menu_view import MenuView
 from views.book_view import BookView
+
+"""
+some notes:
+
+     probably will be usefull : https://github.com/internetarchive/openlibrary-client
+
+
+
+
+
+
+
+"""
+
 
 class LibraryManagementSystem:
     """Main application class for the Library Management System."""
@@ -18,7 +33,7 @@ class LibraryManagementSystem:
         self.menu_view = MenuView()
         self.book_view = BookView()
 
-    def add_new_book(self):
+    async def add_new_book(self):
         """Handle the add new book functionality."""
         # Display the add book menu
         self.book_view.display_add_book_menu()
@@ -32,7 +47,7 @@ class LibraryManagementSystem:
         self.book_view.display_categories(categories)
 
         # Get book details from user
-        book_details = self.book_view.get_book_details()
+        book_details = await self.book_view.get_book_details()
 
         if book_details:
             # Add the book to the database
@@ -43,13 +58,13 @@ class LibraryManagementSystem:
             else:
                 self.menu_view.display_error(result)
 
-    def update_book(self):
+    async def update_book(self):
         """Handle the update book functionality."""
         # Display the update book menu
         self.book_view.display_update_book_menu()
 
         # Get the book ID from user
-        book_id = self.book_view.get_book_id_for_update()
+        book_id = await self.book_view.get_book_id_for_update()
 
         if book_id is None:
             return
@@ -73,7 +88,7 @@ class LibraryManagementSystem:
         self.book_view.display_categories(categories)
 
         # Get updated book details from user
-        book_updates = self.book_view.get_book_update_details()
+        book_updates = await self.book_view.get_book_update_details()
 
         if book_updates:
             # Update the book in the database
@@ -88,28 +103,36 @@ class LibraryManagementSystem:
         """Handle the remove book functionality."""
         self.book_view.remove_book_menu()
 
-    def run(self):
+    async def run(self):
         """Run the main application loop."""
+
+        self.menu_view.clear()
+        self.menu_view.goto_xy(5, 10)
+
         while True:
             # Display the main menu and get user choice
-            choice = self.menu_view.display_main_menu()
+            choice = await self.menu_view.display_main_menu()
 
-            if choice == '1':
-                self.add_new_book()
-            elif choice == '2':
-                self.update_book()
-            elif choice == '3':
-                self.remove_book()
-            elif choice == '4':
-                self.menu_view.display_message("Thank you for using the Library Management System. Goodbye!")
+            if choice == "1":
+                await self.add_new_book()
+            elif choice == "2":
+                await self.update_book()
+            elif choice == "3":
+                await self.remove_book()
+            elif choice == "4":
                 break
             else:
                 self.menu_view.display_error("Invalid choice. Please try again.")
+            await asyncio.sleep(0)
 
-def main():
+        # exit
+        self.menu_view.display_message("Thank you for using the Library Management System. Goodbye!")
+
+
+async def main():
     """Main entry point for the application."""
-    app = LibraryManagementSystem()
-    app.run()
+    await LibraryManagementSystem().run()
+
 
 if __name__ == "__main__":
-    main()
+    asyncio.run(main())

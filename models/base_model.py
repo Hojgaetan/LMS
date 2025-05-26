@@ -1,5 +1,6 @@
 from utils.db_utils import DatabaseConnection
 
+
 class BaseModel:
     """Base class for all models."""
 
@@ -28,7 +29,7 @@ class BaseModel:
 
     def __setattr__(self, name, value):
         """Handle attribute assignment."""
-        if name == '_attributes':
+        if name == "_attributes":
             # Allow direct assignment for the _attributes dictionary
             super().__setattr__(name, value)
         else:
