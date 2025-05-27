@@ -214,8 +214,12 @@ class BookView:
             dict: Dictionary with keys 'title', 'author_id', 'category_id', 'isbn' (values may be None)
         """
         print("\n===== Search Books =====")
-        title = input("Title (leave blank to skip): ")
+        while True:
+            title = input("Title (required): ")
+            if title:
+                break
+            print("Error: Title is required. Please enter a title.")
         return {
-            'title': title if title else None,
+            'title': title
         }
 
