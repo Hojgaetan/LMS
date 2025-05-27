@@ -99,6 +99,7 @@ class LibraryManagementSystem:
         """Handle the add new author functionality."""
         from controllers.author_controller import AuthorController
         from views.author_view import AuthorView
+
         name, biography = AuthorView.display_add_author_menu()
         success, message = AuthorController.add_author(name, biography)
         AuthorView.display_message(message)
@@ -107,6 +108,7 @@ class LibraryManagementSystem:
         """Handle the update author functionality."""
         from controllers.author_controller import AuthorController
         from views.author_view import AuthorView
+
         author_id, name, biography = AuthorView.display_update_author_menu()
         if not author_id.isdigit():
             AuthorView.display_message("Invalid author ID.")
@@ -118,6 +120,7 @@ class LibraryManagementSystem:
         """Handle the delete author functionality."""
         from controllers.author_controller import AuthorController
         from views.author_view import AuthorView
+
         author_id = AuthorView.display_delete_author_menu()
         if not author_id.isdigit():
             AuthorView.display_message("Invalid author ID.")
@@ -129,6 +132,7 @@ class LibraryManagementSystem:
         """Handle the list authors functionality."""
         from controllers.author_controller import AuthorController
         from views.author_view import AuthorView
+
         authors = AuthorController.list_authors()
         AuthorView.display_authors(authors)
 
@@ -136,6 +140,7 @@ class LibraryManagementSystem:
         """Handle the search authors functionality."""
         from controllers.author_controller import AuthorController
         from views.author_view import AuthorView
+
         name = AuthorView.display_search_author_menu()
         authors = AuthorController.search_authors_by_name(name)
         AuthorView.display_authors(authors)
@@ -144,6 +149,7 @@ class LibraryManagementSystem:
         """Handle the add new category functionality."""
         from controllers.category_controller import CategoryController
         from views.category_view import CategoryView
+
         name, description = CategoryView.display_add_category_menu()
         success, message = CategoryController.add_category(name, description)
         CategoryView.display_message(message)
@@ -152,6 +158,7 @@ class LibraryManagementSystem:
         """Handle the update category functionality."""
         from controllers.category_controller import CategoryController
         from views.category_view import CategoryView
+
         category_id, name, description = CategoryView.display_update_category_menu()
         if not category_id.isdigit():
             CategoryView.display_message("Invalid category ID.")
@@ -163,6 +170,7 @@ class LibraryManagementSystem:
         """Handle the delete category functionality."""
         from controllers.category_controller import CategoryController
         from views.category_view import CategoryView
+
         category_id = CategoryView.display_delete_category_menu()
         if not category_id.isdigit():
             CategoryView.display_message("Invalid category ID.")
@@ -174,6 +182,7 @@ class LibraryManagementSystem:
         """Handle the list categories functionality."""
         from controllers.category_controller import CategoryController
         from views.category_view import CategoryView
+
         categories = CategoryController.list_categories()
         CategoryView.display_categories(categories)
 
@@ -181,6 +190,7 @@ class LibraryManagementSystem:
         """Handle the search categories functionality."""
         from controllers.category_controller import CategoryController
         from views.category_view import CategoryView
+
         name = CategoryView.display_search_category_menu()
         categories = CategoryController.search_categories_by_name(name)
         CategoryView.display_categories(categories)

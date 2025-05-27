@@ -1,6 +1,7 @@
 from models.author import Author
 from utils.db_utils import DatabaseConnection
 
+
 class AuthorController:
     """Controller for author-related operations."""
 

@@ -118,7 +118,9 @@ class BookView:
 
         print("\n===== Search Results =====")
         for book in books:
-            print(f"ID: {book.book_id} | Title: {book.title} | Author ID: {book.author_id} | Category ID: {book.category_id} | ISBN: {book.isbn}")
+            print(
+                f"ID: {book.book_id} | Title: {book.title} | Author ID: {book.author_id} | Category ID: {book.category_id} | ISBN: {book.isbn}"
+            )
 
     @staticmethod
     def display_update_book_menu():
@@ -219,7 +221,4 @@ class BookView:
             if title:
                 break
             print("Error: Title is required. Please enter a title.")
-        return {
-            'title': title
-        }
-
+        return {"title": title}

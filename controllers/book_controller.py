@@ -224,4 +224,3 @@ class BookController:
             list: A list of all categories
         """
         return Category.find_all()
-

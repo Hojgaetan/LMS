@@ -1,6 +1,7 @@
 from models.category import Category
 from utils.db_utils import DatabaseConnection
 
+
 class CategoryController:
     """Controller for category-related operations."""
 

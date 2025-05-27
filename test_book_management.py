@@ -325,10 +325,7 @@ def test_search_books():
         if existing:
             existing.delete()
         success, book_id = book_controller.add_book(
-            title=book["title"],
-            author_id=book["author_id"],
-            category_id=book["category_id"],
-            isbn=book["isbn"]
+            title=book["title"], author_id=book["author_id"], category_id=book["category_id"], isbn=book["isbn"]
         )
         if not success:
             print(f"Failed to add book: {book['title']}")
@@ -364,6 +361,7 @@ def test_search_books():
     print("All search_books tests passed!")
     return True
 
+
 def run_all_tests():
     """Run all book management tests."""
     print("\n===== Running All Book Management Tests =====")
@@ -394,6 +392,7 @@ def run_all_tests():
 
     return all_passed
 
+
 if __name__ == "__main__":
     import sys
 
@@ -417,4 +416,3 @@ if __name__ == "__main__":
 
     # Exit with appropriate status code
     sys.exit(0 if test_result else 1)
-
