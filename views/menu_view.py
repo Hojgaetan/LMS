@@ -24,8 +24,15 @@ class MenuView:
         print("12. Delete Category")
         print("13. List Categories")
         print("14. Search Categories")
-        print("15. Exit")
-        return input("Enter your choice (1-15): ")
+        print("15. Register New Member")
+        print("16. Update Member Information")
+        print("17. Delete Member")
+        print("18. List Members")
+        print("19. Search Members")
+        print("20. View Member History")
+        print("21. Activate/Deactivate Member")
+        print("22. Exit")
+        return input("Enter your choice (1-22): ")
 
     @staticmethod
     def display_message(message):

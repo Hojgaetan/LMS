@@ -195,6 +195,74 @@ class LibraryManagementSystem:
         categories = CategoryController.search_categories_by_name(name)
         CategoryView.display_categories(categories)
 
+    def add_new_member(self):
+        """Handle the add new member functionality."""
+        from controllers.member_controller import MemberController
+        from views.member_view import MemberView
+        name, email, phone, address = MemberView.display_add_member_menu()
+        success, message = MemberController.add_member(name, email, phone, address)
+        MemberView.display_message(message)
+
+    def update_member(self):
+        """Handle the update member functionality."""
+        from controllers.member_controller import MemberController
+        from views.member_view import MemberView
+        member_id, name, email, phone, address, status = MemberView.display_update_member_menu()
+        if not member_id.isdigit():
+            MemberView.display_message("Invalid member ID.")
+            return
+        success, message = MemberController.update_member(int(member_id), name or None, email or None, phone or None, address or None, status or None)
+        MemberView.display_message(message)
+
+    def delete_member(self):
+        """Handle the delete member functionality."""
+        from controllers.member_controller import MemberController
+        from views.member_view import MemberView
+        member_id = MemberView.display_delete_member_menu()
+        if not member_id.isdigit():
+            MemberView.display_message("Invalid member ID.")
+            return
+        success, message = MemberController.delete_member(int(member_id))
+        MemberView.display_message(message)
+
+    def list_members(self):
+        """Handle the list members functionality."""
+        from controllers.member_controller import MemberController
+        from views.member_view import MemberView
+        members = MemberController.list_members()
+        MemberView.display_members(members)
+
+    def search_members(self):
+        """Handle the search members functionality."""
+        from controllers.member_controller import MemberController
+        from views.member_view import MemberView
+        name = MemberView.display_search_member_menu()
+        members = MemberController.search_members_by_name(name)
+        MemberView.display_members(members)
+
+    def view_member_history(self):
+        """Handle the view member history functionality."""
+        from controllers.member_controller import MemberController
+        from views.member_view import MemberView
+        member_id = input("Enter Member ID to view history: ")
+        if not member_id.isdigit():
+            MemberView.display_message("Invalid member ID.")
+            return
+        history = MemberController.get_member_history(int(member_id))
+        MemberView.display_member_history(history)
+
+    def set_member_status(self):
+        """Handle the set member status functionality."""
+        from controllers.member_controller import MemberController
+        from views.member_view import MemberView
+        member_id = input("Enter Member ID to change status: ")
+        if not member_id.isdigit():
+            MemberView.display_message("Invalid member ID.")
+            return
+        status = input("Enter new status (active/inactive): ")
+        success, message = MemberController.set_member_status(int(member_id), status)
+        MemberView.display_message(message)
+
     def run(self):
         """Run the main application loop with exception handling."""
         while True:
@@ -231,6 +299,20 @@ class LibraryManagementSystem:
                 elif choice == "14":
                     self.search_categories()
                 elif choice == "15":
+                    self.add_new_member()
+                elif choice == "16":
+                    self.update_member()
+                elif choice == "17":
+                    self.delete_member()
+                elif choice == "18":
+                    self.list_members()
+                elif choice == "19":
+                    self.search_members()
+                elif choice == "20":
+                    self.view_member_history()
+                elif choice == "21":
+                    self.set_member_status()
+                elif choice == "22":
                     self.menu_view.display_message("Thank you for using the Library Management System. Goodbye!")
                     break
                 else:
