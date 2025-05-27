@@ -4,19 +4,6 @@ from controllers.book_controller import BookController
 from views.menu_view import MenuView
 from views.book_view import BookView
 
-"""
-some notes:
-
-     probably will be usefull : https://github.com/internetarchive/openlibrary-client
-
-
-
-
-
-
-
-"""
-
 
 class LibraryManagementSystem:
     """Main application class for the Library Management System."""
@@ -103,6 +90,7 @@ class LibraryManagementSystem:
         """Handle the remove book functionality."""
         self.book_view.remove_book_menu()
 
+        
     async def run(self):
         """Run the main application loop."""
 
@@ -132,6 +120,154 @@ class LibraryManagementSystem:
 async def main():
     """Main entry point for the application."""
     await LibraryManagementSystem().run()
+
+    def search_books(self):
+        """Handle the search books functionality."""
+        criteria = self.book_view.get_search_criteria()
+        books = self.book_controller.search_books(**criteria)
+        self.book_view.display_books(books)
+
+    def add_new_author(self):
+        """Handle the add new author functionality."""
+        from controllers.author_controller import AuthorController
+        from views.author_view import AuthorView
+        name, biography = AuthorView.display_add_author_menu()
+        success, message = AuthorController.add_author(name, biography)
+        AuthorView.display_message(message)
+
+    def update_author(self):
+        """Handle the update author functionality."""
+        from controllers.author_controller import AuthorController
+        from views.author_view import AuthorView
+        author_id, name, biography = AuthorView.display_update_author_menu()
+        if not author_id.isdigit():
+            AuthorView.display_message("Invalid author ID.")
+            return
+        success, message = AuthorController.update_author(int(author_id), name or None, biography or None)
+        AuthorView.display_message(message)
+
+    def delete_author(self):
+        """Handle the delete author functionality."""
+        from controllers.author_controller import AuthorController
+        from views.author_view import AuthorView
+        author_id = AuthorView.display_delete_author_menu()
+        if not author_id.isdigit():
+            AuthorView.display_message("Invalid author ID.")
+            return
+        success, message = AuthorController.delete_author(int(author_id))
+        AuthorView.display_message(message)
+
+    def list_authors(self):
+        """Handle the list authors functionality."""
+        from controllers.author_controller import AuthorController
+        from views.author_view import AuthorView
+        authors = AuthorController.list_authors()
+        AuthorView.display_authors(authors)
+
+    def search_authors(self):
+        """Handle the search authors functionality."""
+        from controllers.author_controller import AuthorController
+        from views.author_view import AuthorView
+        name = AuthorView.display_search_author_menu()
+        authors = AuthorController.search_authors_by_name(name)
+        AuthorView.display_authors(authors)
+
+    def add_new_category(self):
+        """Handle the add new category functionality."""
+        from controllers.category_controller import CategoryController
+        from views.category_view import CategoryView
+        name, description = CategoryView.display_add_category_menu()
+        success, message = CategoryController.add_category(name, description)
+        CategoryView.display_message(message)
+
+    def update_category(self):
+        """Handle the update category functionality."""
+        from controllers.category_controller import CategoryController
+        from views.category_view import CategoryView
+        category_id, name, description = CategoryView.display_update_category_menu()
+        if not category_id.isdigit():
+            CategoryView.display_message("Invalid category ID.")
+            return
+        success, message = CategoryController.update_category(int(category_id), name or None, description or None)
+        CategoryView.display_message(message)
+
+    def delete_category(self):
+        """Handle the delete category functionality."""
+        from controllers.category_controller import CategoryController
+        from views.category_view import CategoryView
+        category_id = CategoryView.display_delete_category_menu()
+        if not category_id.isdigit():
+            CategoryView.display_message("Invalid category ID.")
+            return
+        success, message = CategoryController.delete_category(int(category_id))
+        CategoryView.display_message(message)
+
+    def list_categories(self):
+        """Handle the list categories functionality."""
+        from controllers.category_controller import CategoryController
+        from views.category_view import CategoryView
+        categories = CategoryController.list_categories()
+        CategoryView.display_categories(categories)
+
+    def search_categories(self):
+        """Handle the search categories functionality."""
+        from controllers.category_controller import CategoryController
+        from views.category_view import CategoryView
+        name = CategoryView.display_search_category_menu()
+        categories = CategoryController.search_categories_by_name(name)
+        CategoryView.display_categories(categories)
+
+    def run(self):
+        """Run the main application loop with exception handling."""
+        while True:
+            try:
+                # Display the main menu and get user choice
+                choice = self.menu_view.display_main_menu()
+
+                if choice == "1":
+                    self.add_new_book()
+                elif choice == "2":
+                    self.update_book()
+                elif choice == "3":
+                    self.remove_book()
+                elif choice == "4":
+                    self.search_books()
+                elif choice == "5":
+                    self.add_new_author()
+                elif choice == "6":
+                    self.update_author()
+                elif choice == "7":
+                    self.delete_author()
+                elif choice == "8":
+                    self.list_authors()
+                elif choice == "9":
+                    self.search_authors()
+                elif choice == "10":
+                    self.add_new_category()
+                elif choice == "11":
+                    self.update_category()
+                elif choice == "12":
+                    self.delete_category()
+                elif choice == "13":
+                    self.list_categories()
+                elif choice == "14":
+                    self.search_categories()
+                elif choice == "15":
+                    self.menu_view.display_message("Thank you for using the Library Management System. Goodbye!")
+                    break
+                else:
+                    self.menu_view.display_error("Invalid choice. Please try again.")
+            except Exception as e:
+                self.menu_view.display_error(f"An unexpected error occurred: {e}")
+
+
+def main():
+    """Main entry point for the application with global exception handling."""
+    try:
+        app = LibraryManagementSystem()
+        app.run()
+    except Exception as e:
+        print(f"Fatal error: {e}")
 
 
 if __name__ == "__main__":

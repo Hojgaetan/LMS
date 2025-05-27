@@ -110,6 +110,24 @@ class BookController:
         """
         return Book.find_by_category(category_id)
 
+
+    @staticmethod
+    def search_books(title=None, author_id=None, category_id=None, isbn=None):
+        """
+        Search for books by title, author, category, or ISBN.
+        Args:
+            title (str, optional): Book title (partial match)
+            author_id (int, optional): Author ID
+            category_id (int, optional): Category ID
+            isbn (str, optional): ISBN
+        Returns:
+            list: List of Book objects matching the criteria
+        """
+        try:
+            return Book.search(title=title, author_id=author_id, category_id=category_id, isbn=isbn)
+        except Exception as e:
+            return []
+
     @staticmethod
     def update_book(book_id, **kwargs):
         """

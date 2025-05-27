@@ -24,6 +24,21 @@ class MenuView:
         print("4. Exit")
         return await aio.async_input("Enter your choice (1-4): ")
 
+        print("4. Search Books")
+        print("5. Add New Author")
+        print("6. Update Author")
+        print("7. Delete Author")
+        print("8. List Authors")
+        print("9. Search Authors")
+        print("10. Add New Category")
+        print("11. Update Category")
+        print("12. Delete Category")
+        print("13. List Categories")
+        print("14. Search Categories")
+        print("15. Exit")
+        return input("Enter your choice (1-15): ")
+
+
     @staticmethod
     def display_message(message):
         """
@@ -65,7 +80,11 @@ class MenuView:
         Returns:
             str: The user's input
         """
+
         return await aio.async_input(prompt)
+
+        return input(prompt)
+
 
     @staticmethod
     async def get_int_input(prompt, default=None):

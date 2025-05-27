@@ -45,16 +45,25 @@ class BookView:
         book_details = {}
 
         # Get required fields
+
         book_details["title"] = await aio.async_input("Title (required): ")
 
         try:
             book_details["author_id"] = int(await aio.async_input("Author ID (required): "))
             book_details["category_id"] = int(await aio.async_input("Category ID (required): "))
 
+        book_details["title"] = input("Title (required): ")
+
+        try:
+            book_details["author_id"] = int(input("Author ID (required): "))
+            book_details["category_id"] = int(input("Category ID (required): "))
+
+
             # Get optional fields
             isbn = await aio.async_input("ISBN (optional, press Enter to skip): ")
             if isbn:
                 book_details["isbn"] = isbn
+
 
             pub_year = await aio.async_input("Publication Year (optional, press Enter to skip): ")
             if pub_year:
@@ -65,6 +74,17 @@ class BookView:
                 book_details["publisher"] = publisher
 
             quantity = await aio.async_input("Quantity (optional, default is 1, press Enter to use default): ")
+
+            pub_year = input("Publication Year (optional, press Enter to skip): ")
+            if pub_year:
+                book_details["publication_year"] = int(pub_year)
+
+            publisher = input("Publisher (optional, press Enter to skip): ")
+            if publisher:
+                book_details["publisher"] = publisher
+
+            quantity = input("Quantity (optional, default is 1, press Enter to use default): ")
+
             if quantity:
                 book_details["quantity"] = int(quantity)
 
@@ -113,12 +133,16 @@ class BookView:
             books (list): A list of Book objects
         """
         if not books:
-            print("No books found.")
+            print("No books found matching the criteria.")
             return
 
+
         print("\n===== Books =====")
+
+        print("\n===== Search Results =====")
+
         for book in books:
-            print(f"{book.book_id}. {book.title} (ISBN: {book.isbn or 'N/A'})")
+            print(f"ID: {book.book_id} | Title: {book.title} | Author ID: {book.author_id} | Category ID: {book.category_id} | ISBN: {book.isbn}")
 
     @staticmethod
     def display_update_book_menu():
@@ -205,3 +229,23 @@ class BookView:
 
         success, message = BookController.remove_book(book_id)
         print(message)
+
+
+
+    @staticmethod
+    def get_search_criteria():
+        """
+        Prompt the user for search criteria (title, author ID, category ID, ISBN).
+        Returns:
+            dict: Dictionary with keys 'title', 'author_id', 'category_id', 'isbn' (values may be None)
+        """
+        print("\n===== Search Books =====")
+        while True:
+            title = input("Title (required): ")
+            if title:
+                break
+            print("Error: Title is required. Please enter a title.")
+        return {
+            'title': title
+        }
+
