@@ -309,13 +309,45 @@ class LibraryManagementSystem:
         success, message = BorrowingController.send_reminder(int(borrowing_id))
         BorrowingView.display_message(message)
 
+    def admin_login(self):
+        from controllers.admin_controller import AdminController
+        from views.admin_view import AdminView
+        username, password = AdminView.display_login_menu()
+        success, message = AdminController.authenticate_user(username, password)
+        AdminView.display_message(message)
+        return success
+
+    def set_system_config(self):
+        from controllers.admin_controller import AdminController
+        from views.admin_view import AdminView
+        key, value = AdminView.display_config_menu()
+        success, message = AdminController.set_config(key, value)
+        AdminView.display_message(message)
+
+    def backup_database(self):
+        from controllers.admin_controller import AdminController
+        from views.admin_view import AdminView
+        path = AdminView.display_backup_menu()
+        success, message = AdminController.backup_database(path)
+        AdminView.display_message(message)
+
+    def restore_database(self):
+        from controllers.admin_controller import AdminController
+        from views.admin_view import AdminView
+        path = AdminView.display_restore_menu()
+        success, message = AdminController.restore_database(path)
+        AdminView.display_message(message)
+
+    def log_activity(self, action, user="system"):
+        from controllers.admin_controller import AdminController
+        AdminController.log_activity(action, user)
+
     def run(self):
         """Run the main application loop with exception handling."""
         while True:
             try:
                 # Display the main menu and get user choice
                 choice = self.menu_view.display_main_menu()
-
                 if choice == "1":
                     self.add_new_book()
                 elif choice == "2":
@@ -369,6 +401,14 @@ class LibraryManagementSystem:
                 elif choice == "26":
                     self.send_borrowing_reminder()
                 elif choice == "27":
+                    self.admin_login()
+                elif choice == "28":
+                    self.set_system_config()
+                elif choice == "29":
+                    self.backup_database()
+                elif choice == "30":
+                    self.restore_database()
+                elif choice == "31":
                     self.menu_view.display_message("Thank you for using the Library Management System. Goodbye!")
                     break
                 else:

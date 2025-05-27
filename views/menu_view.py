@@ -36,8 +36,12 @@ class MenuView:
         print("24. Extend Borrowing Period")
         print("25. Show Overdue Borrowings")
         print("26. Send Borrowing Reminder")
-        print("27. Exit")
-        return input("Enter your choice (1-27): ")
+        print("27. Admin Login")
+        print("28. System Configuration")
+        print("29. Backup Database")
+        print("30. Restore Database")
+        print("31. Exit")
+        return input("Enter your choice (1-31): ")
 
     @staticmethod
     def display_message(message):
