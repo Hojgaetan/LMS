@@ -140,6 +140,51 @@ class LibraryManagementSystem:
         authors = AuthorController.search_authors_by_name(name)
         AuthorView.display_authors(authors)
 
+    def add_new_category(self):
+        """Handle the add new category functionality."""
+        from controllers.category_controller import CategoryController
+        from views.category_view import CategoryView
+        name, description = CategoryView.display_add_category_menu()
+        success, message = CategoryController.add_category(name, description)
+        CategoryView.display_message(message)
+
+    def update_category(self):
+        """Handle the update category functionality."""
+        from controllers.category_controller import CategoryController
+        from views.category_view import CategoryView
+        category_id, name, description = CategoryView.display_update_category_menu()
+        if not category_id.isdigit():
+            CategoryView.display_message("Invalid category ID.")
+            return
+        success, message = CategoryController.update_category(int(category_id), name or None, description or None)
+        CategoryView.display_message(message)
+
+    def delete_category(self):
+        """Handle the delete category functionality."""
+        from controllers.category_controller import CategoryController
+        from views.category_view import CategoryView
+        category_id = CategoryView.display_delete_category_menu()
+        if not category_id.isdigit():
+            CategoryView.display_message("Invalid category ID.")
+            return
+        success, message = CategoryController.delete_category(int(category_id))
+        CategoryView.display_message(message)
+
+    def list_categories(self):
+        """Handle the list categories functionality."""
+        from controllers.category_controller import CategoryController
+        from views.category_view import CategoryView
+        categories = CategoryController.list_categories()
+        CategoryView.display_categories(categories)
+
+    def search_categories(self):
+        """Handle the search categories functionality."""
+        from controllers.category_controller import CategoryController
+        from views.category_view import CategoryView
+        name = CategoryView.display_search_category_menu()
+        categories = CategoryController.search_categories_by_name(name)
+        CategoryView.display_categories(categories)
+
     def run(self):
         """Run the main application loop with exception handling."""
         while True:
@@ -166,6 +211,16 @@ class LibraryManagementSystem:
                 elif choice == "9":
                     self.search_authors()
                 elif choice == "10":
+                    self.add_new_category()
+                elif choice == "11":
+                    self.update_category()
+                elif choice == "12":
+                    self.delete_category()
+                elif choice == "13":
+                    self.list_categories()
+                elif choice == "14":
+                    self.search_categories()
+                elif choice == "15":
                     self.menu_view.display_message("Thank you for using the Library Management System. Goodbye!")
                     break
                 else:
