@@ -199,6 +199,7 @@ class LibraryManagementSystem:
         """Handle the add new member functionality."""
         from controllers.member_controller import MemberController
         from views.member_view import MemberView
+
         name, email, phone, address = MemberView.display_add_member_menu()
         success, message = MemberController.add_member(name, email, phone, address)
         MemberView.display_message(message)
@@ -207,17 +208,21 @@ class LibraryManagementSystem:
         """Handle the update member functionality."""
         from controllers.member_controller import MemberController
         from views.member_view import MemberView
+
         member_id, name, email, phone, address, status = MemberView.display_update_member_menu()
         if not member_id.isdigit():
             MemberView.display_message("Invalid member ID.")
             return
-        success, message = MemberController.update_member(int(member_id), name or None, email or None, phone or None, address or None, status or None)
+        success, message = MemberController.update_member(
+            int(member_id), name or None, email or None, phone or None, address or None, status or None
+        )
         MemberView.display_message(message)
 
     def delete_member(self):
         """Handle the delete member functionality."""
         from controllers.member_controller import MemberController
         from views.member_view import MemberView
+
         member_id = MemberView.display_delete_member_menu()
         if not member_id.isdigit():
             MemberView.display_message("Invalid member ID.")
@@ -229,6 +234,7 @@ class LibraryManagementSystem:
         """Handle the list members functionality."""
         from controllers.member_controller import MemberController
         from views.member_view import MemberView
+
         members = MemberController.list_members()
         MemberView.display_members(members)
 
@@ -236,6 +242,7 @@ class LibraryManagementSystem:
         """Handle the search members functionality."""
         from controllers.member_controller import MemberController
         from views.member_view import MemberView
+
         name = MemberView.display_search_member_menu()
         members = MemberController.search_members_by_name(name)
         MemberView.display_members(members)
@@ -244,6 +251,7 @@ class LibraryManagementSystem:
         """Handle the view member history functionality."""
         from controllers.member_controller import MemberController
         from views.member_view import MemberView
+
         member_id = input("Enter Member ID to view history: ")
         if not member_id.isdigit():
             MemberView.display_message("Invalid member ID.")
@@ -255,6 +263,7 @@ class LibraryManagementSystem:
         """Handle the set member status functionality."""
         from controllers.member_controller import MemberController
         from views.member_view import MemberView
+
         member_id = input("Enter Member ID to change status: ")
         if not member_id.isdigit():
             MemberView.display_message("Invalid member ID.")
@@ -266,6 +275,7 @@ class LibraryManagementSystem:
     def borrow_book(self):
         from controllers.borrowing_controller import BorrowingController
         from views.borrowing_view import BorrowingView
+
         book_id, member_id, days = BorrowingView.display_borrow_book_menu()
         if not book_id.isdigit() or not member_id.isdigit():
             BorrowingView.display_message("Invalid book or member ID.")
@@ -276,6 +286,7 @@ class LibraryManagementSystem:
     def return_book(self):
         from controllers.borrowing_controller import BorrowingController
         from views.borrowing_view import BorrowingView
+
         borrowing_id = BorrowingView.display_return_book_menu()
         if not borrowing_id.isdigit():
             BorrowingView.display_message("Invalid borrowing ID.")
@@ -286,6 +297,7 @@ class LibraryManagementSystem:
     def extend_borrowing(self):
         from controllers.borrowing_controller import BorrowingController
         from views.borrowing_view import BorrowingView
+
         borrowing_id, extra_days = BorrowingView.display_extend_borrowing_menu()
         if not borrowing_id.isdigit() or extra_days <= 0:
             BorrowingView.display_message("Invalid input.")
@@ -296,12 +308,14 @@ class LibraryManagementSystem:
     def show_overdue_borrowings(self):
         from controllers.borrowing_controller import BorrowingController
         from views.borrowing_view import BorrowingView
+
         overdues = BorrowingController.get_overdue_borrowings()
         BorrowingView.display_overdue_borrowings(overdues)
 
     def send_borrowing_reminder(self):
         from controllers.borrowing_controller import BorrowingController
         from views.borrowing_view import BorrowingView
+
         borrowing_id = input("Enter Borrowing ID to send reminder: ")
         if not borrowing_id.isdigit():
             BorrowingView.display_message("Invalid borrowing ID.")
@@ -312,6 +326,7 @@ class LibraryManagementSystem:
     def admin_login(self):
         from controllers.admin_controller import AdminController
         from views.admin_view import AdminView
+
         username, password = AdminView.display_login_menu()
         success, message = AdminController.authenticate_user(username, password)
         AdminView.display_message(message)
@@ -320,6 +335,7 @@ class LibraryManagementSystem:
     def set_system_config(self):
         from controllers.admin_controller import AdminController
         from views.admin_view import AdminView
+
         key, value = AdminView.display_config_menu()
         success, message = AdminController.set_config(key, value)
         AdminView.display_message(message)
@@ -327,6 +343,7 @@ class LibraryManagementSystem:
     def backup_database(self):
         from controllers.admin_controller import AdminController
         from views.admin_view import AdminView
+
         path = AdminView.display_backup_menu()
         success, message = AdminController.backup_database(path)
         AdminView.display_message(message)
@@ -334,12 +351,14 @@ class LibraryManagementSystem:
     def restore_database(self):
         from controllers.admin_controller import AdminController
         from views.admin_view import AdminView
+
         path = AdminView.display_restore_menu()
         success, message = AdminController.restore_database(path)
         AdminView.display_message(message)
 
     def log_activity(self, action, user="system"):
         from controllers.admin_controller import AdminController
+
         AdminController.log_activity(action, user)
 
     def run(self):

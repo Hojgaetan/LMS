@@ -30,7 +30,9 @@ class BorrowingView:
             print("No overdue borrowings.")
             return
         for b in overdues:
-            print(f"Borrowing ID: {b.borrowing_id} | Book ID: {b.book_id} | Member ID: {b.member_id} | Due: {b.due_date} | Status: {b.status}")
+            print(
+                f"Borrowing ID: {b.borrowing_id} | Book ID: {b.book_id} | Member ID: {b.member_id} | Due: {b.due_date} | Status: {b.status}"
+            )
 
     @staticmethod
     def display_message(message):

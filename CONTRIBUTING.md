@@ -2,6 +2,8 @@
 
 Thank you for your interest in contributing to this project! Your help is greatly appreciated. Please follow these guidelines to ensure a smooth contribution process.
 
+[![commits](https://img.shields.io/github/commit-activity/w/Hojgaetan/LMS)](https://github.com/Hojgaetan/LMS/commits/main)
+
 ## How to Contribute
 
 1. **Fork the repository**

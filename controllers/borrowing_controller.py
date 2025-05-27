@@ -4,6 +4,7 @@ from models.member import Member
 from utils.db_utils import DatabaseConnection
 from datetime import datetime, timedelta
 
+
 class BorrowingController:
     """Controller for borrowing-related operations."""
 
@@ -15,7 +16,7 @@ class BorrowingController:
             return False, "Book not found."
         if not member:
             return False, "Member not found."
-        if getattr(book, 'available_quantity', 0) < 1:
+        if getattr(book, "available_quantity", 0) < 1:
             return False, "No available copies for this book."
         borrow_date = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         due_date = (datetime.now() + timedelta(days=days)).strftime("%Y-%m-%d %H:%M:%S")
@@ -68,4 +69,7 @@ class BorrowingController:
         if not member:
             return False, "Member not found."
         # In a real system, send an email or SMS. Here, just return a message.
-        return True, f"Reminder sent to {member.name} (Email: {member.email}) for book ID {borrowing.book_id}. Due date: {borrowing.due_date}."
+        return (
+            True,
+            f"Reminder sent to {member.name} (Email: {member.email}) for book ID {borrowing.book_id}. Due date: {borrowing.due_date}.",
+        )

@@ -34,7 +34,9 @@ class MemberView:
             print("No members found.")
             return
         for member in members:
-            print(f"ID: {member.member_id} | Name: {member.name} | Email: {member.email} | Phone: {member.phone} | Status: {getattr(member, 'status', 'active')}")
+            print(
+                f"ID: {member.member_id} | Name: {member.name} | Email: {member.email} | Phone: {member.phone} | Status: {getattr(member, 'status', 'active')}"
+            )
 
     @staticmethod
     def display_search_member_menu():
@@ -49,7 +51,9 @@ class MemberView:
             print("No borrowing history found.")
             return
         for borrowing in history:
-            print(f"Book ID: {borrowing.book_id} | Borrowed: {borrowing.borrow_date} | Due: {borrowing.due_date} | Returned: {borrowing.return_date or 'Not returned'} | Status: {borrowing.status}")
+            print(
+                f"Book ID: {borrowing.book_id} | Borrowed: {borrowing.borrow_date} | Due: {borrowing.due_date} | Returned: {borrowing.return_date or 'Not returned'} | Status: {borrowing.status}"
+            )
 
     @staticmethod
     def display_message(message):
