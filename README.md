@@ -1,12 +1,16 @@
 # Library Management System (LMS)
 
+![forks](https://img.shields.io/github/forks/Hojgaetan/LMS)
+[![commits](https://img.shields.io/github/commit-activity/w/Hojgaetan/LMS)](https://github.com/Hojgaetan/LMS/commits/main)
+![contributors](https://img.shields.io/github/contributors/Hojgaetan/LMS)
+
 ## Overview
 The Library Management System (LMS) is a robust, modular application designed to streamline and automate the management of library resources. Built with a scalable architecture and following the Model-View-Controller (MVC) pattern, LMS provides a comprehensive suite of features for book, author, category, member, and borrowing management, as well as advanced reporting and administrative controls.
 
 ## Key Features
 ### Book Management
 - Add, update, and remove books
-- Search books by title, author, category, or ISBN
+- Search books by title
 - View detailed book information
 - Manage book inventory and availability
 
@@ -151,8 +155,9 @@ The LMS is designed for extensibility. New features, modules, or integrations (e
 For a detailed description of each use case, see `features.md`.
 
 ## Authors & Contributors
-- [Joel Gaetan HASSAM OBAH] (Project Lead)
-- [Contributors]
+- [@Hojgaetan](https://github.com/Hojgaetan) (Lead project)
+- [@pmp-p](https://github.com/pmp-p)
+- Contributors are welcome! Please see the CONTRIBUTING.md file for guidelines.
 
 ## License
 This project is provided for educational and professional use. Please refer to the LICENSE file for more information.
