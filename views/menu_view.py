@@ -31,8 +31,13 @@ class MenuView:
         print("19. Search Members")
         print("20. View Member History")
         print("21. Activate/Deactivate Member")
-        print("22. Exit")
-        return input("Enter your choice (1-22): ")
+        print("22. Borrow Book")
+        print("23. Return Book")
+        print("24. Extend Borrowing Period")
+        print("25. Show Overdue Borrowings")
+        print("26. Send Borrowing Reminder")
+        print("27. Exit")
+        return input("Enter your choice (1-27): ")
 
     @staticmethod
     def display_message(message):

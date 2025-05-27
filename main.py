@@ -263,6 +263,52 @@ class LibraryManagementSystem:
         success, message = MemberController.set_member_status(int(member_id), status)
         MemberView.display_message(message)
 
+    def borrow_book(self):
+        from controllers.borrowing_controller import BorrowingController
+        from views.borrowing_view import BorrowingView
+        book_id, member_id, days = BorrowingView.display_borrow_book_menu()
+        if not book_id.isdigit() or not member_id.isdigit():
+            BorrowingView.display_message("Invalid book or member ID.")
+            return
+        success, message = BorrowingController.borrow_book(int(book_id), int(member_id), days)
+        BorrowingView.display_message(message)
+
+    def return_book(self):
+        from controllers.borrowing_controller import BorrowingController
+        from views.borrowing_view import BorrowingView
+        borrowing_id = BorrowingView.display_return_book_menu()
+        if not borrowing_id.isdigit():
+            BorrowingView.display_message("Invalid borrowing ID.")
+            return
+        success, message = BorrowingController.return_book(int(borrowing_id))
+        BorrowingView.display_message(message)
+
+    def extend_borrowing(self):
+        from controllers.borrowing_controller import BorrowingController
+        from views.borrowing_view import BorrowingView
+        borrowing_id, extra_days = BorrowingView.display_extend_borrowing_menu()
+        if not borrowing_id.isdigit() or extra_days <= 0:
+            BorrowingView.display_message("Invalid input.")
+            return
+        success, message = BorrowingController.extend_borrowing(int(borrowing_id), extra_days)
+        BorrowingView.display_message(message)
+
+    def show_overdue_borrowings(self):
+        from controllers.borrowing_controller import BorrowingController
+        from views.borrowing_view import BorrowingView
+        overdues = BorrowingController.get_overdue_borrowings()
+        BorrowingView.display_overdue_borrowings(overdues)
+
+    def send_borrowing_reminder(self):
+        from controllers.borrowing_controller import BorrowingController
+        from views.borrowing_view import BorrowingView
+        borrowing_id = input("Enter Borrowing ID to send reminder: ")
+        if not borrowing_id.isdigit():
+            BorrowingView.display_message("Invalid borrowing ID.")
+            return
+        success, message = BorrowingController.send_reminder(int(borrowing_id))
+        BorrowingView.display_message(message)
+
     def run(self):
         """Run the main application loop with exception handling."""
         while True:
@@ -313,6 +359,16 @@ class LibraryManagementSystem:
                 elif choice == "21":
                     self.set_member_status()
                 elif choice == "22":
+                    self.borrow_book()
+                elif choice == "23":
+                    self.return_book()
+                elif choice == "24":
+                    self.extend_borrowing()
+                elif choice == "25":
+                    self.show_overdue_borrowings()
+                elif choice == "26":
+                    self.send_borrowing_reminder()
+                elif choice == "27":
                     self.menu_view.display_message("Thank you for using the Library Management System. Goodbye!")
                     break
                 else:
