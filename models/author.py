@@ -63,6 +63,20 @@ class Author(BaseModel):
 
         return []
 
+    @classmethod
+    def all(cls):
+        """Return all authors from the database as a list of Author objects."""
+        query = f"SELECT * FROM {cls.TABLE_NAME}"
+        results = DatabaseConnection.execute_query(query)
+        if results:
+            conn = DatabaseConnection.get_connection()
+            cursor = conn.cursor()
+            cursor.execute(f"PRAGMA table_info({cls.TABLE_NAME})")
+            columns = [column[1] for column in cursor.fetchall()]
+            conn.close()
+            return [cls(**dict(zip(columns, result))) for result in results]
+        return []
+
     def get_books(self):
         """Get all books by this author."""
         from models.book import Book

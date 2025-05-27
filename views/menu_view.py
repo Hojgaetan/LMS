@@ -14,8 +14,13 @@ class MenuView:
         print("2. Update Book Information")
         print("3. Remove Book")
         print("4. Search Books")
-        print("5. Exit")
-        return input("Enter your choice (1-5): ")
+        print("5. Add New Author")
+        print("6. Update Author")
+        print("7. Delete Author")
+        print("8. List Authors")
+        print("9. Search Authors")
+        print("10. Exit")
+        return input("Enter your choice (1-10): ")
 
     @staticmethod
     def display_message(message):

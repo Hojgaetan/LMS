@@ -95,6 +95,51 @@ class LibraryManagementSystem:
         books = self.book_controller.search_books(**criteria)
         self.book_view.display_books(books)
 
+    def add_new_author(self):
+        """Handle the add new author functionality."""
+        from controllers.author_controller import AuthorController
+        from views.author_view import AuthorView
+        name, biography = AuthorView.display_add_author_menu()
+        success, message = AuthorController.add_author(name, biography)
+        AuthorView.display_message(message)
+
+    def update_author(self):
+        """Handle the update author functionality."""
+        from controllers.author_controller import AuthorController
+        from views.author_view import AuthorView
+        author_id, name, biography = AuthorView.display_update_author_menu()
+        if not author_id.isdigit():
+            AuthorView.display_message("Invalid author ID.")
+            return
+        success, message = AuthorController.update_author(int(author_id), name or None, biography or None)
+        AuthorView.display_message(message)
+
+    def delete_author(self):
+        """Handle the delete author functionality."""
+        from controllers.author_controller import AuthorController
+        from views.author_view import AuthorView
+        author_id = AuthorView.display_delete_author_menu()
+        if not author_id.isdigit():
+            AuthorView.display_message("Invalid author ID.")
+            return
+        success, message = AuthorController.delete_author(int(author_id))
+        AuthorView.display_message(message)
+
+    def list_authors(self):
+        """Handle the list authors functionality."""
+        from controllers.author_controller import AuthorController
+        from views.author_view import AuthorView
+        authors = AuthorController.list_authors()
+        AuthorView.display_authors(authors)
+
+    def search_authors(self):
+        """Handle the search authors functionality."""
+        from controllers.author_controller import AuthorController
+        from views.author_view import AuthorView
+        name = AuthorView.display_search_author_menu()
+        authors = AuthorController.search_authors_by_name(name)
+        AuthorView.display_authors(authors)
+
     def run(self):
         """Run the main application loop with exception handling."""
         while True:
@@ -111,6 +156,16 @@ class LibraryManagementSystem:
                 elif choice == "4":
                     self.search_books()
                 elif choice == "5":
+                    self.add_new_author()
+                elif choice == "6":
+                    self.update_author()
+                elif choice == "7":
+                    self.delete_author()
+                elif choice == "8":
+                    self.list_authors()
+                elif choice == "9":
+                    self.search_authors()
+                elif choice == "10":
                     self.menu_view.display_message("Thank you for using the Library Management System. Goodbye!")
                     break
                 else:
