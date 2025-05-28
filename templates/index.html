@@ -167,6 +167,32 @@
       </div>
     </div>
     <div class="table-responsive">
+              <!-- Formulaire de recherche de livres -->
+        <form method="get" class="row g-3 mb-4">
+          <div class="col-md-3">
+            <input type="text" class="form-control" name="title" placeholder="Titre" value="{{ title_filter or '' }}">
+          </div>
+          <div class="col-md-3">
+            <select class="form-select" name="author">
+              <option value="">Tous les auteurs</option>
+              {% for id, name in authors.items() %}
+                <option value="{{ id }}" {% if author_filter==id %}selected{% endif %}>{{ name }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="col-md-3">
+            <select class="form-select" name="category">
+              <option value="">Toutes catégories</option>
+              {% for id, name in categories_list %}
+                <option value="{{ id }}" {% if category_filter==id %}selected{% endif %}>{{ name }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="col-md-1">
+            <button type="submit" class="btn btn-primary">Rechercher</button>
+          </div>
+        </form>
+
         <table class="table table-striped table-bordered align-middle">
             <thead class="table-primary">
                 <tr>

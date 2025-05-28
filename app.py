@@ -7,13 +7,22 @@ app = Flask(__name__)
 
 @app.route('/', methods=['GET'])
 def index():
-    # Récupérer tous les livres
-    books = Book.search()
+    # Récupérer filtres de recherche
+    titre = request.args.get('title')
+    auteur_id = request.args.get('author', type=int)
+    categorie_id = request.args.get('category', type=int)
+    
+
+    # Récupérer tous les livres selon filtres
+    books = Book.search(title=titre, author_id=auteur_id, category_id=categorie_id)
     # Récupérer les auteurs et catégories associés
     authors = {a.author_id: a.name for a in Author.all()}
     categories = {c.category_id: c.name for c in Category.all()}
     categories_list = list(categories.items())
-    return render_template('index.html', books=books, authors=authors, categories=categories, categories_list=categories_list)
+    return render_template('index.html', books=books, authors=authors, categories=categories,
+                           categories_list=categories_list,
+                           title_filter=titre, author_filter=auteur_id,
+                           category_filter=categorie_id)
 
 @app.route('/ajouter-livre', methods=['POST'])
 def ajouter_livre():
