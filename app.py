@@ -96,5 +96,23 @@ def modifier_livre(book_id):
         'quantity': book.quantity
     })
 
+@app.route('/details-livre/<int:book_id>', methods=['GET'])
+def details_livre(book_id):
+    book = Book.find_by_id(book_id)
+    if not book:
+        return jsonify({'error': 'Livre non trouvé'}), 404
+    author = Author.find_by_id(book.author_id).name if book.author_id else ''
+    category = Category.find_by_id(book.category_id).name if book.category_id else ''
+    return jsonify({
+        'titre': book.title,
+        'auteur': author,
+        'categorie': category,
+        'isbn': book.isbn,
+        'publication_year': book.publication_year,
+        'publisher': book.publisher,
+        'quantity': book.quantity,
+        'available_quantity': book.available_quantity
+    })
+
 if __name__ == '__main__':
     app.run(debug=True)
