@@ -89,6 +89,59 @@
         </div>
       </div>
     </div>
+    <!-- Modal de modification de livre -->
+    <div class="modal fade" id="modifierLivreModal" tabindex="-1" aria-labelledby="modifierLivreModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <form method="post" id="modifierLivreForm">
+            <div class="modal-header">
+              <h5 class="modal-title" id="modifierLivreModalLabel"><i class="bi bi-pencil-square me-2"></i>Modifier le livre</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <div class="mb-3">
+                <label for="modif_titre" class="form-label">Titre</label>
+                <input type="text" class="form-control" id="modif_titre" name="titre" required>
+              </div>
+              <div class="mb-3">
+                <label for="modif_auteur" class="form-label">Auteur</label>
+                <input type="text" class="form-control" id="modif_auteur" name="auteur" required>
+              </div>
+              <div class="mb-3">
+                <label for="modif_categorie" class="form-label">Catégorie</label>
+                <select class="form-select" id="modif_categorie" name="categorie" required>
+                  <option value="" disabled>Choisir une catégorie</option>
+                  {% for cat_id, cat_name in categories_list %}
+                    <option value="{{ cat_id }}">{{ cat_name }}</option>
+                  {% endfor %}
+                </select>
+              </div>
+              <div class="mb-3">
+                <label for="modif_isbn" class="form-label">ISBN</label>
+                <input type="text" class="form-control" id="modif_isbn" name="isbn" required>
+              </div>
+              <div class="mb-3">
+                <label for="modif_publication_year" class="form-label">Année de publication</label>
+                <input type="number" class="form-control" id="modif_publication_year" name="publication_year" required>
+              </div>
+              <!-- Champ Éditeur ajouté -->
+              <div class="mb-3">
+                <label for="modif_publisher" class="form-label">Éditeur</label>
+                <input type="text" class="form-control" id="modif_publisher" name="publisher" required>
+              </div>
+              <div class="mb-3">
+                <label for="modif_quantity" class="form-label">Quantité</label>
+                <input type="number" class="form-control" id="modif_quantity" name="quantity" required>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+              <button type="submit" class="btn btn-primary">Modifier</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
     <div class="table-responsive">
         <table class="table table-striped table-bordered align-middle">
             <thead class="table-primary">
@@ -98,6 +151,7 @@
                     <th><i class="bi bi-tags"></i> Catégorie</th>
                     <th><i class="bi bi-123"></i> Quantité</th>
                     <th><i class="bi bi-check2-circle"></i> Disponibilité</th>
+                    <th>Actions</th>
                 </tr>
             </thead>
             <tbody>
@@ -108,6 +162,14 @@
                     <td>{{ categories.get(book.category_id, 'Inconnue') }}</td>
                     <td>{{ book.quantity }}</td>
                     <td>{% if book.available_quantity and book.available_quantity > 0 %}<span class="text-success"><i class="bi bi-check-circle-fill me-1"></i>Disponible</span>{% else %}<span class="text-danger"><i class="bi bi-x-circle-fill me-1"></i>Emprunté</span>{% endif %}</td>
+                    <td>
+                        <a href="#" class="text-primary me-2 modifier-livre" data-id="{{ book.book_id }}" title="Modifier"><i class="bi bi-pencil-square"></i></a>
+                        <form method="post" action="/supprimer-livre/{{ book.book_id }}" style="display:inline;">
+                            <button type="submit" class="btn btn-link p-0 m-0 align-baseline text-danger" title="Supprimer" onclick="return confirm('Voulez-vous vraiment supprimer ce livre ?');">
+                                <i class="bi bi-trash"></i>
+                            </button>
+                        </form>
+                    </td>
                 </tr>
                 {% endfor %}
             </tbody>
@@ -115,5 +177,32 @@
     </div>
 </main>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  document.querySelectorAll('.modifier-livre').forEach(function(link) {
+    link.addEventListener('click', function(e) {
+      e.preventDefault();
+      var bookId = this.getAttribute('data-id');
+      var url = '/modifier-livre/' + bookId;
+      fetch(url)
+        .then(response => response.json())
+        .then(data => {
+          document.getElementById('modifierLivreForm').setAttribute('action', url);
+          document.getElementById('modif_titre').value = data.titre || '';
+          document.getElementById('modif_auteur').value = data.auteur || '';
+          document.getElementById('modif_categorie').value = data.categorie || '';
+          document.getElementById('modif_isbn').value = data.isbn || '';
+          document.getElementById('modif_publication_year').value = data.publication_year || '';
+          document.getElementById('modif_quantity').value = data.quantity || '';
+          document.getElementById('modif_publisher').value = data.publisher || '';
+          const modal = new bootstrap.Modal(document.getElementById('modifierLivreModal'));
+          modal.show();
+        });
+    });
+  });
+});
+</script>
 </body>
 </html>
+
+

@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request, redirect, url_for, jsonify
 from models.book import Book
 from models.author import Author
 from models.category import Category
@@ -47,6 +47,54 @@ def ajouter_livre():
     )
     livre.save()
     return redirect(url_for('index'))
+
+@app.route('/supprimer-livre/<int:book_id>', methods=['POST'])
+def supprimer_livre(book_id):
+    Book.delete(book_id)
+    return redirect(url_for('index'))
+
+@app.route('/modifier-livre/<int:book_id>', methods=['GET', 'POST'])
+def modifier_livre(book_id):
+    book = Book.find_by_id(book_id)
+    if not book:
+        return redirect(url_for('index'))
+    if request.method == 'POST':
+        titre = request.form.get('titre')
+        auteur_nom = request.form.get('auteur')
+        categorie_id = request.form.get('categorie')
+        isbn = request.form.get('isbn')
+        publication_year = request.form.get('publication_year')
+        publisher = request.form.get('publisher')
+        quantite = request.form.get('quantity', type=int)
+        # Chercher ou créer l'auteur
+        auteur = Author.find_by_name(auteur_nom)
+        if auteur:
+            auteur_id = auteur[0].author_id if isinstance(auteur, list) else auteur.author_id
+        else:
+            new_auteur = Author(name=auteur_nom)
+            new_auteur.save()
+            auteur_id = new_auteur.author_id
+        # Mise à jour du livre
+        book.title = titre
+        book.author_id = auteur_id
+        book.category_id = categorie_id
+        book.isbn = isbn
+        book.publication_year = publication_year
+        book.publisher = publisher
+        book.quantity = quantite
+        book.available_quantity = quantite
+        book.save()
+        return redirect(url_for('index'))
+    # GET : renvoyer les infos du livre en JSON pour le formulaire pop-up
+    return jsonify({
+        'titre': book.title,
+        'auteur': Author.find_by_id(book.author_id).name if book.author_id else '',
+        'categorie': book.category_id,
+        'isbn': book.isbn,
+        'publication_year': book.publication_year,
+        'publisher': book.publisher,
+        'quantity': book.quantity
+    })
 
 if __name__ == '__main__':
     app.run(debug=True)
