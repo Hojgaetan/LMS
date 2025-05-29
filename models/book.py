@@ -232,6 +232,13 @@ class Book(BaseModel):
         result = DatabaseConnection.execute_query(query, (book_id,))
         return result is not None
 
+    @classmethod
+    def count(cls):
+        """Count the total number of books."""
+        query = f"SELECT COUNT(*) FROM {cls.TABLE_NAME}"
+        result = DatabaseConnection.execute_query(query)
+        return result[0][0] if result else 0
+
     def get_author(self):
         """Get the author of this book."""
         from models.author import Author

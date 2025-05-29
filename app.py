@@ -2,6 +2,7 @@ from flask import Flask, render_template, request, redirect, url_for, jsonify
 from models.book import Book
 from models.author import Author
 from models.category import Category
+from models.member import Member  # Assurez-vous d'importer le modèle Member
 
 app = Flask(__name__)
 
@@ -122,6 +123,36 @@ def details_livre(book_id):
         'quantity': book.quantity,
         'available_quantity': book.available_quantity
     })
+
+@app.route('/total-livres', methods=['GET'])
+def total_livres():
+    try:
+        total_books = Book.count()
+        return jsonify({'total_books': total_books})
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/dashboard', methods=['GET'])
+def dashboard():
+    try:
+        # Récupérer les statistiques
+        total_books = Book.count()
+        #total_categories = Category.count()
+        #total_authors = Author.count()
+        #popular_books = Book.get_popular_books(limit=5)
+        #active_members = Member.get_active_members(limit=5)
+        #overdue_books = Book.get_overdue_books()
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+    else:
+        return render_template('dashboard.html', 
+                           total_books=total_books, 
+                           #total_categories=total_categories, 
+                           #total_authors=total_authors, 
+                           #popular_books=popular_books, 
+                           #active_members=active_members, 
+                           #overdue_books=overdue_books
+                           )
 
 if __name__ == '__main__':
     app.run(debug=True)
