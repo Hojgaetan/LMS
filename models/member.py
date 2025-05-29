@@ -134,8 +134,28 @@ class Member(BaseModel):
         result = DatabaseConnection.execute_query(query)
         return result[0][0] if result else 0
 
+    @classmethod
+    def get_all(cls):
+        """Retrieve all members."""
+        query = f"SELECT * FROM {cls.TABLE_NAME}"
+        results = DatabaseConnection.execute_query(query)
+        if results:
+            conn = DatabaseConnection.get_connection()
+            cursor = conn.cursor()
+            cursor.execute(f"PRAGMA table_info({cls.TABLE_NAME})")
+            columns = [column[1] for column in cursor.fetchall()]
+            conn.close()
+            return [cls(**dict(zip(columns, result))) for result in results]
+        return []
+
     def get_borrowings(self):
         """Get all borrowings by this member."""
+        from models.borrowing import Borrowing
+
+        return Borrowing.find_by_member(self.member_id)
+
+    def get_loans(self):
+        """Get all loans by this member."""
         from models.borrowing import Borrowing
 
         return Borrowing.find_by_member(self.member_id)

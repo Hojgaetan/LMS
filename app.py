@@ -184,6 +184,30 @@ def get_books():
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
+@app.route('/members-loans', methods=['GET'])
+def get_members_loans():
+    try:
+        members = Member.get_all()
+        members_loans_data = [
+            {
+                'id': member.member_id,
+                'name': member.name,
+                'email': member.email,
+                'loans': [
+                    {
+                        'book_title': Book.find_by_id(loan.book_id).title if loan.book_id else None,
+                        'due_date': loan.due_date,
+                        'return_date': loan.return_date
+                    }
+                    for loan in member.get_loans()
+                ]
+            }
+            for member in members
+        ]
+        return jsonify({'members_loans': members_loans_data})
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
 @app.route('/', methods=['GET'])
 def index():
     try:
@@ -210,6 +234,23 @@ def index():
             }
             for book in books
         ]
+        members = Member.get_all()
+        members_loans_data = [
+            {
+                'id': member.member_id,
+                'name': member.name,
+                'email': member.email,
+                'loans': [
+                    {
+                        'book_title': Book.find_by_id(loan.book_id).title if loan.book_id else None,
+                        'due_date': loan.due_date,
+                        'return_date': loan.return_date
+                    }
+                    for loan in member.get_loans()
+                ]
+            }
+            for member in members
+        ]
     except Exception as e:
         return jsonify({'error': str(e)}), 500
     else:
@@ -221,7 +262,8 @@ def index():
                            total_popular_books=total_popular_books,
                            total_active_members= total_active_members,
                            total_overdue_books=total_overdue_books,
-                           books=books_data
+                           books=books_data,
+                           members_loans=members_loans_data
                            )
 
 if __name__ == '__main__':

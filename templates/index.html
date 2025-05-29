@@ -128,15 +128,21 @@
                     <th><i class="bi bi-envelope"></i> Email</th>
                     <th><i class="bi bi-book"></i> Nombre de livres empruntés</th>
                     <th><i class="bi bi-clock"></i> Dernier emprunt</th>
+                    <th>Actions</th>
                 </tr>
             </thead>
             <tbody>
+                {% for member in members_loans %}
                 <tr>
-                    <td>Exemple Membre</td>
-                    <td>exemple@mail.com</td>
-                    <td>15</td>
-                    <td>2025-05-01</td>
+                    <td>{{ member.name }}</td>
+                    <td>{{ member.email }}</td>
+                    <td>{{ member.loans | length }}</td>
+                    <td>{% if member.loans %}{{ member.loans[-1].due_date }}{% else %} - {% endif %}</td>
+                    <td>
+                        <button class="btn btn-info btn-sm" title="Voir détails"><i class="bi bi-eye"></i></button>
+                    </td>
                 </tr>
+                {% endfor %}
             </tbody>
         </table>
     </div>
