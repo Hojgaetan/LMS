@@ -131,13 +131,21 @@ def total_livres():
         return jsonify({'total_books': total_books})
     except Exception as e:
         return jsonify({'error': str(e)}), 500
+    
+@app.route('/total-category', methods=['GET'])
+def total_categories():
+    try:
+        total_category = Book.count()
+        return jsonify({'total_category': total_category})
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
 
 @app.route('/dashboard', methods=['GET'])
 def dashboard():
     try:
         # Récupérer les statistiques
         total_books = Book.count()
-        #total_categories = Category.count()
+        total_category = Category.count()
         #total_authors = Author.count()
         #popular_books = Book.get_popular_books(limit=5)
         #active_members = Member.get_active_members(limit=5)
@@ -147,7 +155,7 @@ def dashboard():
     else:
         return render_template('dashboard.html', 
                            total_books=total_books, 
-                           #total_categories=total_categories, 
+                           total_category=total_category,
                            #total_authors=total_authors, 
                            #popular_books=popular_books, 
                            #active_members=active_members, 
