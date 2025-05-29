@@ -8,6 +8,12 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
     <!-- Ajout des styles nécessaires pour DataTables -->
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.min.css">
+    <!-- Diminish the size of icons by adding a custom class -->
+    <style>
+        .icon-small {
+            font-size: 1.2rem; /* Adjust the size as needed */
+        }
+    </style>
 </head>
 <body>
 <nav class="navbar navbar-expand-lg navbar-dark bg-primary mb-4">
@@ -38,7 +44,7 @@
         <div class="col-md-4">
             <div class="card bg-light">
                 <div class="card-body">
-                    <h5 class="card-title"><i class="bi bi-book me-2"></i>Total Livres</h5>
+                    <h5 class="card-title"><i class="bi bi-book me-2 icon-small"></i>Total Livres <i class="bi bi-question-circle icon-small" title="Nombre total de livres disponibles dans la bibliothèque."></i></h5>
                     <p class="card-text display-4">{{ total_books }}</p>
                 </div>
             </div>
@@ -46,7 +52,7 @@
         <div class="col-md-4">
             <div class="card bg-light">
                 <div class="card-body">
-                    <h5 class="card-title"><i class="bi bi-tags me-2"></i>Catégories</h5>
+                    <h5 class="card-title"><i class="bi bi-tags me-2 icon-small"></i>Catégories <i class="bi bi-question-circle icon-small" title="Nombre total de catégories de livres."></i></h5>
                     <p class="card-text display-4">{{ total_category }}</p>
                 </div>
             </div>
@@ -54,7 +60,7 @@
         <div class="col-md-4">
             <div class="card bg-light">
                 <div class="card-body">
-                    <h5 class="card-title"><i class="bi bi-person me-2"></i>Auteurs</h5>
+                    <h5 class="card-title"><i class="bi bi-person me-2 icon-small"></i>Auteurs <i class="bi bi-question-circle icon-small" title="Nombre total d'auteurs enregistrés."></i></h5>
                     <p class="card-text display-4">{{ total_authors }}</p>
                 </div>
             </div>
@@ -65,7 +71,7 @@
         <div class="col-md-4">
             <div class="card bg-light">
                 <div class="card-body">
-                    <h5 class="card-title"><i class="bi bi-bar-chart me-2"></i>Livres Populaires</h5>
+                    <h5 class="card-title"><i class="bi bi-bar-chart me-2 icon-small"></i>Livres Populaires <i class="bi bi-question-circle icon-small" title="Nombre total de livres populaires basés sur les emprunts."></i></h5>
                     <p class="card-text display-4">{{total_popular_books}}</p>
                 </div>
             </div>
@@ -74,7 +80,7 @@
         <div class="col-md-4">
             <div class="card bg-light">
                 <div class="card-body">
-                    <h5 class="card-title"><i class="bi bi-person-lines-fill me-2"></i>Membres Actifs</h5>
+                    <h5 class="card-title"><i class="bi bi-person-lines-fill me-2 icon-small"></i>Membres Actifs <i class="bi bi-question-circle icon-small" title="Nombre total de membres ayant emprunté des livres récemment."></i></h5>
                     <p class="card-text display-4">{{total_active_members}}</p>
                 </div>
             </div>
@@ -83,7 +89,7 @@
         <div class="col-md-4">
             <div class="card bg-light">
                 <div class="card-body">
-                    <h5 class="card-title"><i class="bi bi-exclamation-circle me-2"></i>Livres en Retard</h5>
+                    <h5 class="card-title"><i class="bi bi-exclamation-circle me-2 icon-small"></i>Livres en Retard <i class="bi bi-question-circle icon-small" title="Nombre total de livres dont la date de retour est dépassée."></i></h5>
                     <p class="card-text display-4">{{total_overdue_books}}</p>
                 </div>
             </div>
@@ -98,19 +104,25 @@
                     <th><i class="bi bi-book"></i> Titre</th>
                     <th><i class="bi bi-person"></i> Auteur</th>
                     <th><i class="bi bi-tags"></i> Catégorie</th>
+                    <th><i class="bi bi-check-circle"></i> Disponibilite</th>
                     <th>Actions</th>
                 </tr>
             </thead>
             <tbody>
                 {% for book in books %}
-                <tr>
+                <tr data-isbn="{{ book.isbn }}" data-publication-year="{{ book.publication_year }}" data-publisher="{{ book.publisher }}" data-quantity="{{ book.quantity }}" data-available-quantity="{{ book.available_quantity }}">
                     <td>{{ book.title }}</td>
                     <td>{{ book.author }}</td>
                     <td>{{ book.category }}</td>
                     <td>
-                        <button class="btn btn-info btn-sm" title="Voir détails"><i class="bi bi-eye"></i></button>
-                        <button class="btn btn-primary btn-sm" title="Modifier"><i class="bi bi-pencil-square"></i></button>
-                        <button class="btn btn-danger btn-sm" title="Supprimer"><i class="bi bi-trash"></i></button>
+                        {% if book.available_quantity > 0 %}
+                        <span class="badge bg-success">Disponible</span>
+                        {% else %}
+                        <span class="badge bg-danger">Emprunté</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <button class="btn btn-info btn-sm see-detail-book" title="Voir détails"><i class="bi bi-eye"></i></button>
                     </td>
                 </tr>
                 {% endfor %}
@@ -139,12 +151,56 @@
                     <td>{{ member.loans | length }}</td>
                     <td>{% if member.loans %}{{ member.loans[-1].due_date }}{% else %} - {% endif %}</td>
                     <td>
-                        <button class="btn btn-info btn-sm" title="Voir détails"><i class="bi bi-eye"></i></button>
+                        <button class="btn btn-info btn-sm see-detail-member" title="Voir détails"><i class="bi bi-eye"></i></button>
                     </td>
                 </tr>
                 {% endfor %}
             </tbody>
         </table>
+    </div>
+</div>
+<!-- Modal pour afficher les détails d'un livre -->
+<div class="modal fade" id="bookDetailsModal" tabindex="-1" aria-labelledby="bookDetailsModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="bookDetailsModalLabel">Détails du Livre</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p><strong>Titre:</strong> <span id="bookTitle"></span></p>
+                <p><strong>Auteur:</strong> <span id="bookAuthor"></span></p>
+                <p><strong>Catégorie:</strong> <span id="bookCategory"></span></p>
+                <p><strong>ISBN:</strong> <span id="bookISBN"></span></p>
+                <p><strong>Année de publication:</strong> <span id="bookPublicationYear"></span></p>
+                <p><strong>Éditeur:</strong> <span id="bookPublisher"></span></p>
+                <p><strong>Quantité:</strong> <span id="bookQuantity"></span></p>
+                <p><strong>Quantité disponible:</strong> <span id="bookAvailableQuantity"></span></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Modal pour afficher les détails d'un membre -->
+<div class="modal fade" id="memberDetailsModal" tabindex="-1" aria-labelledby="memberDetailsModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="memberDetailsModalLabel">Détails du Membre</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p><strong>Nom:</strong> <span id="memberName"></span></p>
+                <p><strong>Email:</strong> <span id="memberEmail"></span></p>
+                <p><strong>Nombre de livres empruntés:</strong> <span id="memberLoansCount"></span></p>
+                <p><strong>Dernier emprunt:</strong> <span id="memberLastLoan"></span></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+            </div>
+        </div>
     </div>
 </div>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
@@ -158,6 +214,57 @@
         $('#authorsTable').DataTable();
         $('#loansTable').DataTable();
         $('#membersTable').DataTable();
+    });
+</script>
+<script>
+    // Script pour afficher les détails du livre dans le modal
+    document.querySelectorAll('.see-detail-book').forEach(button => {
+        button.addEventListener('click', function() {
+            const bookRow = this.closest('tr');
+            const bookDetails = {
+                title: bookRow.querySelector('td:nth-child(1)').textContent,
+                author: bookRow.querySelector('td:nth-child(2)').textContent,
+                category: bookRow.querySelector('td:nth-child(3)').textContent,
+                isbn: bookRow.dataset.isbn,
+                publicationYear: bookRow.dataset.publicationYear,
+                publisher: bookRow.dataset.publisher,
+                quantity: bookRow.dataset.quantity,
+                availableQuantity: bookRow.dataset.availableQuantity
+            };
+
+            document.getElementById('bookTitle').textContent = bookDetails.title;
+            document.getElementById('bookAuthor').textContent = bookDetails.author;
+            document.getElementById('bookCategory').textContent = bookDetails.category;
+            document.getElementById('bookISBN').textContent = bookDetails.isbn;
+            document.getElementById('bookPublicationYear').textContent = bookDetails.publicationYear;
+            document.getElementById('bookPublisher').textContent = bookDetails.publisher;
+            document.getElementById('bookQuantity').textContent = bookDetails.quantity;
+            document.getElementById('bookAvailableQuantity').textContent = bookDetails.availableQuantity;
+
+            const modal = new bootstrap.Modal(document.getElementById('bookDetailsModal'));
+            modal.show();
+        });
+    });
+
+    // Script pour afficher les détails du membre dans le modal
+    document.querySelectorAll('.see-detail-member').forEach(button => {
+        button.addEventListener('click', function() {
+            const memberRow = this.closest('tr');
+            const memberDetails = {
+                name: memberRow.querySelector('td:nth-child(1)').textContent,
+                email: memberRow.querySelector('td:nth-child(2)').textContent,
+                loansCount: memberRow.querySelector('td:nth-child(3)').textContent,
+                lastLoan: memberRow.querySelector('td:nth-child(4)').textContent
+            };
+
+            document.getElementById('memberName').textContent = memberDetails.name;
+            document.getElementById('memberEmail').textContent = memberDetails.email;
+            document.getElementById('memberLoansCount').textContent = memberDetails.loansCount;
+            document.getElementById('memberLastLoan').textContent = memberDetails.lastLoan;
+
+            const modal = new bootstrap.Modal(document.getElementById('memberDetailsModal'));
+            modal.show();
+        });
     });
 </script>
 </body>
