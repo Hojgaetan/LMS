@@ -115,6 +115,25 @@ class Member(BaseModel):
 
         return None
 
+    @classmethod
+    def count(cls):
+        """Count the total number of members."""
+        query = f"SELECT COUNT(*) FROM {cls.TABLE_NAME}"
+        result = DatabaseConnection.execute_query(query)
+        return result[0][0] if result else 0
+
+    @classmethod
+    def count_active_members(cls):
+        """Count the total number of active members based on recent loans."""
+        query = f"""
+        SELECT COUNT(DISTINCT m.member_id)
+        FROM {cls.TABLE_NAME} AS m
+        JOIN loans AS l ON m.member_id = l.member_id
+        WHERE l.return_date IS NULL
+        """
+        result = DatabaseConnection.execute_query(query)
+        return result[0][0] if result else 0
+
     def get_borrowings(self):
         """Get all borrowings by this member."""
         from models.borrowing import Borrowing

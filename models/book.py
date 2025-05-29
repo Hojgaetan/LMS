@@ -238,6 +238,31 @@ class Book(BaseModel):
         query = f"SELECT COUNT(*) FROM {cls.TABLE_NAME}"
         result = DatabaseConnection.execute_query(query)
         return result[0][0] if result else 0
+    
+    @classmethod
+    def count_popular_books(cls, threshold=10):
+        """Count the total number of popular books based on a loan threshold."""
+        query = f"""
+        SELECT COUNT(DISTINCT b.book_id)
+        FROM {cls.TABLE_NAME} AS b
+        JOIN loans AS l ON b.book_id = l.book_id
+        GROUP BY b.book_id
+        HAVING COUNT(l.book_id) >= ?
+        """
+        result = DatabaseConnection.execute_query(query, (threshold,))
+        return result[0][0] if result else 0
+
+    @classmethod
+    def count_overdue_books(cls):
+        """Count the total number of overdue books."""
+        query = f"""
+        SELECT COUNT(DISTINCT b.book_id)
+        FROM {cls.TABLE_NAME} AS b
+        JOIN loans AS l ON b.book_id = l.book_id
+        WHERE l.due_date < DATE('now') AND l.return_date IS NULL
+        """
+        result = DatabaseConnection.execute_query(query)
+        return result[0][0] if result else 0
 
     def get_author(self):
         """Get the author of this book."""

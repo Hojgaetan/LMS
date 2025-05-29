@@ -77,6 +77,13 @@ class Author(BaseModel):
             return [cls(**dict(zip(columns, result))) for result in results]
         return []
 
+    @classmethod
+    def count(cls):
+        """Count the total number of authors."""
+        query = f"SELECT COUNT(*) FROM {cls.TABLE_NAME}"
+        result = DatabaseConnection.execute_query(query)
+        return result[0][0] if result else 0
+
     def get_books(self):
         """Get all books by this author."""
         from models.book import Book

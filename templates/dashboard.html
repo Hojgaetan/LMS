@@ -39,7 +39,7 @@
             <div class="card bg-light">
                 <div class="card-body">
                     <h5 class="card-title"><i class="bi bi-book me-2"></i>Total Livres</h5>
-                    <p class="card-text display-4">120</p>
+                    <p class="card-text display-4">{{ total_books }}</p>
                 </div>
             </div>
         </div>
@@ -47,7 +47,7 @@
             <div class="card bg-light">
                 <div class="card-body">
                     <h5 class="card-title"><i class="bi bi-tags me-2"></i>Catégories</h5>
-                    <p class="card-text display-4">15</p>
+                    <p class="card-text display-4">{{ total_category }}</p>
                 </div>
             </div>
         </div>
@@ -55,7 +55,7 @@
             <div class="card bg-light">
                 <div class="card-body">
                     <h5 class="card-title"><i class="bi bi-person me-2"></i>Auteurs</h5>
-                    <p class="card-text display-4">45</p>
+                    <p class="card-text display-4">{{ total_authors }}</p>
                 </div>
             </div>
         </div>
@@ -66,7 +66,7 @@
             <div class="card bg-light">
                 <div class="card-body">
                     <h5 class="card-title"><i class="bi bi-bar-chart me-2"></i>Livres Populaires</h5>
-                    <p class="card-text display-4">50</p>
+                    <p class="card-text display-4">{{total_popular_books}}</p>
                 </div>
             </div>
         </div>
@@ -75,7 +75,7 @@
             <div class="card bg-light">
                 <div class="card-body">
                     <h5 class="card-title"><i class="bi bi-person-lines-fill me-2"></i>Membres Actifs</h5>
-                    <p class="card-text display-4">120</p>
+                    <p class="card-text display-4">{{total_active_members}}</p>
                 </div>
             </div>
         </div>
@@ -84,7 +84,7 @@
             <div class="card bg-light">
                 <div class="card-body">
                     <h5 class="card-title"><i class="bi bi-exclamation-circle me-2"></i>Livres en Retard</h5>
-                    <p class="card-text display-4">14</p>
+                    <p class="card-text display-4">{{total_overdue_books}}</p>
                 </div>
             </div>
         </div>
