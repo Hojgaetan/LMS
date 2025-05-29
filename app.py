@@ -2,28 +2,9 @@ from flask import Flask, render_template, request, redirect, url_for, jsonify
 from models.book import Book
 from models.author import Author
 from models.category import Category
-from models.member import Member  # Assurez-vous d'importer le modèle Member
+from models.member import Member
 
 app = Flask(__name__)
-
-@app.route('/', methods=['GET'])
-def index():
-    # Récupérer filtres de recherche
-    titre = request.args.get('title')
-    auteur_id = request.args.get('author', type=int)
-    categorie_id = request.args.get('category', type=int)
-    
-
-    # Récupérer tous les livres selon filtres
-    books = Book.search(title=titre, author_id=auteur_id, category_id=categorie_id)
-    # Récupérer les auteurs et catégories associés
-    authors = {a.author_id: a.name for a in Author.all()}
-    categories = {c.category_id: c.name for c in Category.all()}
-    categories_list = list(categories.items())
-    return render_template('index.html', books=books, authors=authors, categories=categories,
-                           categories_list=categories_list,
-                           title_filter=titre, author_filter=auteur_id,
-                           category_filter=categorie_id)
 
 @app.route('/ajouter-livre', methods=['POST'])
 def ajouter_livre():
@@ -181,8 +162,30 @@ def total_overdue_books():
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
+@app.route('/books', methods=['GET'])
+def get_books():
+    try:
+        books = Book.search()
+        books_data = [
+            {
+                'id': book.book_id,
+                'title': book.title,
+                'author': Author.find_by_id(book.author_id).name if book.author_id else None,
+                'category': Category.find_by_id(book.category_id).name if book.category_id else None,
+                'isbn': book.isbn,
+                'publication_year': book.publication_year,
+                'publisher': book.publisher,
+                'quantity': book.quantity,
+                'available_quantity': book.available_quantity
+            }
+            for book in books
+        ]
+        return jsonify({'books': books_data})
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
 @app.route('/', methods=['GET'])
-def dashboard():
+def index():
     try:
         # Récupérer les statistiques
         total_books = Book.count()
@@ -192,13 +195,25 @@ def dashboard():
         total_popular_books = Book.count_popular_books(threshold=10)
         total_active_members = Member.count_active_members()
         total_overdue_books = Book.count_overdue_books()
-        #popular_books = Book.get_popular_books(limit=5)
-        #active_members = Member.get_active_members(limit=5)
-        #overdue_books = Book.get_overdue_books()
+        books = Book.search()
+        books_data = [
+            {
+                'id': book.book_id,
+                'title': book.title,
+                'author': Author.find_by_id(book.author_id).name if book.author_id else None,
+                'category': Category.find_by_id(book.category_id).name if book.category_id else None,
+                'isbn': book.isbn,
+                'publication_year': book.publication_year,
+                'publisher': book.publisher,
+                'quantity': book.quantity,
+                'available_quantity': book.available_quantity
+            }
+            for book in books
+        ]
     except Exception as e:
         return jsonify({'error': str(e)}), 500
     else:
-        return render_template('dashboard.html', 
+        return render_template('index.html', 
                            total_books=total_books, 
                            total_category=total_category,
                            total_authors=total_authors, 
@@ -206,9 +221,7 @@ def dashboard():
                            total_popular_books=total_popular_books,
                            total_active_members= total_active_members,
                            total_overdue_books=total_overdue_books,
-                           #popular_books=popular_books, 
-                           #active_members=active_members, 
-                           #overdue_books=overdue_books
+                           books=books_data
                            )
 
 if __name__ == '__main__':
