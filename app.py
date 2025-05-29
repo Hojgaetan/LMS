@@ -140,13 +140,58 @@ def total_categories():
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
-@app.route('/dashboard', methods=['GET'])
+@app.route('/total-authors', methods=['GET'])
+def total_authors():
+    try:
+        total_authors = Author.count()
+        return jsonify({'total_authors': total_authors})
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/total-members', methods=['GET'])
+def total_members():
+    try:
+        total_members = Member.count()
+        return jsonify({'total_members': total_members})
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/total-popular-books', methods=['GET'])
+def total_popular_books():
+    try:
+        threshold = request.args.get('threshold', default=10, type=int)
+        total_popular_books = Book.count_popular_books(threshold=threshold)
+        return jsonify({'total_popular_books': total_popular_books})
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/total-active-members', methods=['GET'])
+def total_active_members():
+    try:
+        total_active_members = Member.count_active_members()
+        return jsonify({'total_active_members': total_active_members})
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/total-overdue-books', methods=['GET'])
+def total_overdue_books():
+    try:
+        total_overdue_books = Book.count_overdue_books()
+        return jsonify({'total_overdue_books': total_overdue_books})
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/', methods=['GET'])
 def dashboard():
     try:
         # Récupérer les statistiques
         total_books = Book.count()
         total_category = Category.count()
-        #total_authors = Author.count()
+        total_authors = Author.count()
+        total_members = Member.count()
+        total_popular_books = Book.count_popular_books(threshold=10)
+        total_active_members = Member.count_active_members()
+        total_overdue_books = Book.count_overdue_books()
         #popular_books = Book.get_popular_books(limit=5)
         #active_members = Member.get_active_members(limit=5)
         #overdue_books = Book.get_overdue_books()
@@ -156,7 +201,11 @@ def dashboard():
         return render_template('dashboard.html', 
                            total_books=total_books, 
                            total_category=total_category,
-                           #total_authors=total_authors, 
+                           total_authors=total_authors, 
+                           total_members=total_members,
+                           total_popular_books=total_popular_books,
+                           total_active_members= total_active_members,
+                           total_overdue_books=total_overdue_books,
                            #popular_books=popular_books, 
                            #active_members=active_members, 
                            #overdue_books=overdue_books
