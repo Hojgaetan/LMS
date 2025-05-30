@@ -54,3 +54,18 @@ class AuthorService:
             int: The total number of authors
         """
         return len(Author.all())
+
+    @staticmethod
+    def get_author_name(author_id):
+        """
+        Get the name of an author by their ID.
+
+        Args:
+            author_id (int): The ID of the author.
+
+        Returns:
+            str: The name of the author, or None if not found.
+        """
+        author = Author.find_by_id(author_id)
+        return author.name if author else None
+

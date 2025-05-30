@@ -274,3 +274,18 @@ class BookService:
             return len(popular_books)
         except Exception as e:
             raise Exception(f"Error counting popular books: {str(e)}")
+
+    @staticmethod
+    def count_overdue_books():
+        """
+        Count the number of overdue books in the library.
+
+        Returns:
+            int: The count of overdue books.
+        """
+        try:
+            overdue_books = Book.find_overdue_books()
+            return len(overdue_books)
+        except Exception as e:
+            raise Exception(f"Error counting overdue books: {str(e)}")
+

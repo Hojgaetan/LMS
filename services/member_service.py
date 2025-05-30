@@ -91,3 +91,17 @@ class MemberService:
     def count_active_members():
         """Count the total number of active members based on recent loans."""
         return Member.count_active_members()
+
+    @staticmethod
+    def get_all_members_with_loans():
+        """
+        Retrieve all members along with their loan information.
+
+        Returns:
+            list: A list of Member objects with their loans populated.
+        """
+        members = Member.find_all()
+        for member in members:
+            member.loans = member.get_borrowings()
+        return members
+

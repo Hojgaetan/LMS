@@ -264,6 +264,33 @@ class Book(BaseModel):
         result = DatabaseConnection.execute_query(query)
         return result[0][0] if result else 0
 
+    @classmethod
+    def find_overdue_books(cls):
+        """
+        Find all overdue books.
+
+        Returns:
+            list: A list of overdue books.
+        """
+        query = f"""
+        SELECT b.*
+        FROM {cls.TABLE_NAME} AS b
+        JOIN loans AS l ON b.book_id = l.book_id
+        WHERE l.due_date < DATE('now') AND l.return_date IS NULL
+        """
+        results = DatabaseConnection.execute_query(query)
+
+        if results:
+            conn = DatabaseConnection.get_connection()
+            cursor = conn.cursor()
+            cursor.execute(f"PRAGMA table_info({cls.TABLE_NAME})")
+            columns = [column[1] for column in cursor.fetchall()]
+            conn.close()
+
+            return [cls(**dict(zip(columns, result))) for result in results]
+
+        return []
+
     @staticmethod
     def get_all_books():
         """Get all books."""
