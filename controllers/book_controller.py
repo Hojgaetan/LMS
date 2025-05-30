@@ -1,226 +1,113 @@
+from flask import Blueprint, jsonify, request
 from models.book import Book
 from models.author import Author
 from models.category import Category
 
+book_blueprint = Blueprint('books', __name__)
 
-class BookController:
-    """Controller class for book-related operations."""
+@book_blueprint.route('/add', methods=['POST'])
+def add_book():
+    titre = request.form.get('titre')
+    auteur_nom = request.form.get('auteur')
+    categorie_id = request.form.get('categorie')
+    isbn = request.form.get('isbn')
+    publication_year = request.form.get('publication_year')
+    publisher = request.form.get('publisher')
+    quantite = request.form.get('quantity', type=int)
 
-    @staticmethod
-    def add_book(title, author_id, category_id, isbn=None, publication_year=None, publisher=None, quantity=1):
-        """
-        Add a new book to the library.
+    auteur = Author.find_by_name(auteur_nom)
+    if auteur:
+        auteur_id = auteur[0].author_id if isinstance(auteur, list) else auteur.author_id
+    else:
+        new_auteur = Author(name=auteur_nom)
+        new_auteur.save()
+        auteur_id = new_auteur.author_id
 
-        Args:
-            title (str): The title of the book
-            author_id (int): The ID of the author
-            category_id (int): The ID of the category
-            isbn (str, optional): The ISBN of the book
-            publication_year (int, optional): The year the book was published
-            publisher (str, optional): The publisher of the book
-            quantity (int, optional): The number of copies available, defaults to 1
+    livre = Book(
+        title=titre,
+        author_id=auteur_id,
+        category_id=categorie_id,
+        isbn=isbn,
+        publication_year=publication_year,
+        publisher=publisher,
+        quantity=quantite,
+        available_quantity=quantite
+    )
+    livre.save()
+    return jsonify({'success': True, 'message': 'Book added successfully'})
 
-        Returns:
-            tuple: (success, result) where success is a boolean indicating if the operation was successful
-                  and result is either the book ID or an error message
-        """
-        # Create a new book instance
-        book = Book(
-            title=title,
-            author_id=author_id,
-            category_id=category_id,
-            isbn=isbn,
-            publication_year=publication_year,
-            publisher=publisher,
-            quantity=quantity,
-            available_quantity=quantity,
-        )
+@book_blueprint.route('/delete/<int:book_id>', methods=['POST'])
+def delete_book(book_id):
+    Book.delete(book_id)
+    return jsonify({'success': True, 'message': 'Book deleted successfully'})
 
-        # Validate the book data
-        is_valid, message = book.validate()
-        if not is_valid:
-            return False, message
+@book_blueprint.route('/update/<int:book_id>', methods=['POST'])
+def update_book(book_id):
+    book = Book.find_by_id(book_id)
+    if not book:
+        return jsonify({'error': 'Book not found'}), 404
 
-        # Save the book to the database
-        book_id = book.save()
-        if book_id:
-            return True, book_id
-        else:
-            return False, "Failed to save book to database"
+    titre = request.form.get('titre')
+    auteur_nom = request.form.get('auteur')
+    categorie_id = request.form.get('categorie')
+    isbn = request.form.get('isbn')
+    publication_year = request.form.get('publication_year')
+    publisher = request.form.get('publisher')
+    quantite = request.form.get('quantity', type=int)
 
-    @staticmethod
-    def get_book(book_id):
-        """
-        Get a book by its ID.
+    auteur = Author.find_by_name(auteur_nom)
+    if auteur:
+        auteur_id = auteur[0].author_id if isinstance(auteur, list) else auteur.author_id
+    else:
+        new_auteur = Author(name=auteur_nom)
+        new_auteur.save()
+        auteur_id = new_auteur.author_id
 
-        Args:
-            book_id (int): The ID of the book to retrieve
+    book.title = titre
+    book.author_id = auteur_id
+    book.category_id = categorie_id
+    book.isbn = isbn
+    book.publication_year = publication_year
+    book.publisher = publisher
+    book.quantity = quantite
+    book.available_quantity = quantite
+    book.save()
 
-        Returns:
-            Book: The book with the given ID, or None if not found
-        """
-        return Book.find_by_id(book_id)
+    return jsonify({'success': True, 'message': 'Book updated successfully'})
 
-    @staticmethod
-    def get_all_books():
-        """
-        Get all books in the library.
+@book_blueprint.route('/details/<int:book_id>', methods=['GET'])
+def book_details(book_id):
+    book = Book.find_by_id(book_id)
+    if not book:
+        return jsonify({'error': 'Book not found'}), 404
 
-        Returns:
-            list: A list of all books
-        """
-        return Book.find_all()
+    author = Author.find_by_id(book.author_id).name if book.author_id else ''
+    category = Category.find_by_id(book.category_id).name if book.category_id else ''
 
-    @staticmethod
-    def search_books_by_title(title):
-        """
-        Search for books by title.
+    return jsonify({
+        'title': book.title,
+        'author': author,
+        'category': category,
+        'isbn': book.isbn,
+        'publication_year': book.publication_year,
+        'publisher': book.publisher,
+        'quantity': book.quantity,
+        'available_quantity': book.available_quantity
+    })
 
-        Args:
-            title (str): The title to search for
+@book_blueprint.route('/total-popular-books', methods=['GET'])
+def total_popular_books():
+    try:
+        threshold = request.args.get('threshold', default=10, type=int)
+        total_popular_books = Book.count_popular_books(threshold=threshold)
+        return jsonify({'total_popular_books': total_popular_books})
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
 
-        Returns:
-            list: A list of books matching the search criteria
-        """
-        return Book.find_by_title(title)
-
-    @staticmethod
-    def search_books_by_author(author_id):
-        """
-        Search for books by author.
-
-        Args:
-            author_id (int): The ID of the author
-
-        Returns:
-            list: A list of books by the specified author
-        """
-        return Book.find_by_author(author_id)
-
-    @staticmethod
-    def search_books_by_category(category_id):
-        """
-        Search for books by category.
-
-        Args:
-            category_id (int): The ID of the category
-
-        Returns:
-            list: A list of books in the specified category
-        """
-        return Book.find_by_category(category_id)
-
-    @staticmethod
-    def search_books(title=None, author_id=None, category_id=None, isbn=None):
-        """
-        Search for books by title, author, category, or ISBN.
-        Args:
-            title (str, optional): Book title (partial match)
-            author_id (int, optional): Author ID
-            category_id (int, optional): Category ID
-            isbn (str, optional): ISBN
-        Returns:
-            list: List of Book objects matching the criteria
-        """
-        try:
-            return Book.search(title=title, author_id=author_id, category_id=category_id, isbn=isbn)
-        except Exception as e:
-            return []
-
-    @staticmethod
-    def update_book(book_id, **kwargs):
-        """
-        Update a book's information.
-
-        Args:
-            book_id (int): The ID of the book to update
-            **kwargs: The fields to update and their new values
-
-        Returns:
-            tuple: (success, result) where success is a boolean indicating if the operation was successful
-                  and result is either the book ID or an error message
-        """
-        book = Book.find_by_id(book_id)
-        if not book:
-            return False, f"Book with ID {book_id} not found"
-
-        # Update the book's attributes
-        for key, value in kwargs.items():
-            if hasattr(book, key):
-                setattr(book, key, value)
-
-        # Validate the updated book data
-        is_valid, message = book.validate()
-        if not is_valid:
-            return False, message
-
-        # Save the updated book to the database
-        book_id = book.save()
-        if book_id:
-            return True, book_id
-        else:
-            return False, "Failed to update book in database"
-
-    @staticmethod
-    def delete_book(book_id):
-        """
-        Delete a book from the library.
-
-        Args:
-            book_id (int): The ID of the book to delete
-
-        Returns:
-            tuple: (success, message) where success is a boolean indicating if the operation was successful
-                  and message is a string describing the result
-        """
-        book = Book.find_by_id(book_id)
-        if not book:
-            return False, f"Book with ID {book_id} not found"
-
-        try:
-            book.delete()
-            return True, f"Book '{book.title}' deleted successfully"
-        except Exception as e:
-            return False, f"Failed to delete book: {str(e)}"
-
-    @staticmethod
-    def remove_book(book_id):
-        """
-        Remove a book from the library by its ID.
-        Args:
-            book_id (int): The ID of the book to remove
-        Returns:
-            tuple: (success, message) where success is a boolean and message is a string
-        """
-        from models.book import Book
-
-        # Check if the book exists
-        book = Book.find_by_id(book_id)
-        if not book:
-            return False, f"Book with ID {book_id} does not exist."
-        # Delete the book
-        success = Book.delete(book_id)
-        if success:
-            return True, f"Book with ID {book_id} has been removed."
-        else:
-            return False, "Failed to remove the book."
-
-    @staticmethod
-    def get_all_authors():
-        """
-        Get all authors in the library.
-
-        Returns:
-            list: A list of all authors
-        """
-        return Author.find_all()
-
-    @staticmethod
-    def get_all_categories():
-        """
-        Get all categories in the library.
-
-        Returns:
-            list: A list of all categories
-        """
-        return Category.find_all()
+@book_blueprint.route('/total-overdue-books', methods=['GET'])
+def total_overdue_books():
+    try:
+        total_overdue_books = Book.count_overdue_books()
+        return jsonify({'total_overdue_books': total_overdue_books})
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
