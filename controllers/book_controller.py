@@ -2,6 +2,7 @@ from flask import Blueprint, jsonify, request
 from models.book import Book
 from models.author import Author
 from models.category import Category
+from services.book_service import BookService
 
 book_blueprint = Blueprint('books', __name__)
 
@@ -16,25 +17,27 @@ def add_book():
     quantite = request.form.get('quantity', type=int)
 
     auteur = Author.find_by_name(auteur_nom)
-    if auteur:
-        auteur_id = auteur[0].author_id if isinstance(auteur, list) else auteur.author_id
-    else:
+    if not auteur:
         new_auteur = Author(name=auteur_nom)
         new_auteur.save()
         auteur_id = new_auteur.author_id
+    else:
+        auteur_id = auteur[0].author_id if isinstance(auteur, list) else auteur.author_id
 
-    livre = Book(
+    success, result = BookService.add_book(
         title=titre,
         author_id=auteur_id,
         category_id=categorie_id,
         isbn=isbn,
         publication_year=publication_year,
         publisher=publisher,
-        quantity=quantite,
-        available_quantity=quantite
+        quantity=quantite
     )
-    livre.save()
-    return jsonify({'success': True, 'message': 'Book added successfully'})
+
+    if success:
+        return jsonify({'success': True, 'message': 'Book added successfully', 'book_id': result})
+    else:
+        return jsonify({'success': False, 'message': result}), 400
 
 @book_blueprint.route('/delete/<int:book_id>', methods=['POST'])
 def delete_book(book_id):
@@ -109,5 +112,26 @@ def total_overdue_books():
     try:
         total_overdue_books = Book.count_overdue_books()
         return jsonify({'total_overdue_books': total_overdue_books})
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+@book_blueprint.route('/books', methods=['GET'])
+def get_books():
+    try:
+        books = Book.get_all_books()
+        books_data = []
+        for book in books:
+            books_data.append({
+                'id': book.book_id,
+                'title': book.title,
+                'author': Author.find_by_id(book.author_id).name if book.author_id else '',
+                'category': Category.find_by_id(book.category_id).name if book.category_id else '',
+                'isbn': book.isbn,
+                'publication_year': book.publication_year,
+                'publisher': book.publisher,
+                'quantity': book.quantity,
+                'available_quantity': book.available_quantity
+            })
+        return jsonify({'books': books_data})
     except Exception as e:
         return jsonify({'error': str(e)}), 500

@@ -264,6 +264,24 @@ class Book(BaseModel):
         result = DatabaseConnection.execute_query(query)
         return result[0][0] if result else 0
 
+    @staticmethod
+    def get_all_books():
+        """Get all books."""
+        query = f"SELECT * FROM {Book.TABLE_NAME}"
+        results = DatabaseConnection.execute_query(query)
+
+        if results:
+            # Convert the result tuples to dictionaries using column names
+            conn = DatabaseConnection.get_connection()
+            cursor = conn.cursor()
+            cursor.execute(f"PRAGMA table_info({Book.TABLE_NAME})")
+            columns = [column[1] for column in cursor.fetchall()]
+            conn.close()
+
+            return [Book(**dict(zip(columns, result))) for result in results]
+
+        return []
+
     def get_author(self):
         """Get the author of this book."""
         from models.author import Author

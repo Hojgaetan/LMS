@@ -23,3 +23,23 @@ class DashboardService:
             }
         except Exception as e:
             raise Exception(f"Error fetching dashboard statistics: {str(e)}")
+
+    def get_books_data(self):
+        try:
+            books = self.book_model.get_all_books()
+            books_data = []
+            for book in books:
+                books_data.append({
+                    'id': book.book_id,
+                    'title': book.title,
+                    'author': self.author_model.find_by_id(book.author_id).name if book.author_id else '',
+                    'category': self.category_model.find_by_id(book.category_id).name if book.category_id else '',
+                    'isbn': book.isbn,
+                    'publication_year': book.publication_year,
+                    'publisher': book.publisher,
+                    'quantity': book.quantity,
+                    'available_quantity': book.available_quantity
+                })
+            return books_data
+        except Exception as e:
+            raise Exception(f"Error fetching books data: {str(e)}")
