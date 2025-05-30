@@ -1,46 +1,12 @@
-from models.category import Category
-from utils.db_utils import DatabaseConnection
+from flask import Blueprint, jsonify
+from services.category_service import CategoryService
 
+book_category_blueprint = Blueprint('book_category', __name__)
 
-class CategoryController:
-    """Controller for category-related operations."""
-
-    @staticmethod
-    def add_category(name, description=None):
-        category = Category(name=name, description=description)
-        valid, msg = category.validate()
-        if not valid:
-            return False, msg
-        category.save()
-        return True, f"Category '{name}' added successfully."
-
-    @staticmethod
-    def update_category(category_id, name=None, description=None):
-        category = Category.find_by_id(category_id)
-        if not category:
-            return False, "Category not found."
-        if name:
-            category.name = name
-        if description:
-            category.description = description
-        valid, msg = category.validate()
-        if not valid:
-            return False, msg
-        category.save()
-        return True, f"Category '{category_id}' updated successfully."
-
-    @staticmethod
-    def delete_category(category_id):
-        category = Category.find_by_id(category_id)
-        if not category:
-            return False, "Category not found."
-        category.delete()
-        return True, f"Category '{category_id}' deleted successfully."
-
-    @staticmethod
-    def list_categories():
-        return Category.all()
-
-    @staticmethod
-    def search_categories_by_name(name):
-        return Category.find_by_name(name)
+@book_category_blueprint.route('/total-category', methods=['GET'])
+def total_categories():
+    try:
+        total_category = CategoryService.count_categories()
+        return jsonify({'total_category': total_category})
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
