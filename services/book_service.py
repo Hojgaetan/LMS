@@ -224,3 +224,53 @@ class BookService:
             list: A list of all categories
         """
         return Category.find_all()
+    
+    def get_books_data(self):
+        try:
+            books = self.book_model.get_all_books()
+            books_data = []
+            for book in books:
+                books_data.append({
+                    'id': book.book_id,
+                    'title': book.title,
+                    'author': self.author_model.find_by_id(book.author_id).name if book.author_id else '',
+                    'category': self.category_model.find_by_id(book.category_id).name if book.category_id else '',
+                    'isbn': book.isbn,
+                    'publication_year': book.publication_year,
+                    'publisher': book.publisher,
+                    'quantity': book.quantity,
+                    'available_quantity': book.available_quantity
+                })
+            return books_data
+        except Exception as e:
+            raise Exception(f"Error fetching books data: {str(e)}")
+    
+    @staticmethod
+    def count_books():
+        """
+        Count the total number of books in the library.
+
+        Returns:
+            int: The total number of books
+        """
+        try:
+            return len(Book.find_all())
+        except Exception as e:
+            raise Exception(f"Error counting books: {str(e)}")
+    
+    @staticmethod
+    def count_popular_books(threshold):
+        """
+        Count the number of popular books based on a threshold for borrowing.
+
+        Args:
+            threshold (int): The minimum number of times a book must be borrowed to be considered popular.
+
+        Returns:
+            int: The count of popular books.
+        """
+        try:
+            popular_books = Book.find_popular_books(threshold)
+            return len(popular_books)
+        except Exception as e:
+            raise Exception(f"Error counting popular books: {str(e)}")

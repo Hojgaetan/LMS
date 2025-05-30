@@ -44,3 +44,13 @@ class CategoryService:
     @staticmethod
     def search_categories_by_name(name):
         return Category.find_by_name(name)
+
+    @staticmethod
+    def count_categories():
+        """
+        Count the total number of categories.
+
+        Returns:
+            int: The total number of categories
+        """
+        return len(Category.all())

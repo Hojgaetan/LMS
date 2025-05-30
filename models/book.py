@@ -326,3 +326,34 @@ class Book(BaseModel):
                 return False, f"A book with ISBN {self.isbn} already exists"
 
         return True, "Book is valid"
+
+    @classmethod
+    def find_popular_books(cls, threshold=10):
+        """
+        Find popular books based on a loan threshold.
+
+        Args:
+            threshold (int): The minimum number of times a book must be borrowed to be considered popular.
+
+        Returns:
+            list: A list of popular books.
+        """
+        query = f"""
+        SELECT b.*
+        FROM {cls.TABLE_NAME} AS b
+        JOIN loans AS l ON b.book_id = l.book_id
+        GROUP BY b.book_id
+        HAVING COUNT(l.book_id) >= ?
+        """
+        results = DatabaseConnection.execute_query(query, (threshold,))
+
+        if results:
+            conn = DatabaseConnection.get_connection()
+            cursor = conn.cursor()
+            cursor.execute(f"PRAGMA table_info({cls.TABLE_NAME})")
+            columns = [column[1] for column in cursor.fetchall()]
+            conn.close()
+
+            return [cls(**dict(zip(columns, result))) for result in results]
+
+        return []

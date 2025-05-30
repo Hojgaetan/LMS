@@ -1,13 +1,12 @@
 from flask import Blueprint, jsonify
-from models.author import Author
-from utils.db_utils import DatabaseConnection
+from services.author_service import AuthorService
 
 author_blueprint = Blueprint('authors', __name__)
 
 @author_blueprint.route('/total-authors', methods=['GET'])
 def total_authors():
     try:
-        total_authors = Author.count()
+        total_authors = AuthorService.count_authors()
         return jsonify({'total_authors': total_authors})
     except Exception as e:
         return jsonify({'error': str(e)}), 500

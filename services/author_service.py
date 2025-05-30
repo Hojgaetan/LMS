@@ -44,3 +44,13 @@ class AuthorService:
     @staticmethod
     def search_authors_by_name(name):
         return Author.find_by_name(name)
+
+    @staticmethod
+    def count_authors():
+        """
+        Count the total number of authors.
+
+        Returns:
+            int: The total number of authors
+        """
+        return len(Author.all())

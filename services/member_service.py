@@ -66,3 +66,28 @@ class MemberService:
         member.status = status
         member.save()
         return True, f"Member '{member_id}' status updated to {status}."
+    
+    def get_members_loans_data(self):
+        try:
+            members = self.member_model.get_all_members_with_loans()
+            members_loans_data = []
+            for member in members:
+                members_loans_data.append({
+                    'name': member.name,
+                    'email': member.email,
+                    'loans_count': len(member.loans),
+                    'last_loan_due_date': member.loans[-1].due_date if member.loans else None
+                })
+            return members_loans_data
+        except Exception as e:
+            raise Exception(f"Error fetching members loans data: {str(e)}")
+    
+    @staticmethod
+    def count_members():
+        """Count the total number of members."""
+        return Member.count()
+
+    @staticmethod
+    def count_active_members():
+        """Count the total number of active members based on recent loans."""
+        return Member.count_active_members()

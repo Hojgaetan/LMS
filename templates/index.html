@@ -126,8 +126,8 @@
                     <tr>
                         <td>{{ member.name }}</td>
                         <td>{{ member.email }}</td>
-                        <td>{{ member.loans | length }}</td>
-                        <td>{% if member.loans %}{{ member.loans[-1].due_date }}{% else %} - {% endif %}</td>
+                        <td>{{ member.loans_count }}</td>
+                        <td>{% if member.loans_count %}{{ member.last_loan_due_date }}{% else %} - {% endif %}</td>
                         <td>
                             <button class="btn btn-info btn-sm see-detail-member" title="Voir détails"><i class="bi bi-eye"></i></button>
                         </td>
