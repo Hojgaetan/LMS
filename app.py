@@ -162,52 +162,6 @@ def total_overdue_books():
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
-@app.route('/books', methods=['GET'])
-def get_books():
-    try:
-        books = Book.search()
-        books_data = [
-            {
-                'id': book.book_id,
-                'title': book.title,
-                'author': Author.find_by_id(book.author_id).name if book.author_id else None,
-                'category': Category.find_by_id(book.category_id).name if book.category_id else None,
-                'isbn': book.isbn,
-                'publication_year': book.publication_year,
-                'publisher': book.publisher,
-                'quantity': book.quantity,
-                'available_quantity': book.available_quantity
-            }
-            for book in books
-        ]
-        return jsonify({'books': books_data})
-    except Exception as e:
-        return jsonify({'error': str(e)}), 500
-
-@app.route('/members-loans', methods=['GET'])
-def get_members_loans():
-    try:
-        members = Member.get_all()
-        members_loans_data = [
-            {
-                'id': member.member_id,
-                'name': member.name,
-                'email': member.email,
-                'loans': [
-                    {
-                        'book_title': Book.find_by_id(loan.book_id).title if loan.book_id else None,
-                        'due_date': loan.due_date,
-                        'return_date': loan.return_date
-                    }
-                    for loan in member.get_loans()
-                ]
-            }
-            for member in members
-        ]
-        return jsonify({'members_loans': members_loans_data})
-    except Exception as e:
-        return jsonify({'error': str(e)}), 500
-
 @app.route('/', methods=['GET'])
 def index():
     try:
@@ -219,38 +173,9 @@ def index():
         total_popular_books = Book.count_popular_books(threshold=10)
         total_active_members = Member.count_active_members()
         total_overdue_books = Book.count_overdue_books()
-        books = Book.search()
-        books_data = [
-            {
-                'id': book.book_id,
-                'title': book.title,
-                'author': Author.find_by_id(book.author_id).name if book.author_id else None,
-                'category': Category.find_by_id(book.category_id).name if book.category_id else None,
-                'isbn': book.isbn,
-                'publication_year': book.publication_year,
-                'publisher': book.publisher,
-                'quantity': book.quantity,
-                'available_quantity': book.available_quantity
-            }
-            for book in books
-        ]
-        members = Member.get_all()
-        members_loans_data = [
-            {
-                'id': member.member_id,
-                'name': member.name,
-                'email': member.email,
-                'loans': [
-                    {
-                        'book_title': Book.find_by_id(loan.book_id).title if loan.book_id else None,
-                        'due_date': loan.due_date,
-                        'return_date': loan.return_date
-                    }
-                    for loan in member.get_loans()
-                ]
-            }
-            for member in members
-        ]
+        #popular_books = Book.get_popular_books(limit=5)
+        #active_members = Member.get_active_members(limit=5)
+        #overdue_books = Book.get_overdue_books()
     except Exception as e:
         return jsonify({'error': str(e)}), 500
     else:
@@ -262,8 +187,9 @@ def index():
                            total_popular_books=total_popular_books,
                            total_active_members= total_active_members,
                            total_overdue_books=total_overdue_books,
-                           books=books_data,
-                           members_loans=members_loans_data
+                           #popular_books=popular_books, 
+                           #active_members=active_members, 
+                           #overdue_books=overdue_books
                            )
 
 if __name__ == '__main__':
