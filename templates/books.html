@@ -40,20 +40,28 @@
                     <th><i class="bi bi-book"></i> Titre</th>
                     <th><i class="bi bi-person"></i> Auteur</th>
                     <th><i class="bi bi-tags"></i> Catégorie</th>
-                    <th>Actions</th>
+                    <th><i class="bi bi-check-circle"></i> Disponibilité</th>
+                    <th><i class="bi bi-eye"></i> Actions</th>
                 </tr>
             </thead>
             <tbody>
-                <tr>
-                    <td>Exemple Livre</td>
-                    <td>Exemple Auteur</td>
-                    <td>Exemple Catégorie</td>
-                    <td>
-                        <button class="btn btn-info btn-sm" title="Voir détails"><i class="bi bi-eye"></i></button>
-                        <button class="btn btn-primary btn-sm" title="Modifier"><i class="bi bi-pencil-square"></i></button>
-                        <button class="btn btn-danger btn-sm" title="Supprimer"><i class="bi bi-trash"></i></button>
-                    </td>
-                </tr>
+                {% for book in books %}
+                    <tr data-isbn="{{ book.isbn }}" data-publication-year="{{ book.publication_year }}" data-publisher="{{ book.publisher }}" data-quantity="{{ book.quantity }}" data-available-quantity="{{ book.available_quantity }}">
+                        <td>{{ book.title }}</td>
+                        <td>{{ book.author }}</td>
+                        <td>{{ book.category }}</td>
+                        <td>
+                            {% if book.available_quantity > 0 %}
+                            <span class="badge bg-success">Disponible</span>
+                            {% else %}
+                            <span class="badge bg-danger">Emprunté</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <button class="btn btn-info btn-sm see-detail-book" title="Voir détails"><i class="bi bi-eye"></i></button>
+                        </td>
+                    </tr>
+                    {% endfor %}
             </tbody>
         </table>
     </div>
@@ -71,23 +79,17 @@
                     <th><i class="bi bi-clock"></i> Jours de retard</th>
                 </tr>
             </thead>
-            {% for book in books %}
-                    <tr data-isbn="{{ book.isbn }}" data-publication-year="{{ book.publication_year }}" data-publisher="{{ book.publisher }}" data-quantity="{{ book.quantity }}" data-available-quantity="{{ book.available_quantity }}">
-                        <td>{{ book.title }}</td>
-                        <td>{{ book.author }}</td>
-                        <td>{{ book.category }}</td>
-                        <td>
-                            {% if book.available_quantity > 0 %}
-                            <span class="badge bg-success">Disponible</span>
-                            {% else %}
-                            <span class="badge bg-danger">Emprunté</span>
-                            {% endif %}
-                        </td>
-                        <td>
-                            <button class="btn btn-info btn-sm see-detail-book" title="Voir détails"><i class="bi bi-eye"></i></button>
-                        </td>
-                    </tr>
+            <tbody>
+            {% for book in overdue_books %}
+                <tr>
+                    <td>{{ book.title }}</td>
+                    <td>{{ book.borrowing.member_name }}</td>
+                    <td>{{ book.borrowing.borrow_date }}</td>
+                    <td>{{ book.borrowing.due_date }}</td>
+                    <td>{{ book.borrowing.overdue_days }}</td>
+                </tr>
             {% endfor %}
+            </tbody>
         </table>
     </div>
     <!-- Modal pour afficher les détails d'un livre -->

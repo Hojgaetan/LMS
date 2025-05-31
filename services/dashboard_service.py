@@ -58,4 +58,21 @@ class DashboardService:
             return members_loans_data
         except Exception as e:
             raise Exception(f"Error fetching members loans data: {str(e)}")
+        
+    def get_overdue_books_data(self):
+        try:
+            from datetime import datetime
+            overdue_books = self.book_service.get_overdue_books()
+            overdue_books_data = []
+            for book in overdue_books:
+                overdue_books_data.append({
+                    'title': book.title,
+                    'member': book.borrowing.member.name,
+                    'borrow_date': book.borrowing.borrow_date,
+                    'due_date': book.borrowing.due_date,
+                    'days_overdue': (datetime.now() - book.borrowing.due_date).days if datetime.now() > book.borrowing.due_date else 0
+                })
+            return overdue_books_data
+        except Exception as e:
+            raise Exception(f"Error fetching overdue books data: {str(e)}")
 

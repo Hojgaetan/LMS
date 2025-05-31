@@ -15,20 +15,13 @@ def dashboard():
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
-
-@dashboard_blueprint.route('/books-data', methods=['GET'])
-def get_books_data():
+@dashboard_blueprint.route('/books', methods=['GET'])
+def books():
     try:
+        stats = dashboard_service.get_dashboard_statistics()
         books_data = dashboard_service.get_books_data()
-        return jsonify({'books': books_data})
+        overdue_books_data = dashboard_service.get_overdue_books_data()
+        return render_template('books.html', **stats, books=books_data, overdue_books=overdue_books_data)
     except Exception as e:
         return jsonify({'error': str(e)}), 500
-
-
-@dashboard_blueprint.route('/members-loans', methods=['GET'])
-def get_members_loans():
-    try:
-        members_loans_data = dashboard_service.get_members_loans_data()
-        return jsonify({'members_loans': members_loans_data})
-    except Exception as e:
-        return jsonify({'error': str(e)}), 500
+    

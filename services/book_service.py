@@ -1,6 +1,7 @@
 from models.book import Book
 from models.author import Author
 from models.category import Category
+from datetime import datetime
 
 
 class BookService:
@@ -288,4 +289,23 @@ class BookService:
             return len(overdue_books)
         except Exception as e:
             raise Exception(f"Error counting overdue books: {str(e)}")
+    
+    @staticmethod
+    def get_overdue_books():
+        """
+        Get all overdue books in the library.
+
+        Returns:
+            list: A list of overdue books with borrowing details.
+        """
+        try:
+            overdue_books = Book.find_all_with_borrowing()
+            return [
+                book for book in overdue_books
+                if book.borrowing and book.borrowing['overdue_days'] > 0
+            ]
+        except Exception as e:
+            raise Exception(f"Error fetching overdue books: {str(e)}")
+
+
 

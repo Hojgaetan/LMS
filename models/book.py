@@ -384,3 +384,55 @@ class Book(BaseModel):
             return [cls(**dict(zip(columns, result))) for result in results]
 
         return []
+
+    @classmethod
+    def find_all_with_borrowing(cls):
+        """
+        Find all books with borrowing details and calculate overdue days.
+
+        Returns:
+            list: A list of books with borrowing details.
+        """
+        query = f"""
+            SELECT b.*, br.borrow_date, br.due_date, m.name AS member_name
+            FROM {cls.TABLE_NAME} AS b
+            LEFT JOIN borrowings AS br ON b.book_id = br.book_id
+            LEFT JOIN members AS m ON br.member_id = m.member_id
+        """
+        results = DatabaseConnection.execute_query(query)
+
+        if results:
+            conn = DatabaseConnection.get_connection()
+            cursor = conn.cursor()
+            cursor.execute(f"PRAGMA table_info({cls.TABLE_NAME})")
+            columns = [column[1] for column in cursor.fetchall()]
+            conn.close()
+
+            books = []
+            for result in results:
+                book_data = dict(zip(columns, result[:len(columns)]))
+                borrow_date = result[len(columns)]
+                due_date = result[len(columns) + 1]
+                member_name = result[len(columns) + 2]
+
+                overdue_days = 0
+                if due_date:
+                    from datetime import datetime
+                    due_date_obj = datetime.strptime(due_date, '%Y-%m-%d')
+                    current_date = datetime.now()
+                    if current_date > due_date_obj:
+                        overdue_days = (current_date - due_date_obj).days
+
+                borrowing_data = {
+                    'borrow_date': borrow_date,
+                    'due_date': due_date,
+                    'member_name': member_name,
+                    'overdue_days': overdue_days
+                }
+                book = cls(**book_data)
+                book.borrowing = borrowing_data
+                books.append(book)
+
+            return books
+
+        return []
