@@ -73,3 +73,39 @@ class BorrowingService:
             True,
             f"Reminder sent to {member.name} (Email: {member.email}) for book ID {borrowing.book_id}. Due date: {borrowing.due_date}.",
         )
+
+    @staticmethod
+    def get_borrowing(borrowing_id):
+        """
+        Get a borrowing record by its ID.
+
+        Args:
+            borrowing_id (int): The ID of the borrowing record.
+
+        Returns:
+            Borrowing: The borrowing record, or None if not found.
+        """
+        return Borrowing.find_by_id(borrowing_id)
+
+    @staticmethod
+    def update_borrowing(borrowing_id, **updates):
+        """
+        Update a borrowing record with the given updates.
+
+        Args:
+            borrowing_id (int): The ID of the borrowing record.
+            updates (dict): Key-value pairs of fields to update.
+
+        Returns:
+            tuple: (bool, str) indicating success and a message.
+        """
+        borrowing = Borrowing.find_by_id(borrowing_id)
+        if not borrowing:
+            return False, "Borrowing record not found."
+
+        for field, value in updates.items():
+            if hasattr(borrowing, field):
+                setattr(borrowing, field, value)
+
+        borrowing.save()
+        return True, "Borrowing record updated successfully."

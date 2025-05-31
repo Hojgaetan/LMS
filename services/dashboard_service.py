@@ -70,7 +70,11 @@ class DashboardService:
                     'member': book.borrowing.member.name,
                     'borrow_date': book.borrowing.borrow_date,
                     'due_date': book.borrowing.due_date,
-                    'days_overdue': (datetime.now() - book.borrowing.due_date).days if datetime.now() > book.borrowing.due_date else 0
+                    'days_overdue': (
+                        (datetime.now() - book.borrowing.due_date).days
+                        if book.borrowing.due_date and isinstance(book.borrowing.due_date, datetime) and datetime.now() > book.borrowing.due_date
+                        else 0
+                    )
                 })
             return overdue_books_data
         except Exception as e:

@@ -20,8 +20,7 @@ def books():
     try:
         stats = dashboard_service.get_dashboard_statistics()
         books_data = dashboard_service.get_books_data()
-        overdue_books_data = dashboard_service.get_overdue_books_data()
-        return render_template('books.html', **stats, books=books_data, overdue_books=overdue_books_data)
+        return render_template('books.html', **stats, books=books_data)
     except Exception as e:
         return jsonify({'error': str(e)}), 500
     

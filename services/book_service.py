@@ -302,8 +302,10 @@ class BookService:
             overdue_books = Book.find_all_with_borrowing()
             return [
                 book for book in overdue_books
-                if book.borrowing and book.borrowing['overdue_days'] > 0
+                if book.borrowing and book.borrowing['due_date'] and datetime.strptime(book.borrowing['due_date'], '%Y-%m-%d %H:%M:%S') < datetime.now()
             ]
+        except ValueError as ve:
+            raise Exception(f"Error parsing date: {str(ve)}")
         except Exception as e:
             raise Exception(f"Error fetching overdue books: {str(e)}")
 

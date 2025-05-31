@@ -1,5 +1,7 @@
-from controllers.database_controller import DatabaseController
-from controllers.book_controller import BookController
+from services.book_service import BookService
+from services.member_service import MemberService
+from services.category_service import CategoryService
+from services.author_service import AuthorService
 from views.menu_view import MenuView
 from views.book_view import BookView
 
@@ -9,11 +11,11 @@ class LibraryManagementSystem:
 
     def __init__(self):
         """Initialize the Library Management System."""
-        # Initialize the database
-        DatabaseController.initialize_database()
-
         # Initialize controllers
-        self.book_controller = BookController()
+        self.book_service = BookService()
+        self.member_service = MemberService()
+        self.category_service = CategoryService()
+        self.author_service = AuthorService()
 
         # Initialize views
         self.menu_view = MenuView()
@@ -25,11 +27,11 @@ class LibraryManagementSystem:
         self.book_view.display_add_book_menu()
 
         # Get all authors and display them
-        authors = self.book_controller.get_all_authors()
+        authors = self.author_service.get_all_authors()
         self.book_view.display_authors(authors)
 
         # Get all categories and display them
-        categories = self.book_controller.get_all_categories()
+        categories = self.category_service.get_all_categories()
         self.book_view.display_categories(categories)
 
         # Get book details from user
@@ -37,7 +39,7 @@ class LibraryManagementSystem:
 
         if book_details:
             # Add the book to the database
-            success, result = self.book_controller.add_book(**book_details)
+            success, result = self.book_service.add_book(**book_details)
 
             if success:
                 self.menu_view.display_success(f"Book added successfully with ID: {result}")
@@ -56,7 +58,7 @@ class LibraryManagementSystem:
             return
 
         # Get the book from the database
-        book = self.book_controller.get_book(book_id)
+        book = self.book_service.get_book(book_id)
 
         if not book:
             self.menu_view.display_error(f"Book with ID {book_id} not found")
@@ -66,11 +68,11 @@ class LibraryManagementSystem:
         self.book_view.display_book(book)
 
         # Get all authors and display them
-        authors = self.book_controller.get_all_authors()
+        authors = self.author_service.get_all_authors()
         self.book_view.display_authors(authors)
 
         # Get all categories and display them
-        categories = self.book_controller.get_all_categories()
+        categories = self.category_service.get_all_categories()
         self.book_view.display_categories(categories)
 
         # Get updated book details from user
@@ -78,7 +80,7 @@ class LibraryManagementSystem:
 
         if book_updates:
             # Update the book in the database
-            success, result = self.book_controller.update_book(book_id, **book_updates)
+            success, result = self.book_service.update_book(book_id, **book_updates)
 
             if success:
                 self.menu_view.display_success(f"Book updated successfully with ID: {result}")
@@ -92,7 +94,7 @@ class LibraryManagementSystem:
     def search_books(self):
         """Handle the search books functionality."""
         criteria = self.book_view.get_search_criteria()
-        books = self.book_controller.search_books(**criteria)
+        books = self.book_service.search_books(**criteria)
         self.book_view.display_books(books)
 
     def add_new_author(self):
