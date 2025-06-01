@@ -3,39 +3,51 @@
 ![forks](https://img.shields.io/github/forks/Hojgaetan/LMS)
 [![commits](https://img.shields.io/github/commit-activity/w/Hojgaetan/LMS)](https://github.com/Hojgaetan/LMS/commits/main)
 ![contributors](https://img.shields.io/github/contributors/Hojgaetan/LMS)
+![MIT License Badge](https://img.shields.io/badge/license-MIT-green)
 
 ## Overview
 The Library Management System (LMS) is a robust, modular application designed to streamline and automate the management of library resources. Built with a scalable architecture and following the Model-View-Controller (MVC) pattern, LMS provides a comprehensive suite of features for book, author, category, member, and borrowing management, as well as advanced reporting and administrative controls.
 
 ## Key Features
-### Book Management
-- Add, update, and remove books
-- Search books by title
-- View detailed book information
-- Manage book inventory and availability
 
-### Author & Category Management
-- Register and update authors and categories
-- View all books by a specific author or within a category
+### 📚 Book Management
+- ➕ **Add, update, and remove books**: Manage your library's collection effortlessly.
+- 🔍 **Search books by title**: Quickly locate books using a powerful search feature.
+- 📝 **View detailed book information**: Access comprehensive details about each book.
+- 📦 **Manage book inventory and availability**: Keep track of stock and borrowing status.
 
-### Member Management
-- Register, update, and manage library members
-- View member borrowing history
-- Activate/deactivate memberships
+### ✍️ Author & Category Management
+- 🖊️ **Register and update authors and categories**: Organize books by authors and genres.
+- 📖 **View all books by a specific author or within a category**: Simplify browsing and discovery.
 
-### Borrowing Operations
-- Record book borrowings and returns
-- Extend borrowing periods
-- Track overdue books and send reminders
+### 👥 Member Management
+- 🆕 **Register, update, and manage library members**: Maintain member profiles and activity.
+- 📜 **View member borrowing history**: Track borrowing records for each member.
+- 🔒 **Activate/deactivate memberships**: Manage membership statuses with ease.
 
-### Reporting & Analytics
-- Generate reports on popular books, member activity, inventory status, and overdue books
+### 🔄 Borrowing Operations
+- 📘 **Record book borrowings and returns**: Streamline lending and returning processes.
+- ⏳ **Extend borrowing periods**: Allow members to extend their borrowing duration.
+- ⚠️ **Track overdue books and send reminders**: Ensure timely returns with automated notifications.
 
-### Administration
-- User authentication and role-based access
-- System configuration (borrowing period, late fees, etc.)
-- Database backup and restore
-- Activity logging for audit trails
+### 📊 Reporting & Analytics
+- 📈 **Generate reports on popular books**: Identify trends and popular titles.
+- 👤 **Member activity reports**: Analyze borrowing patterns and member engagement.
+- 📦 **Inventory status reports**: Monitor stock levels and availability.
+- ⏰ **Overdue books reports**: Stay informed about overdue items.
+
+### 🔐 Administration
+- 🔑 **User authentication and role-based access**: Secure the system with permissions and roles.
+- ⚙️ **System configuration**: Customize borrowing periods, late fees, and other settings.
+- 💾 **Database backup and restore**: Safeguard data with backup and recovery options.
+- 🕵️ **Activity logging for audit trails**: Track system usage and changes for accountability.
+
+---
+
+### Why Choose LMS?
+The Library Management System (LMS) is designed to be scalable, modular, and user-friendly. Whether you're managing a small library or a large institution, LMS provides the tools you need to streamline operations and enhance user experience.
+
+---
 
 ## Project Structure
 ```
@@ -68,29 +80,57 @@ LMS/
 ```
 
 ## Installation & Setup
-1. **Clone the repository**
-   ```bash
-   git clone <repository-url>
-   cd LMS
-   ```
-2. **Install dependencies**
-   - Python 3.x is required
-   - (Optional) Install dependencies from requirements.txt if provided:
-   ```bash
-   pip install -r requirements.txt
-   ```
-3. **Initialize the database**
-   - The database is automatically initialized on first run.
 
-4. **Run the application**
-   ```bash
-   python main.py
-   ```
+Follow these steps to set up the Library Management System (LMS) on your local machine:
+
+### 1. Clone the Repository
+Clone the project repository from GitHub and navigate to the project directory:
+```bash
+git clone <repository-url>
+cd LMS
+```
+
+### 2. Install Dependencies
+Ensure Python 3.x is installed on your system. Install the required dependencies using `pip`:
+```bash
+pip install -r requirements.txt
+```
+> **Note**: The `requirements.txt` file contains all necessary libraries for the application.
+
+### 3. Initialize the Database
+The SQLite database will be automatically initialized on the first run of the application. No manual setup is required.
+
+### 4. Run the Application
+Start the application by running the following command:
+```bash
+python main.py
+```
+
+> **Tip**: For development purposes, you can use a virtual environment to isolate dependencies:
+```bash
+python -m venv venv
+source venv/bin/activate  # On Linux/Mac
+venv\Scripts\activate     # On Windows
+pip install -r requirements.txt
+```
+
+---
+
+### Additional Notes:
+- Ensure you have Git installed for cloning the repository.
+- If you encounter issues with dependencies, verify your Python version and ensure compatibility with the libraries listed in `requirements.txt`.
+- For database backups or migrations, refer to the `utils/db_utils.py` file for additional scripts.
+
 
 ## Technologies Used
-- Python 3
-- SQLite (for persistent storage)
-- MVC architectural pattern
+
+- 🐍 **Python 3**: Core programming language for building the application.
+- 🗄️ **SQLite**: Lightweight database for persistent storage of library data.
+- 🏗️ **MVC Architectural Pattern**: Ensures separation of concerns and modular design.
+- 🌐 **Flask**: (Optional) For future web-based interface development.
+- 🧪 **Pytest**: Framework for writing and running unit tests.
+- 🛠️ **Git**: Version control system for collaboration and code management.
+- 📄 **Markdown**: Used for project documentation.
 
 ## Usage
 - Interact with the system via the command-line interface.
@@ -107,48 +147,115 @@ The LMS is designed for extensibility. New features, modules, or integrations (e
 
 ## Feature Implementation Status
 
-### Book Management
-- **Add New Books**: Implemented
-- **Update Book Information**: Implemented
-- **Remove Books**: Implemented
-- **Search Books**: Partially implemented
-- **View Book Details**: Implemented
-- **Manage Book Inventory**: Partially implemented (quantity/availability tracked, but advanced inventory features may be pending)
+| **Feature**                 | **Status**              | **Notes**                                                                 |
+|-----------------------------|-------------------------|---------------------------------------------------------------------------|
+| **Book Management**         |                         |                                                                           |
+| Add New Books               | ✅ Implemented          | Fonctionnalité entièrement opérationnelle dans `books.html`.             |
+| Update Book Information     | ✅ Implemented          | Fonctionnalité opérationnelle avec un modal dans `books.html`.           |
+| Remove Books                | ✅ Implemented          | Fonctionnalité opérationnelle avec un modal dans `books.html`.           |
+| Search Books                | ⚠️ Partially implemented | Recherche basique disponible, mais les fonctionnalités avancées sont en attente. |
+| View Book Details           | ✅ Implemented          | Modal pour afficher les détails du livre dans `books.html`.              |
+| Manage Book Inventory       | ⚠️ Partially implemented | Gestion de la disponibilité et du stock partiellement implémentée.       |
+| **Author Management**       |                         |                                                                           |
+| Add New Authors             | ✅ Implemented (basic)  | Fonctionnalité basique disponible.                                       |
+| Update Author Information   | ❌ To be completed      | Aucun formulaire ou modal trouvé pour cette fonctionnalité.              |
+| View Author Bibliography    | ❌ To be completed      | Fonctionnalité non implémentée.                                          |
+| **Category Management**     |                         |                                                                           |
+| Add New Categories/Genres   | ✅ Implemented (basic)  | Fonctionnalité basique disponible.                                       |
+| Update Category Information | ❌ To be completed      | Aucun formulaire ou modal trouvé pour cette fonctionnalité.              |
+| Browse Books by Category    | ⚠️ Partially implemented | Recherche par catégorie disponible, mais pas entièrement fonctionnelle.  |
+| **Member Management**       |                         |                                                                           |
+| Register New Members         | ❌ To be completed      | Aucun formulaire ou modal trouvé pour cette fonctionnalité.              |
+| Update Member Information    | ❌ To be completed      | Fonctionnalité non implémentée.                                          |
+| View Member History          | ❌ To be completed      | Fonctionnalité non implémentée.                                          |
+| Manage Member Status         | ❌ To be completed      | Fonctionnalité non implémentée.                                          |
+| **Borrowing Operations**    |                         |                                                                           |
+| Borrow Books                | ❌ To be completed      | Aucun formulaire ou modal trouvé pour cette fonctionnalité.              |
+| Return Books                | ❌ To be completed      | Fonctionnalité non implémentée.                                          |
+| Extend Borrowing Period     | ❌ To be completed      | Fonctionnalité non implémentée.                                          |
+| Track Overdue Books         | ❌ To be completed      | Fonctionnalité non implémentée.                                          |
+| Send Reminders              | ❌ To be completed      | Fonctionnalité non implémentée.                                          |
+| **Reporting and Analytics** |                         |                                                                           |
+| Popular Books Report        | ❌ To be completed      | Aucun tableau ou rapport trouvé pour cette fonctionnalité.               |
+| Member Activity Report      | ❌ To be completed      | Fonctionnalité non implémentée.                                          |
+| Inventory Status Report     | ❌ To be completed      | Fonctionnalité non implémentée.                                          |
+| Overdue Books Report        | ❌ To be completed      | Fonctionnalité non implémentée.                                          |
+| **Administration**          |                         |                                                                           |
+| User Authentication         | ❌ To be completed      | Aucun système d'authentification trouvé dans le projet.                  |
+| System Configuration        | ❌ To be completed      | Fonctionnalité non implémentée.                                          |
+| Database Backup/Restore     | ❌ To be completed      | Aucun script ou fonctionnalité trouvée pour cette tâche.                 |
+| Activity Logging            | ❌ To be completed      | Fonctionnalité non implémentée.                                          |
 
-### Author Management
-- **Add New Authors**: Implemented (basic)
-- **Update Author Information**: To be completed
-- **View Author Bibliography**: To be completed
+---
 
-### Category Management
-- **Add New Categories/Genres**: Implemented (basic)
-- **Update Category Information**: To be completed
-- **Browse Books by Category**: Partially implemented (search by category available)
+### Legend:
+- ✅ **Implemented**: Fully functional
+- ⚠️ **Partially implemented**: Some features are functional, but improvements are pending
+- ❌ **To be completed**: Not yet implemented
 
-### Member Management
-- **Register New Members**: To be completed
-- **Update Member Information**: To be completed
-- **View Member History**: To be completed
-- **Manage Member Status**: To be completed
+---
 
-### Borrowing Operations
-- **Borrow Books**: To be completed
-- **Return Books**: To be completed
-- **Extend Borrowing Period**: To be completed
-- **Track Overdue Books**: To be completed
-- **Send Reminders**: To be completed
+### Notes :
+- Les fonctionnalités liées aux livres semblent être les plus avancées dans le projet.
+- Les fonctionnalités liées aux membres, emprunts, et rapports nécessitent une implémentation complète.
+- L'administration (authentification, configuration, sauvegarde) est absente et doit être ajoutée.
 
-### Reporting and Analytics
-- **Popular Books Report**: To be completed
-- **Member Activity Report**: To be completed
-- **Inventory Status Report**: To be completed
-- **Overdue Books Report**: To be completed
+Si vous souhaitez des détails supplémentaires ou des suggestions pour prioriser les tâches, faites-le-moi savoir !## Feature Implementation Status
 
-### Administration
-- **User Authentication**: To be completed
-- **System Configuration**: To be completed
-- **Database Backup/Restore**: To be completed
-- **Activity Logging**: To be completed
+| **Feature**                 | **Status**              | **Notes**                                                                 |
+|-----------------------------|-------------------------|---------------------------------------------------------------------------|
+| **Book Management**         |                         |                                                                           |
+| Add New Books               | ✅ Implemented          | Fonctionnalité entièrement opérationnelle dans `books.html`.             |
+| Update Book Information     | ✅ Implemented          | Fonctionnalité opérationnelle avec un modal dans `books.html`.           |
+| Remove Books                | ✅ Implemented          | Fonctionnalité opérationnelle avec un modal dans `books.html`.           |
+| Search Books                | ⚠️ Partially implemented | Recherche basique disponible, mais les fonctionnalités avancées sont en attente. |
+| View Book Details           | ✅ Implemented          | Modal pour afficher les détails du livre dans `books.html`.              |
+| Manage Book Inventory       | ⚠️ Partially implemented | Gestion de la disponibilité et du stock partiellement implémentée.       |
+| **Author Management**       |                         |                                                                           |
+| Add New Authors             | ✅ Implemented (basic)  | Fonctionnalité basique disponible.                                       |
+| Update Author Information   | ❌ To be completed      | Aucun formulaire ou modal trouvé pour cette fonctionnalité.              |
+| View Author Bibliography    | ❌ To be completed      | Fonctionnalité non implémentée.                                          |
+| **Category Management**     |                         |                                                                           |
+| Add New Categories/Genres   | ✅ Implemented (basic)  | Fonctionnalité basique disponible.                                       |
+| Update Category Information | ❌ To be completed      | Aucun formulaire ou modal trouvé pour cette fonctionnalité.              |
+| Browse Books by Category    | ⚠️ Partially implemented | Recherche par catégorie disponible, mais pas entièrement fonctionnelle.  |
+| **Member Management**       |                         |                                                                           |
+| Register New Members         | ❌ To be completed      | Aucun formulaire ou modal trouvé pour cette fonctionnalité.              |
+| Update Member Information    | ❌ To be completed      | Fonctionnalité non implémentée.                                          |
+| View Member History          | ❌ To be completed      | Fonctionnalité non implémentée.                                          |
+| Manage Member Status         | ❌ To be completed      | Fonctionnalité non implémentée.                                          |
+| **Borrowing Operations**    |                         |                                                                           |
+| Borrow Books                | ❌ To be completed      | Aucun formulaire ou modal trouvé pour cette fonctionnalité.              |
+| Return Books                | ❌ To be completed      | Fonctionnalité non implémentée.                                          |
+| Extend Borrowing Period     | ❌ To be completed      | Fonctionnalité non implémentée.                                          |
+| Track Overdue Books         | ❌ To be completed      | Fonctionnalité non implémentée.                                          |
+| Send Reminders              | ❌ To be completed      | Fonctionnalité non implémentée.                                          |
+| **Reporting and Analytics** |                         |                                                                           |
+| Popular Books Report        | ❌ To be completed      | Aucun tableau ou rapport trouvé pour cette fonctionnalité.               |
+| Member Activity Report      | ❌ To be completed      | Fonctionnalité non implémentée.                                          |
+| Inventory Status Report     | ❌ To be completed      | Fonctionnalité non implémentée.                                          |
+| Overdue Books Report        | ❌ To be completed      | Fonctionnalité non implémentée.                                          |
+| **Administration**          |                         |                                                                           |
+| User Authentication         | ❌ To be completed      | Aucun système d'authentification trouvé dans le projet.                  |
+| System Configuration        | ❌ To be completed      | Fonctionnalité non implémentée.                                          |
+| Database Backup/Restore     | ❌ To be completed      | Aucun script ou fonctionnalité trouvée pour cette tâche.                 |
+| Activity Logging            | ❌ To be completed      | Fonctionnalité non implémentée.                                          |
+
+---
+
+### Legend:
+- ✅ **Implemented**: Fully functional
+- ⚠️ **Partially implemented**: Some features are functional, but improvements are pending
+- ❌ **To be completed**: Not yet implemented
+
+---
+
+---
+
+### Legend:
+- ✅ **Implemented**: Fully functional
+- ⚠️ **Partially implemented**: Some features are functional, but improvements are pending
+- ❌ **To be completed**: Not yet implemented
 
 ---
 
@@ -157,7 +264,9 @@ For a detailed description of each use case, see `features.md`.
 ## Authors & Contributors
 - [@Hojgaetan](https://github.com/Hojgaetan) (Lead project)
 - [@pmp-p](https://github.com/pmp-p)
-- Contributors are welcome! Please see the CONTRIBUTING.md file for guidelines.
+- Contributors are welcome! Please see the `CONTRIBUTING.md` file for guidelines.
 
 ## License
-This project is provided for educational and professional use. Please refer to the LICENSE file for more information.
+This project is licensed under the **MIT License**, an open-source license that allows free use, modification, and distribution of the software. 
+
+For more details, please refer to the `LICENSE` file included in the repository.

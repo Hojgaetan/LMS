@@ -1,39 +1,98 @@
-# Contributing to the Library Management System (LMS)
+# Contributing to Library Management System (LMS)
 
-Thank you for your interest in contributing to this project! Your help is greatly appreciated. Please follow these guidelines to ensure a smooth contribution process.
-
-[![commits](https://img.shields.io/github/commit-activity/w/Hojgaetan/LMS)](https://github.com/Hojgaetan/LMS/commits/main)
-
-## How to Contribute
-
-1. **Fork the repository**
-2. **Create a new branch** for your feature or bugfix
-3. **Make your changes** with clear, descriptive commit messages
-4. **Test your changes** to ensure nothing is broken
-5. **Submit a pull request** with a clear description of your changes
-
-## Code Style
-- Follow PEP8 for Python code
-- Use meaningful variable and function names
-- Write docstrings for all public classes and methods
-
-## Issues
-- Search for existing issues before opening a new one
-- Provide detailed information when reporting bugs
-
-## Pull Requests
-- Reference related issues in your PR description
-- Ensure your branch is up to date with the main branch
-- One feature/fix per pull request
-
-## Tests
-- Add or update tests for any new features or bug fixes
-- Ensure all tests pass before submitting your PR
-
-## Community
-- Be respectful and constructive in all interactions
-- Suggestions and feedback are welcome!
+Thank you for considering contributing to the Library Management System (LMS)! Contributions are welcome and greatly appreciated. This document outlines the guidelines for contributing to the project.
 
 ---
 
-For any questions, please open an issue or contact a maintainer.
+## How to Contribute
+
+### 1. Fork the Repository
+- Click the "Fork" button on the repository page to create a copy of the project in your GitHub account.
+
+### 2. Clone the Repository
+- Clone your forked repository to your local machine:
+```bash
+git clone <your-forked-repository-url>
+cd LMS
+```
+
+### 3. Create a Branch
+- Create a new branch for your changes:
+```bash
+git checkout -b feature/<your-feature-name>
+```
+
+### 4. Make Changes
+- Implement your changes or fix issues.
+- Ensure your code follows the project's coding standards.
+- Write unit tests for any new functionality.
+
+### 5. Commit Your Changes
+- Use clear and concise commit messages:
+```bash
+git commit -m "Add feature: <description>"
+```
+
+### 6. Push Your Changes
+- Push your changes to your forked repository:
+```bash
+git push origin feature/<your-feature-name>
+```
+
+### 7. Submit a Pull Request
+- Go to the original repository and click "New Pull Request."
+- Provide a detailed description of your changes and link any related issues.
+
+---
+
+## Contribution Guidelines
+
+### Code Standards
+- Follow the Python PEP 8 coding style.
+- Use meaningful variable and function names.
+- Write comments to explain complex logic.
+
+### Testing
+- Ensure all new features are covered by unit tests.
+- Run existing tests to confirm no regressions:
+```bash
+pytest
+```
+
+### Documentation
+- Update the `README.md` file if your changes affect the project's functionality.
+- Add comments to your code for clarity.
+
+### Issues
+- Check the "Issues" tab for tasks or bugs to work on.
+- If you find a bug, create a new issue with detailed steps to reproduce it.
+
+---
+
+## Areas to Contribute
+
+### Feature Development
+- Implement missing features (e.g., Member Management, Borrowing Operations).
+- Enhance existing features (e.g., advanced search functionality).
+
+### Bug Fixes
+- Identify and fix bugs reported in the "Issues" tab.
+
+### Documentation
+- Improve project documentation (e.g., `README.md`, `features.md`).
+- Add examples and usage instructions.
+
+### Code Quality
+- Refactor code to improve readability and maintainability.
+- Add unit tests for untested modules.
+
+---
+
+## Communication
+- Use the "Discussions" tab for general questions or ideas.
+- For urgent matters, contact the maintainers directly via GitHub.
+
+---
+
+## Thank You!
+Your contributions make LMS better for everyone. We appreciate your time and effort in improving the project!
