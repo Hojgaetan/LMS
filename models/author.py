@@ -84,11 +84,30 @@ class Author(BaseModel):
         result = DatabaseConnection.execute_query(query)
         return result[0][0] if result else 0
 
+    @classmethod
+    def find_by_id(cls, author_id):
+        """Find an author by their ID."""
+        query = f"SELECT * FROM {cls.TABLE_NAME} WHERE {cls.PRIMARY_KEY} = ?"
+        result = DatabaseConnection.execute_query(query, (author_id,))
+        if result:
+            conn = DatabaseConnection.get_connection()
+            cursor = conn.cursor()
+            cursor.execute(f"PRAGMA table_info({cls.TABLE_NAME})")
+            columns = [column[1] for column in cursor.fetchall()]
+            conn.close()
+            return cls(**dict(zip(columns, result[0])))
+        return None
+
     def get_books(self):
         """Get all books by this author."""
         from models.book import Book
 
         return Book.find_by_author(self.author_id)
+
+    def delete(self):
+        """Delete the author from the database."""
+        query = f"DELETE FROM {self.TABLE_NAME} WHERE {self.PRIMARY_KEY} = ?"
+        DatabaseConnection.execute_query(query, (self.author_id,))
 
     def validate(self):
         """Validate the author data."""

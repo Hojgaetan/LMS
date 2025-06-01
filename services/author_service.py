@@ -26,7 +26,10 @@ class AuthorService:
         valid, msg = author.validate()
         if not valid:
             return False, msg
-        author.save()
+        try:
+            author.save()
+        except Exception as e:
+            return False, f"Failed to update author: {str(e)}"
         return True, f"Author '{author_id}' updated successfully."
 
     @staticmethod
@@ -34,7 +37,10 @@ class AuthorService:
         author = Author.find_by_id(author_id)
         if not author:
             return False, "Author not found."
-        author.delete()
+        try:
+            author.delete()
+        except Exception as e:
+            return False, f"Failed to delete author: {str(e)}"
         return True, f"Author '{author_id}' deleted successfully."
 
     @staticmethod

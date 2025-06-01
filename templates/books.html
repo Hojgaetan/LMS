@@ -33,6 +33,12 @@
         </div>
     </div>
 
+    <div class="d-flex justify-content-end mb-3">
+        <button class="btn btn-primary" id="addBookButton" title="Ajouter un nouveau livre">
+            <i class="bi bi-plus-circle"></i> Ajouter un livre
+        </button>
+    </div>
+
     <div class="table-responsive">
         <table id="booksTable" class="table table-striped table-hover align-middle">
             <thead class="table-primary">
@@ -59,6 +65,8 @@
                         </td>
                         <td>
                             <button class="btn btn-info btn-sm see-detail-book" title="Voir détails"><i class="bi bi-eye"></i></button>
+                            <button class="btn btn-warning btn-sm edit-book" title="Modifier"><i class="bi bi-pencil"></i></button>
+                            <button class="btn btn-danger btn-sm delete-book" title="Supprimer"><i class="bi bi-trash"></i></button>
                         </td>
                     </tr>
                     {% endfor %}
@@ -85,6 +93,122 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal pour modifier un livre -->
+    <div class="modal fade" id="editBookModal" tabindex="-1" aria-labelledby="editBookModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editBookModalLabel">Modifier le Livre</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <!-- Formulaire pour modifier un livre -->
+                    <form id="editBookForm">
+                        <div class="mb-3">
+                            <label for="editBookTitle" class="form-label">Titre</label>
+                            <input type="text" class="form-control" id="editBookTitle" name="title">
+                        </div>
+                        <div class="mb-3">
+                            <label for="editBookAuthor" class="form-label">Auteur</label>
+                            <input type="text" class="form-control" id="editBookAuthor" name="author">
+                        </div>
+                        <div class="mb-3">
+                            <label for="editBookCategory" class="form-label">Catégorie</label>
+                            <input type="text" class="form-control" id="editBookCategory" name="category">
+                        </div>
+                        <div class="mb-3">
+                            <label for="editBookISBN" class="form-label">ISBN</label>
+                            <input type="text" class="form-control" id="editBookISBN" name="isbn">
+                        </div>
+                        <div class="mb-3">
+                            <label for="editBookPublicationYear" class="form-label">Année de publication</label>
+                            <input type="number" class="form-control" id="editBookPublicationYear" name="publication_year">
+                        </div>
+                        <div class="mb-3">
+                            <label for="editBookPublisher" class="form-label">Éditeur</label>
+                            <input type="text" class="form-control" id="editBookPublisher" name="publisher">
+                        </div>
+                        <div class="mb-3">
+                            <label for="editBookQuantity" class="form-label">Quantité</label>
+                            <input type="number" class="form-control" id="editBookQuantity" name="quantity">
+                        </div>
+                        
+                        <button type="submit" class="btn btn-primary">Enregistrer les modifications</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal pour supprimer un livre -->
+    <div class="modal fade" id="deleteBookModal" tabindex="-1" aria-labelledby="deleteBookModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="deleteBookModalLabel">Supprimer le Livre</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Êtes-vous sûr de vouloir supprimer ce livre ?</p>
+                    <button type="button" class="btn btn-danger" id="confirmDeleteBook">Supprimer</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal pour ajouter un nouveau livre -->
+    <div class="modal fade" id="addBookModal" tabindex="-1" aria-labelledby="addBookModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addBookModalLabel">Ajouter un Nouveau Livre</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <!-- Formulaire pour ajouter un nouveau livre -->
+                    <form id="addBookForm">
+                        <div class="mb-3">
+                            <label for="addBookTitle" class="form-label">Titre <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="addBookTitle" name="title" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="addBookAuthor" class="form-label">Auteur <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="addBookAuthor" name="author" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="addBookCategory" class="form-label">Catégorie <span class="text-danger">*</span></label>
+                            <select class="form-control" id="addBookCategory" name="category" required>
+                                <option value="">Sélectionnez une catégorie</option>
+                                {% for category in books|map(attribute='category')|unique %}
+                                    <option value="{{ category }}">{{ category }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="addBookISBN" class="form-label">ISBN <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="addBookISBN" name="isbn" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="addBookPublicationYear" class="form-label">Année de publication <span class="text-danger">*</span></label>
+                            <input type="date" class="form-control" id="addBookPublicationYear" name="publication_year" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="addBookPublisher" class="form-label">Éditeur <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="addBookPublisher" name="publisher" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="addBookQuantity" class="form-label">Quantité <span class="text-danger">*</span></label>
+                            <input type="number" class="form-control" id="addBookQuantity" name="quantity" required>
+                        </div>
+                        
+                        <button type="submit" class="btn btn-primary">Ajouter le livre</button>
+                    </form>
                 </div>
             </div>
         </div>
@@ -125,6 +249,75 @@
                 modal.show();
             });
         });
+    // Script pour gérer les actions des boutons Modifier, Supprimer et Ajouter
+    document.querySelectorAll('.edit-book').forEach(button => {
+        button.addEventListener('click', function() {
+            const bookRow = this.closest('tr');
+            const bookDetails = {
+                title: bookRow.querySelector('td:nth-child(1)').textContent,
+                author: bookRow.querySelector('td:nth-child(2)').textContent,
+                category: bookRow.querySelector('td:nth-child(3)').textContent
+            };
+
+            document.getElementById('editBookTitle').value = bookDetails.title;
+            document.getElementById('editBookAuthor').value = bookDetails.author;
+            document.getElementById('editBookCategory').value = bookDetails.category;
+
+            const modal = new bootstrap.Modal(document.getElementById('editBookModal'));
+            modal.show();
+        });
+    });
+
+    document.querySelectorAll('.delete-book').forEach(button => {
+        button.addEventListener('click', function() {
+            const bookRow = this.closest('tr');
+            const bookTitle = bookRow.querySelector('td:nth-child(1)').textContent;
+
+            document.getElementById('deleteBookModalLabel').textContent = `Supprimer le Livre: ${bookTitle}`;
+
+            const modal = new bootstrap.Modal(document.getElementById('deleteBookModal'));
+            modal.show();
+        });
+    });
+
+    document.getElementById('addBookButton').addEventListener('click', function() {
+        const modal = new bootstrap.Modal(document.getElementById('addBookModal'));
+        modal.show();
+    });
+
+    // Gestion du formulaire d'ajout de livre
+    document.getElementById('addBookForm').addEventListener('submit', function(event) {
+        event.preventDefault(); // Empêche le rechargement de la page
+
+        const formData = new FormData(this);
+        const jsonData = Object.fromEntries(formData.entries()); // Convertit les données en JSON
+
+        fetch('/books/add', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(jsonData) // Dynamically convert form data to JSON
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Une erreur est survenue lors de l\'ajout du livre.');
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (data.success) {
+                alert('Livre ajouté avec succès !');
+                location.reload(); // Recharge la page pour afficher le nouveau livre
+            } else {
+                alert(`Erreur : ${data.message}`);
+            }
+        })
+        .catch(error => {
+            console.error(error);
+            alert('Une erreur est survenue. Veuillez réessayer.');
+        });
+    });
 </script>
 </body>
 </html>
