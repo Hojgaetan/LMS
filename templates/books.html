@@ -287,35 +287,92 @@
 
     // Gestion du formulaire d'ajout de livre
     document.getElementById('addBookForm').addEventListener('submit', function(event) {
-        event.preventDefault(); // Empêche le rechargement de la page
+        event.preventDefault();
 
+        // Récupération et validation des données du formulaire
         const formData = new FormData(this);
-        const jsonData = Object.fromEntries(formData.entries()); // Convertit les données en JSON
+        const jsonData = {};
+        
+        // Conversion des données du formulaire en JSON
+        formData.forEach((value, key) => {
+            // Traitement spécial pour la date de publication
+            if (key === 'publication_year') {
+                jsonData[key] = new Date(value).getFullYear();
+            } else if (key === 'category') {
+                // On s'assure d'envoyer le nom de la catégorie
+                const categorySelect = document.getElementById('addBookCategory');
+                jsonData[key] = categorySelect.options[categorySelect.selectedIndex].text;
+            } else {
+                jsonData[key] = value;
+            }
+        });
 
+        // Validation des données
+        if (!jsonData.title || !jsonData.author || !jsonData.category || !jsonData.isbn || !jsonData.publication_year || !jsonData.publisher || !jsonData.quantity) {
+            const errorAlert = document.createElement('div');
+            errorAlert.className = 'alert alert-danger alert-dismissible fade show';
+            errorAlert.innerHTML = `
+                Veuillez remplir tous les champs obligatoires
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            `;
+            document.querySelector('.container').insertBefore(errorAlert, document.querySelector('.table-responsive'));
+            return;
+        }
+
+        // Désactivation du bouton pendant l'envoi
+        const submitButton = this.querySelector('button[type="submit"]');
+        submitButton.disabled = true;
+        submitButton.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Envoi en cours...';
+
+        // Envoi des données au serveur
         fetch('/books/add', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify(jsonData) // Dynamically convert form data to JSON
+            body: JSON.stringify(jsonData)
         })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Une erreur est survenue lors de l\'ajout du livre.');
-            }
-            return response.json();
-        })
-        .then(data => {
-            if (data.success) {
-                alert('Livre ajouté avec succès !');
-                location.reload(); // Recharge la page pour afficher le nouveau livre
+        .then(response => response.json().then(data => ({
+            status: response.status,
+            data: data
+        })))
+        .then(({ status, data }) => {
+            if (status === 201 || status === 200) {
+                if (data.success) {
+                    // Affichage du message de succès
+                    const successAlert = document.createElement('div');
+                    successAlert.className = 'alert alert-success alert-dismissible fade show';
+                    successAlert.innerHTML = `
+                        ${data.message}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    `;
+                    document.querySelector('.container').insertBefore(successAlert, document.querySelector('.table-responsive'));
+                    
+                    // Fermeture du modal et rechargement de la page
+                    const modal = bootstrap.Modal.getInstance(document.getElementById('addBookModal'));
+                    modal.hide();
+                    setTimeout(() => location.reload(), 1500);
+                } else {
+                    throw new Error(data.message);
+                }
             } else {
-                alert(`Erreur : ${data.message}`);
+                throw new Error(data.message || 'Une erreur est survenue lors de l\'ajout du livre');
             }
         })
         .catch(error => {
-            console.error(error);
-            alert('Une erreur est survenue. Veuillez réessayer.');
+            // Affichage de l'erreur
+            const errorAlert = document.createElement('div');
+            errorAlert.className = 'alert alert-danger alert-dismissible fade show';
+            errorAlert.innerHTML = `
+                ${error.message}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            `;
+            document.querySelector('.container').insertBefore(errorAlert, document.querySelector('.table-responsive'));
+        })
+        .finally(() => {
+            // Réactivation du bouton
+            submitButton.disabled = false;
+            submitButton.innerHTML = 'Ajouter le livre';
         });
     });
 </script>

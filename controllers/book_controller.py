@@ -10,35 +10,56 @@ book_blueprint = Blueprint('books', __name__)
 
 @book_blueprint.route('/add', methods=['POST'])
 def add_book():
-    data = request.json
-    logging.debug(f"Received data: {data}")
-
     try:
+        data = request.json
+        logging.debug(f"Received data: {data}")
+
+        # Validation des champs requis
+        required_fields = ['title', 'author', 'category', 'isbn', 'publication_year', 'publisher', 'quantity']
+        missing_fields = [field for field in required_fields if not data.get(field)]
+        
+        if missing_fields:
+            return jsonify({
+                'success': False,
+                'message': f'Champs manquants: {", ".join(missing_fields)}'
+            }), 400
+
+        # Récupération des données
         titre = data.get('title')
         auteur_nom = data.get('author')
-        categorie_id = data.get('category')
+        categorie_nom = data.get('category')  # On reçoit le nom de la catégorie
         isbn = data.get('isbn')
         publication_year = data.get('publication_year')
         publisher = data.get('publisher')
         quantite = data.get('quantity')
 
-        if not titre or not auteur_nom or not categorie_id:
-            logging.error("Validation error: Missing required fields")
-            return jsonify({'success': False, 'message': 'Missing required fields'}), 400
-
+        # Vérification de l'auteur
         auteur = AuthorService.search_authors_by_name(auteur_nom)
-        logging.debug(f"Author search result: {auteur}")
-
         if not auteur:
             success, result = AuthorService.add_author(name=auteur_nom)
-            logging.debug(f"Author creation result: success={success}, result={result}")
             if not success:
-                logging.error(f"Author creation failed: {result}")
-                return jsonify({'success': False, 'message': result}), 400
+                return jsonify({
+                    'success': False,
+                    'message': f'Erreur lors de la création de l\'auteur: {result}'
+                }), 400
             auteur_id = result
         else:
             auteur_id = auteur[0].author_id if isinstance(auteur, list) else auteur.author_id
 
+        # Vérification de la catégorie
+        categorie = CategoryService.get_category_by_name(categorie_nom)
+        if not categorie:
+            success, result = CategoryService.add_category(name=categorie_nom)
+            if not success:
+                return jsonify({
+                    'success': False,
+                    'message': f'Erreur lors de la création de la catégorie: {result}'
+                }), 400
+            categorie_id = result
+        else:
+            categorie_id = categorie.category_id
+
+        # Ajout du livre
         success, result = BookService.add_book(
             title=titre,
             author_id=auteur_id,
@@ -48,17 +69,25 @@ def add_book():
             publisher=publisher,
             quantity=quantite
         )
-        logging.debug(f"Book creation result: success={success}, result={result}")
 
         if success:
-            return jsonify({'success': True, 'message': 'Book added successfully', 'book_id': result})
+            return jsonify({
+                'success': True,
+                'message': 'Livre ajouté avec succès',
+                'book_id': result
+            }), 201
         else:
-            logging.error(f"Book creation failed: {result}")
-            return jsonify({'success': False, 'message': result}), 400
+            return jsonify({
+                'success': False,
+                'message': f'Erreur lors de l\'ajout du livre: {result}'
+            }), 400
 
     except Exception as e:
-        logging.exception("An unexpected error occurred")
-        return jsonify({'success': False, 'message': str(e)}), 500
+        logging.exception("Une erreur inattendue s'est produite")
+        return jsonify({
+            'success': False,
+            'message': f'Erreur serveur: {str(e)}'
+        }), 500
 
 @book_blueprint.route('/delete/<int:book_id>', methods=['POST'])
 def delete_book(book_id):
