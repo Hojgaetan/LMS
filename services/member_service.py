@@ -103,3 +103,13 @@ class MemberService:
             member.loans = member.get_borrowings()
         return members
 
+    @staticmethod
+    def get_member_by_email(email):
+        """Return a member object if a member with the given email exists, else None."""
+        return Member.find_by_email(email)
+
+    @staticmethod
+    def get_all_members():
+        """Return a list of all members."""
+        return Member.find_all()
+

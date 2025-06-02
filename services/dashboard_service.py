@@ -80,3 +80,21 @@ class DashboardService:
         except Exception as e:
             raise Exception(f"Error fetching overdue books data: {str(e)}")
 
+    def get_members_data(self):
+        try:
+            members = self.member_service.get_all_members()
+            members_data = []
+            for member in members:
+                members_data.append({
+                    'id': getattr(member, 'member_id', None),
+                    'name': getattr(member, 'name', ''),
+                    'email': getattr(member, 'email', ''),
+                    'phone': getattr(member, 'phone', ''),
+                    'address': getattr(member, 'address', ''),
+                    'registration_date': getattr(member, 'registration_date', ''),
+                    'membership_type': getattr(member, 'membership_type', ''),
+                    'user_role': getattr(member, 'user_role', '')
+                })
+            return members_data
+        except Exception as e:
+            raise Exception(f"Error fetching members data: {str(e)}")

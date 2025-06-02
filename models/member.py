@@ -8,7 +8,7 @@ class Member(BaseModel):
     TABLE_NAME = "members"
     PRIMARY_KEY = "member_id"
 
-    def __init__(self, member_id=None, name=None, email=None, phone=None, address=None, registration_date=None, **kwargs):
+    def __init__(self, member_id=None, name=None, email=None, phone=None, address=None, registration_date=None, password=None, member_type=None, **kwargs):
         """Initialize a Member instance."""
         super().__init__(**kwargs)
         self.member_id = member_id

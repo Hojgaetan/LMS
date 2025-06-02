@@ -23,4 +23,13 @@ def books():
         return render_template('books.html', **stats, books=books_data)
     except Exception as e:
         return jsonify({'error': str(e)}), 500
-    
+
+@dashboard_blueprint.route('/members', methods=['GET'])
+def members():
+    try:
+        stats = dashboard_service.get_dashboard_statistics()
+        members_data = dashboard_service.get_members_data()
+        return render_template('members.html', **stats, members=members_data)
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+

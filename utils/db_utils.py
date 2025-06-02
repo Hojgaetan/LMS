@@ -130,7 +130,7 @@ class DatabaseConnection:
             email TEXT UNIQUE,
             phone TEXT,
             address TEXT,
-            registration_date TEXT DEFAULT CURRENT_TIMESTAMP
+            registration_date TEXT DEFAULT CURRENT_TIMESTAMP,
         )
         """
         )
