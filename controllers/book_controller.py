@@ -97,45 +97,78 @@ def delete_book(book_id):
     else:
         return jsonify({'success': False, 'message': message}), 400
 
-@book_blueprint.route('/update/<int:book_id>', methods=['POST'])
-def update_book(book_id):
-    book = BookService.get_book(book_id)
-    if not book:
-        return jsonify({'error': 'Book not found'}), 404
+@book_blueprint.route('/edit', methods=['POST'])
+def update_book():
+    try:
+        data = request.json
+        logging.debug(f"Received data for update: {data}")
 
-    titre = request.form.get('titre')
-    auteur_nom = request.form.get('auteur')
-    categorie_id = request.form.get('categorie')
-    isbn = request.form.get('isbn')
-    publication_year = request.form.get('publication_year')
-    publisher = request.form.get('publisher')
-    quantite = request.form.get('quantity', type=int)
+        # Validate required fields
+        required_fields = ['title', 'author', 'category', 'isbn', 'publication_year', 'publisher', 'quantity']
+        missing_fields = [field for field in required_fields if not data.get(field)]
+        if missing_fields:
+            return jsonify({
+                'success': False,
+                'message': f'Missing fields: {", ".join(missing_fields)}'
+            }), 400
 
-    auteur = AuthorService.search_authors_by_name(auteur_nom)
-    if not auteur:
-        success, result = AuthorService.add_author(name=auteur_nom)
-        if not success:
-            return jsonify({'success': False, 'message': result}), 400
-        auteur_id = result
-    else:
-        auteur_id = auteur[0].author_id if isinstance(auteur, list) else auteur.author_id
+        # Extract data
+        book_id = data.get('id')
+        title = data.get('title')
+        author_name = data.get('author')
+        category_name = data.get('category')
+        isbn = data.get('isbn')
+        publication_year = data.get('publication_year')
+        publisher = data.get('publisher')
+        quantity = data.get('quantity')
 
-    success, result = BookService.update_book(
-        book_id,
-        title=titre,
-        author_id=auteur_id,
-        category_id=categorie_id,
-        isbn=isbn,
-        publication_year=publication_year,
-        publisher=publisher,
-        quantity=quantite,
-        available_quantity=quantite
-    )
+        # Validate author
+        author = AuthorService.search_authors_by_name(author_name)
+        if not author:
+            success, author_id = AuthorService.add_author(name=author_name)
+            if not success:
+                return jsonify({
+                    'success': False,
+                    'message': f'Error adding author: {author_id}'
+                }), 400
+        else:
+            author_id = author[0].author_id if isinstance(author, list) else author.author_id
 
-    if success:
-        return jsonify({'success': True, 'message': 'Book updated successfully'})
-    else:
-        return jsonify({'success': False, 'message': result}), 400
+        # Validate category
+        category = CategoryService.get_category_by_name(category_name)
+        if not category:
+            success, category_id = CategoryService.add_category(name=category_name)
+            if not success:
+                return jsonify({
+                    'success': False,
+                    'message': f'Error adding category: {category_id}'
+                }), 400
+        else:
+            category_id = category.category_id
+
+        # Update book
+        success, message = BookService.update_book(
+            book_id=book_id,
+            title=title,
+            author_id=author_id,
+            category_id=category_id,
+            isbn=isbn,
+            publication_year=publication_year,
+            publisher=publisher,
+            quantity=quantity
+        )
+
+        if success:
+            return jsonify({'success': True, 'message': 'Book updated successfully'}), 200
+        else:
+            return jsonify({'success': False, 'message': message}), 400
+
+    except Exception as e:
+        logging.exception("An unexpected error occurred during book update")
+        return jsonify({
+            'success': False,
+            'message': f'Server error: {str(e)}'
+        }), 500
 
 @book_blueprint.route('/details/<int:book_id>', methods=['GET'])
 def book_details(book_id):
@@ -144,7 +177,7 @@ def book_details(book_id):
         return jsonify({'error': 'Book not found'}), 404
 
     author = AuthorService.get_author(book.author_id).name if book.author_id else ''
-    category = CategoryService.get_category(book.category_id).name if book.category_id else ''
+    category = CategoryService.get_category_name(book.category_id) if book.category_id else ''
 
     return jsonify({
         'title': book.title,
@@ -184,7 +217,7 @@ def get_books():
                 'id': book.book_id,
                 'title': book.title,
                 'author': AuthorService.get_author(book.author_id).name if book.author_id else '',
-                'category': CategoryService.get_category(book.category_id).name if book.category_id else '',
+                'category': CategoryService.get_category_name(book.category_id) if book.category_id else '',
                 'isbn': book.isbn,
                 'publication_year': book.publication_year,
                 'publisher': book.publisher,

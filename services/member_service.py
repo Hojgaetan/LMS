@@ -1,6 +1,4 @@
 from models.member import Member
-from utils.db_utils import DatabaseConnection
-
 
 class MemberService:
     """Controller for member-related operations."""

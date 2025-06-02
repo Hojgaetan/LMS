@@ -52,7 +52,7 @@
             </thead>
             <tbody>
                 {% for book in books %}
-                    <tr data-isbn="{{ book.isbn }}" data-publication-year="{{ book.publication_year }}" data-publisher="{{ book.publisher }}" data-quantity="{{ book.quantity }}" data-available-quantity="{{ book.available_quantity }}">
+                    <tr data-book-id="{{ book.id }}" data-isbn="{{ book.isbn }}" data-publication-year="{{ book.publication_year }}" data-publisher="{{ book.publisher }}" data-quantity="{{ book.quantity }}" data-available-quantity="{{ book.available_quantity }}">
                         <td>{{ book.title }}</td>
                         <td>{{ book.author }}</td>
                         <td>{{ book.category }}</td>
@@ -110,32 +110,37 @@
                     <!-- Formulaire pour modifier un livre -->
                     <form id="editBookForm">
                         <div class="mb-3">
-                            <label for="editBookTitle" class="form-label">Titre</label>
-                            <input type="text" class="form-control" id="editBookTitle" name="title">
+                            <label for="editBookTitle" class="form-label">Titre <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="editBookTitle" name="title" required>
                         </div>
                         <div class="mb-3">
-                            <label for="editBookAuthor" class="form-label">Auteur</label>
-                            <input type="text" class="form-control" id="editBookAuthor" name="author">
+                            <label for="editBookAuthor" class="form-label">Auteur <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="editBookAuthor" name="author" required>
                         </div>
                         <div class="mb-3">
-                            <label for="editBookCategory" class="form-label">Catégorie</label>
-                            <input type="text" class="form-control" id="editBookCategory" name="category">
+                            <label for="editBookCategory" class="form-label">Catégorie <span class="text-danger">*</span></label>
+                            <select class="form-control" id="editBookCategory" name="category" required>
+                                <option value="">Sélectionnez une catégorie</option>
+                                {% for category in books|map(attribute='category')|unique %}
+                                    <option value="{{ category }}">{{ category }}</option>
+                                {% endfor %}
+                            </select>
                         </div>
                         <div class="mb-3">
-                            <label for="editBookISBN" class="form-label">ISBN</label>
-                            <input type="text" class="form-control" id="editBookISBN" name="isbn">
+                            <label for="editBookISBN" class="form-label">ISBN <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="editBookISBN" name="isbn" required>
                         </div>
                         <div class="mb-3">
-                            <label for="editBookPublicationYear" class="form-label">Année de publication</label>
-                            <input type="number" class="form-control" id="editBookPublicationYear" name="publication_year">
+                            <label for="editBookPublicationYear" class="form-label">Année de publication <span class="text-danger">*</span></label>
+                            <input type="number" class="form-control" id="editBookPublicationYear" name="publication_year" placeholder="Année de publication" required>
                         </div>
                         <div class="mb-3">
-                            <label for="editBookPublisher" class="form-label">Éditeur</label>
-                            <input type="text" class="form-control" id="editBookPublisher" name="publisher">
+                            <label for="editBookPublisher" class="form-label">Éditeur <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="editBookPublisher" name="publisher" required>
                         </div>
                         <div class="mb-3">
-                            <label for="editBookQuantity" class="form-label">Quantité</label>
-                            <input type="number" class="form-control" id="editBookQuantity" name="quantity">
+                            <label for="editBookQuantity" class="form-label">Quantité <span class="text-danger">*</span></label>
+                            <input type="number" class="form-control" id="editBookQuantity" name="quantity" required>
                         </div>
                         
                         <button type="submit" class="btn btn-primary">Enregistrer les modifications</button>
@@ -256,15 +261,27 @@
             const bookDetails = {
                 title: bookRow.querySelector('td:nth-child(1)').textContent,
                 author: bookRow.querySelector('td:nth-child(2)').textContent,
-                category: bookRow.querySelector('td:nth-child(3)').textContent
+                category: bookRow.querySelector('td:nth-child(3)').textContent,
+                isbn: bookRow.dataset.isbn,
+                publicationYear: bookRow.dataset.publicationYear,
+                publisher: bookRow.dataset.publisher,
+                quantity: bookRow.dataset.quantity
             };
+
+            // Stockage de l'ID du livre dans le modal
+            const modal = document.getElementById('editBookModal');
+            modal.dataset.currentBookId = bookRow.dataset.bookId;
 
             document.getElementById('editBookTitle').value = bookDetails.title;
             document.getElementById('editBookAuthor').value = bookDetails.author;
             document.getElementById('editBookCategory').value = bookDetails.category;
+            document.getElementById('editBookISBN').value = bookDetails.isbn;
+            document.getElementById('editBookPublicationYear').value = bookDetails.publicationYear;
+            document.getElementById('editBookPublisher').value = bookDetails.publisher;
+            document.getElementById('editBookQuantity').value = bookDetails.quantity;
 
-            const modal = new bootstrap.Modal(document.getElementById('editBookModal'));
-            modal.show();
+            const modalInstance = new bootstrap.Modal(modal);
+            modalInstance.show();
         });
     });
 
@@ -373,6 +390,93 @@
             // Réactivation du bouton
             submitButton.disabled = false;
             submitButton.innerHTML = 'Ajouter le livre';
+        });
+    });
+
+    // Gestion du formulaire de modification de livre
+    document.getElementById('editBookForm').addEventListener('submit', function(event) {
+        event.preventDefault();
+
+        // Récupération et validation des données du formulaire
+        const formData = new FormData(this);
+        const jsonData = {};
+        
+        // Conversion des données du formulaire en JSON
+        formData.forEach((value, key) => {
+            jsonData[key] = value;
+        });
+
+        // Ajout de l'ID du livre
+        const modal = document.getElementById('editBookModal');
+        const bookRow = document.querySelector(`tr[data-book-id="${modal.dataset.currentBookId}"]`);
+        jsonData.id = bookRow.dataset.bookId;
+
+        // Validation des données
+        if (!jsonData.title || !jsonData.author || !jsonData.category || !jsonData.isbn || !jsonData.publication_year || !jsonData.publisher || !jsonData.quantity) {
+            const errorAlert = document.createElement('div');
+            errorAlert.className = 'alert alert-danger alert-dismissible fade show';
+            errorAlert.innerHTML = `
+                Veuillez remplir tous les champs obligatoires
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            `;
+            document.querySelector('.container').insertBefore(errorAlert, document.querySelector('.table-responsive'));
+            return;
+        }
+
+        // Désactivation du bouton pendant l'envoi
+        const submitButton = this.querySelector('button[type="submit"]');
+        submitButton.disabled = true;
+        submitButton.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Enregistrement en cours...';
+
+        // Envoi des données au serveur
+        fetch('/books/edit', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(jsonData)
+        })
+        .then(response => response.json().then(data => ({
+            status: response.status,
+            data: data
+        })))
+        .then(({ status, data }) => {
+            if (status === 200) {
+                if (data.success) {
+                    // Affichage du message de succès
+                    const successAlert = document.createElement('div');
+                    successAlert.className = 'alert alert-success alert-dismissible fade show';
+                    successAlert.innerHTML = `
+                        ${data.message}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    `;
+                    document.querySelector('.container').insertBefore(successAlert, document.querySelector('.table-responsive'));
+                    
+                    // Fermeture du modal et rechargement de la page
+                    const modal = bootstrap.Modal.getInstance(document.getElementById('editBookModal'));
+                    modal.hide();
+                    setTimeout(() => location.reload(), 1500);
+                } else {
+                    throw new Error(data.message);
+                }
+            } else {
+                throw new Error(data.message || 'Une erreur est survenue lors de la modification du livre');
+            }
+        })
+        .catch(error => {
+            // Affichage de l'erreur
+            const errorAlert = document.createElement('div');
+            errorAlert.className = 'alert alert-danger alert-dismissible fade show';
+            errorAlert.innerHTML = `
+                ${error.message}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            `;
+            document.querySelector('.container').insertBefore(errorAlert, document.querySelector('.table-responsive'));
+        })
+        .finally(() => {
+            // Réactivation du bouton
+            submitButton.disabled = false;
+            submitButton.innerHTML = 'Enregistrer les modifications';
         });
     });
 </script>
