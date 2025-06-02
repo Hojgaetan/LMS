@@ -1,4 +1,4 @@
-from flask import Blueprint, jsonify
+from flask import Blueprint, jsonify, request
 from services.member_service import MemberService
 
 member_blueprint = Blueprint('members', __name__)

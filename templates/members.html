@@ -103,6 +103,10 @@
     </div>
 </div>
 
+<!-- Toast Container -->
+<div class="toast-container position-fixed top-0 end-0 p-3">
+</div>
+
 {% for member in members %}
 <!-- Modal pour les détails du membre -->
 <div class="modal fade" id="detailsModal{{ member.id }}" tabindex="-1" aria-labelledby="detailsModalLabel{{ member.id }}" aria-hidden="true">
@@ -176,6 +180,85 @@
 <script>
     $(document).ready(function() {
         $('#membersTable').DataTable();
+    });
+</script>
+
+<script>
+    // Fonction pour afficher les notifications toast
+    function showToast(message, isSuccess = true) {
+        // Créer un nouvel élément toast
+        const toastContainer = document.querySelector('.toast-container');
+        const toastId = 'toast-' + Date.now();
+        const toastHTML = `
+            <div id="${toastId}" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+                <div class="toast-header ${isSuccess ? 'bg-success' : 'bg-danger'} text-white">
+                    <i class="bi ${isSuccess ? 'bi-check-circle' : 'bi-exclamation-circle'} me-2"></i>
+                    <strong class="me-auto">${isSuccess ? 'Succès' : 'Erreur'}</strong>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast" aria-label="Close"></button>
+                </div>
+                <div class="toast-body ${isSuccess ? 'bg-success' : 'bg-danger'} text-white">
+                    ${message}
+                </div>
+            </div>
+        `;
+        
+        // Ajouter le toast au conteneur
+        toastContainer.insertAdjacentHTML('beforeend', toastHTML);
+        
+        // Initialiser et afficher le toast
+        const toastElement = document.getElementById(toastId);
+        const bsToast = new bootstrap.Toast(toastElement, {
+            autohide: true,
+            delay: 10000
+        });
+        
+        // Supprimer le toast du DOM après qu'il soit caché
+        toastElement.addEventListener('hidden.bs.toast', function () {
+            toastElement.remove();
+        });
+        
+        bsToast.show();
+    }
+
+    // Gestion du formulaire d'ajout de membre
+    document.getElementById('addMemberForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        // Récupération des données du formulaire
+        const formData = {
+            name: document.getElementById('name').value,
+            email: document.getElementById('email').value,
+            phone: document.getElementById('phone').value,
+            address: document.getElementById('address').value
+        };
+
+        // Envoi de la requête AJAX
+        fetch('/members/add', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(formData)
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Afficher un message de succès
+                showToast(data.message, true);
+                // Fermer le modal
+                const modal = bootstrap.Modal.getInstance(document.getElementById('addMemberModal'));
+                modal.hide();
+                // Recharger la page pour afficher le nouveau membre
+                window.location.reload();
+            } else {
+                // Afficher le message d'erreur
+                showToast(data.message, false);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            showToast('Une erreur est survenue lors de l\'ajout du membre.', false);
+        });
     });
 </script>
 </body>
