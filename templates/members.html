@@ -12,6 +12,11 @@
 {% include 'includes/navbar.html' %}
 <div class="container">
     <h3 class="mb-4"><i class="bi bi-people me-2"></i>Membres</h3>
+    <div class="d-flex justify-content-end mb-4">
+        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addMemberModal">
+            <i class="bi bi-person-plus me-2"></i>Ajouter un Membre
+        </button>
+    </div>
     <div class="row text-center mb-4">
         <div class="col-md-6">
             <div class="card bg-light">
@@ -55,6 +60,46 @@
                 {% endfor %}
             </tbody>
         </table>
+    </div>
+</div>
+
+<!-- Modal pour ajouter un membre -->
+<div class="modal fade" id="addMemberModal" tabindex="-1" aria-labelledby="addMemberModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title" id="addMemberModalLabel">
+                    <i class="bi bi-person-plus me-2"></i>Ajouter un Membre
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form id="addMemberForm" method="POST" action="/members/add">
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="name" class="form-label">Nom complet <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" id="name" name="name" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="email" class="form-label">Email <span class="text-danger">*</span></label>
+                        <input type="email" class="form-control" id="email" name="email" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="phone" class="form-label">Téléphone <span class="text-danger">*</span></label>
+                        <input type="tel" class="form-control" id="phone" name="phone" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="address" class="form-label">Adresse <span class="text-danger">*</span></label>
+                        <textarea class="form-control" id="address" name="address" rows="2" required></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-save me-2"></i>Enregistrer
+                    </button>
+                </div>
+            </form>
+        </div>
     </div>
 </div>
 
