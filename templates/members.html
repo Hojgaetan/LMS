@@ -17,7 +17,7 @@
             <div class="card bg-light">
                 <div class="card-body">
                     <h5 class="card-title"><i class="bi bi-people me-2"></i>Total Membres</h5>
-                    <p class="card-text display-4">120</p>
+                    <p class="card-text display-4">{{ total_members }}</p>
                 </div>
             </div>
         </div>
@@ -25,7 +25,7 @@
             <div class="card bg-light">
                 <div class="card-body">
                     <h5 class="card-title"><i class="bi bi-person-lines-fill me-2"></i>Membres Actifs</h5>
-                    <p class="card-text display-4">80</p>
+                    <p class="card-text display-4">{{ total_active_members }}</p>
                 </div>
             </div>
         </div>
@@ -41,20 +41,90 @@
                 </tr>
             </thead>
             <tbody>
+                {% for member in members %}
                 <tr>
-                    <td>Exemple Membre</td>
-                    <td>exemple@mail.com</td>
-                    <td>+221 77 123 45 67</td>
+                    <td>{{ member.name }}</td>
+                    <td>{{ member.email }}</td>
+                    <td>{{ member.phone }}</td>
                     <td>
-                        <button class="btn btn-info btn-sm" title="Voir détails"><i class="bi bi-eye"></i></button>
-                        <button class="btn btn-primary btn-sm" title="Modifier"><i class="bi bi-pencil-square"></i></button>
-                        <button class="btn btn-danger btn-sm" title="Supprimer"><i class="bi bi-trash"></i></button>
+                        <button class="btn btn-info btn-sm" title="Voir détails" data-bs-toggle="modal" data-bs-target="#detailsModal{{ member.id }}"><i class="bi bi-eye"></i></button>
+                        <button class="btn btn-primary btn-sm" title="Modifier" data-bs-toggle="modal" data-bs-target="#editModal{{ member.id }}"><i class="bi bi-pencil-square"></i></button>
+                        <button class="btn btn-danger btn-sm" title="Supprimer" data-bs-toggle="modal" data-bs-target="#deleteModal{{ member.id }}"><i class="bi bi-trash"></i></button>
                     </td>
                 </tr>
+                {% endfor %}
             </tbody>
         </table>
     </div>
 </div>
+
+{% for member in members %}
+<!-- Modal pour les détails du membre -->
+<div class="modal fade" id="detailsModal{{ member.id }}" tabindex="-1" aria-labelledby="detailsModalLabel{{ member.id }}" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title" id="detailsModalLabel{{ member.id }}">
+                    <i class="bi bi-person-circle me-2"></i>Détails du Membre
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h6 class="mb-3"><i class="bi bi-person me-2"></i>Informations Personnelles</h6>
+                        <table class="table table-borderless">
+                            <tr>
+                                <th>Nom :</th>
+                                <td>{{ member.name }}</td>
+                            </tr>
+                            <tr>
+                                <th>Email :</th>
+                                <td>{{ member.email }}</td>
+                            </tr>
+                            <tr>
+                                <th>Téléphone :</th>
+                                <td>{{ member.phone }}</td>
+                            </tr>
+                            <tr>
+                                <th>Date d'inscription :</th>
+                                <td>{{ member.registration_date }}</td>
+                            </tr>
+                        </table>
+                    </div>
+                    <div class="col-md-6">
+                        <h6 class="mb-3"><i class="bi bi-book me-2"></i>Statistiques d'Emprunts</h6>
+                        <table class="table table-borderless">
+                            <tr>
+                                <th>Total des emprunts :</th>
+                                <td>{{ member.total_borrows }}</td>
+                            </tr>
+                            <tr>
+                                <th>Dernier emprunt :</th>
+                                <td>{{ member.last_borrow_date }}</td>
+                            </tr>
+                            <tr>
+                                <th>Statut :</th>
+                                <td>
+                                    {% if member.is_active %}
+                                    <span class="badge bg-success">Actif</span>
+                                    {% else %}
+                                    <span class="badge bg-danger">Inactif</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endfor %}
+
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
@@ -65,3 +135,5 @@
 </script>
 </body>
 </html>
+
+

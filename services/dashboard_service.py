@@ -92,8 +92,6 @@ class DashboardService:
                     'phone': getattr(member, 'phone', ''),
                     'address': getattr(member, 'address', ''),
                     'registration_date': getattr(member, 'registration_date', ''),
-                    'membership_type': getattr(member, 'membership_type', ''),
-                    'user_role': getattr(member, 'user_role', '')
                 })
             return members_data
         except Exception as e:
