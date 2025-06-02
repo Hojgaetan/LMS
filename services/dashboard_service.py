@@ -86,7 +86,7 @@ class DashboardService:
             members_data = []
             for member in members:
                 members_data.append({
-                    'id': getattr(member, 'member_id', None),
+                    'member_id': getattr(member, 'member_id', None),
                     'name': getattr(member, 'name', ''),
                     'email': getattr(member, 'email', ''),
                     'phone': getattr(member, 'phone', ''),

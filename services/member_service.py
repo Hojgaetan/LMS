@@ -14,24 +14,55 @@ class MemberService:
 
     @staticmethod
     def update_member(member_id, name=None, email=None, phone=None, address=None, status=None):
-        member = Member.find_by_id(member_id)
-        if not member:
-            return False, "Member not found."
-        if name:
-            member.name = name
-        if email:
-            member.email = email
-        if phone:
-            member.phone = phone
-        if address:
-            member.address = address
-        if status:
-            member.status = status
-        valid, msg = member.validate()
-        if not valid:
-            return False, msg
-        member.save()
-        return True, f"Member '{member_id}' updated successfully."
+        try:
+            print("Début de la mise à jour du membre:", member_id)  # Log de début
+            member = Member.find_by_id(member_id)
+            if not member:
+                print("Membre non trouvé dans le service")  # Log si le membre n'existe pas
+                return False, "Le membre n'a pas été trouvé dans la base de données."
+
+            print("Membre trouvé, données actuelles:", {  # Log des données actuelles
+                'name': member.name,
+                'email': member.email,
+                'phone': member.phone,
+                'address': member.address
+            })
+
+            # Mettre à jour les champs si fournis
+            if name is not None:
+                print("Mise à jour du nom:", name)  # Log de la mise à jour du nom
+                member.name = name
+            if email is not None:
+                print("Mise à jour de l'email:", email)  # Log de la mise à jour de l'email
+                member.email = email
+            if phone is not None:
+                print("Mise à jour du téléphone:", phone)  # Log de la mise à jour du téléphone
+                member.phone = phone
+            if address is not None:
+                print("Mise à jour de l'adresse:", address)  # Log de la mise à jour de l'adresse
+                member.address = address
+            if status is not None:
+                print("Mise à jour du statut:", status)  # Log de la mise à jour du statut
+                member.status = status
+
+            print("Validation des données")  # Log avant validation
+            # Valider les données
+            valid, msg = member.validate()
+            if not valid:
+                print("Erreur de validation:", msg)  # Log de l'erreur de validation
+                return False, msg
+
+            print("Sauvegarde des modifications")  # Log avant sauvegarde
+            # Sauvegarder les modifications
+            member.save()
+            print("Mise à jour réussie")  # Log de succès
+            return True, f"Les informations du membre ont été mises à jour avec succès."
+
+        except Exception as e:
+            print("Erreur dans update_member:", str(e))  # Log de l'erreur
+            import traceback
+            print("Traceback complet:", traceback.format_exc())  # Log du traceback complet
+            return False, f"Une erreur est survenue lors de la mise à jour : {str(e)}"
 
     @staticmethod
     def delete_member(member_id):

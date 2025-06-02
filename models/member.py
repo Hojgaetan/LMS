@@ -185,12 +185,21 @@ class Member(BaseModel):
     def validate(self):
         """Validate the member data."""
         if not self.name:
-            return False, "Member name is required"
+            return False, "Le nom du membre est obligatoire."
 
-        if self.email:
-            # Check if email is unique
+        if not self.email:
+            return False, "L'adresse email est obligatoire."
+
+        if not self.phone:
+            return False, "Le numéro de téléphone est obligatoire."
+
+        if not self.address:
+            return False, "L'adresse est obligatoire."
+
+        # Vérifier si l'email est unique uniquement si c'est un nouveau membre ou si l'email a changé
+        if self.email and (not self.member_id or self.email != self._get_attribute("email")):
             existing_member = Member.find_by_email(self.email)
             if existing_member and existing_member.member_id != self.member_id:
-                return False, f"A member with email {self.email} already exists"
+                return False, f"Un membre avec l'adresse email {self.email} existe déjà."
 
-        return True, "Member is valid"
+        return True, "Les informations du membre sont valides."

@@ -52,11 +52,75 @@
                     <td>{{ member.email }}</td>
                     <td>{{ member.phone }}</td>
                     <td>
-                        <button class="btn btn-info btn-sm" title="Voir détails" data-bs-toggle="modal" data-bs-target="#detailsModal{{ member.id }}"><i class="bi bi-eye"></i></button>
-                        <button class="btn btn-primary btn-sm" title="Modifier" data-bs-toggle="modal" data-bs-target="#editModal{{ member.id }}"><i class="bi bi-pencil-square"></i></button>
-                        <button class="btn btn-danger btn-sm" title="Supprimer" data-bs-toggle="modal" data-bs-target="#deleteModal{{ member.id }}"><i class="bi bi-trash"></i></button>
+                        <button class="btn btn-info btn-sm" title="Voir détails" data-bs-toggle="modal" data-bs-target="#detailsModal{{ member.member_id }}"><i class="bi bi-eye"></i></button>
+                        <button class="btn btn-primary btn-sm" title="Modifier" data-bs-toggle="modal" data-bs-target="#editModal{{ member.member_id }}"><i class="bi bi-pencil-square"></i></button>
+                        <button class="btn btn-danger btn-sm" title="Supprimer" data-bs-toggle="modal" data-bs-target="#deleteModal{{ member.member_id }}"><i class="bi bi-trash"></i></button>
                     </td>
                 </tr>
+
+                <!-- Modal pour modifier un membre -->
+                <div class="modal fade" id="editModal{{ member.member_id }}" tabindex="-1" aria-labelledby="editModalLabel{{ member.member_id }}" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header bg-primary text-white">
+                                <h5 class="modal-title" id="editModalLabel{{ member.member_id }}">
+                                    <i class="bi bi-pencil-square me-2"></i>Modifier le Membre
+                                </h5>
+                                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <form class="edit-member-form" data-member-id="{{ member.member_id }}">
+                                <div class="modal-body">
+                                    <div class="mb-3">
+                                        <label for="edit-name-{{ member.member_id }}" class="form-label">Nom complet <span class="text-danger">*</span></label>
+                                        <input type="text" class="form-control" id="edit-name-{{ member.member_id }}" name="name" value="{{ member.name }}" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="edit-email-{{ member.member_id }}" class="form-label">Email <span class="text-danger">*</span></label>
+                                        <input type="email" class="form-control" id="edit-email-{{ member.member_id }}" name="email" value="{{ member.email }}" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="edit-phone-{{ member.member_id }}" class="form-label">Téléphone <span class="text-danger">*</span></label>
+                                        <input type="tel" class="form-control" id="edit-phone-{{ member.member_id }}" name="phone" value="{{ member.phone }}" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="edit-address-{{ member.member_id }}" class="form-label">Adresse <span class="text-danger">*</span></label>
+                                        <textarea class="form-control" id="edit-address-{{ member.member_id }}" name="address" rows="2" required>{{ member.address }}</textarea>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="bi bi-save me-2"></i>Enregistrer
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Modal pour supprimer un membre -->
+                <div class="modal fade" id="deleteModal{{ member.member_id }}" tabindex="-1" aria-labelledby="deleteModalLabel{{ member.member_id }}" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header bg-danger text-white">
+                                <h5 class="modal-title" id="deleteModalLabel{{ member.member_id }}">
+                                    <i class="bi bi-exclamation-triangle me-2"></i>Confirmer la suppression
+                                </h5>
+                                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <p>Êtes-vous sûr de vouloir supprimer le membre <strong>{{ member.name }}</strong> ?</p>
+                                <p class="text-danger">Cette action est irréversible.</p>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                                <button type="button" class="btn btn-danger delete-member-btn" data-member-id="{{ member.member_id }}">
+                                    <i class="bi bi-trash me-2"></i>Supprimer
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
                 {% endfor %}
             </tbody>
         </table>
@@ -109,11 +173,11 @@
 
 {% for member in members %}
 <!-- Modal pour les détails du membre -->
-<div class="modal fade" id="detailsModal{{ member.id }}" tabindex="-1" aria-labelledby="detailsModalLabel{{ member.id }}" aria-hidden="true">
+<div class="modal fade" id="detailsModal{{ member.member_id }}" tabindex="-1" aria-labelledby="detailsModalLabel{{ member.member_id }}" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header bg-primary text-white">
-                <h5 class="modal-title" id="detailsModalLabel{{ member.id }}">
+                <h5 class="modal-title" id="detailsModalLabel{{ member.member_id }}">
                     <i class="bi bi-person-circle me-2"></i>Détails du Membre
                 </h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -137,7 +201,7 @@
                             </tr>
                             <tr>
                                 <th>Date d'inscription :</th>
-                                <td>{{ member.registration_date }}</td>
+                                <td>{{ member.registration_date if member.registration_date else 'Non spécifiée' }}</td>
                             </tr>
                         </table>
                     </div>
@@ -220,11 +284,47 @@
         bsToast.show();
     }
 
+    // Fonction utilitaire pour les requêtes AJAX
+    async function makeRequest(url, method, data) {
+        try {
+            console.log('Envoi de la requête:', { url, method, data });
+            const response = await fetch(url, {
+                method: method,
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify(data)
+            });
+
+            console.log('Statut de la réponse:', response.status);
+            console.log('Headers de la réponse:', Object.fromEntries(response.headers.entries()));
+
+            const contentType = response.headers.get('content-type');
+            if (!contentType || !contentType.includes('application/json')) {
+                const responseText = await response.text();
+                console.error('Réponse non-JSON:', responseText);
+                throw new TypeError("La réponse n'est pas au format JSON!");
+            }
+
+            const jsonData = await response.json();
+            console.log('Données reçues:', jsonData);
+
+            if (!response.ok) {
+                throw new Error(jsonData.message || 'Une erreur est survenue');
+            }
+
+            return jsonData;
+        } catch (error) {
+            console.error('Erreur détaillée:', error);
+            throw error;
+        }
+    }
+
     // Gestion du formulaire d'ajout de membre
-    document.getElementById('addMemberForm').addEventListener('submit', function(e) {
+    document.getElementById('addMemberForm').addEventListener('submit', async function(e) {
         e.preventDefault();
         
-        // Récupération des données du formulaire
         const formData = {
             name: document.getElementById('name').value,
             email: document.getElementById('email').value,
@@ -232,32 +332,84 @@
             address: document.getElementById('address').value
         };
 
-        // Envoi de la requête AJAX
-        fetch('/members/add', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(formData)
-        })
-        .then(response => response.json())
-        .then(data => {
+        try {
+            const data = await makeRequest('/members/add', 'POST', formData);
+            
             if (data.success) {
-                // Afficher un message de succès
-                showToast(data.message, true);
-                // Fermer le modal
+                showToast(`Le membre "${formData.name}" a été ajouté avec succès à la bibliothèque.`, true);
                 const modal = bootstrap.Modal.getInstance(document.getElementById('addMemberModal'));
                 modal.hide();
-                // Recharger la page pour afficher le nouveau membre
                 window.location.reload();
             } else {
-                // Afficher le message d'erreur
                 showToast(data.message, false);
             }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            showToast('Une erreur est survenue lors de l\'ajout du membre.', false);
+        } catch (error) {
+            showToast('Une erreur est survenue lors de l\'ajout du membre. Veuillez réessayer.', false);
+        }
+    });
+
+    // Gestion des formulaires de modification
+    document.querySelectorAll('.edit-member-form').forEach(form => {
+        form.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const memberId = this.dataset.memberId;
+            const memberName = document.getElementById(`edit-name-${memberId}`).value;
+            
+            const formData = {
+                member_id: memberId,
+                name: memberName,
+                email: document.getElementById(`edit-email-${memberId}`).value,
+                phone: document.getElementById(`edit-phone-${memberId}`).value,
+                address: document.getElementById(`edit-address-${memberId}`).value
+            };
+
+            try {
+                const data = await makeRequest('/members/update', 'POST', formData);
+                
+                if (data.success) {
+                    showToast(`Les informations de ${memberName} ont été mises à jour avec succès.`, true);
+                    const modal = bootstrap.Modal.getInstance(document.getElementById(`editModal${memberId}`));
+                    modal.hide();
+                    window.location.reload();
+                } else {
+                    showToast(data.message || 'Une erreur est survenue lors de la modification.', false);
+                }
+            } catch (error) {
+                showToast(error.message || 'Une erreur est survenue lors de la modification des informations du membre.', false);
+            }
+        });
+    });
+
+    // Gestion des boutons de suppression
+    document.querySelectorAll('.delete-member-btn').forEach(button => {
+        button.addEventListener('click', async function() {
+            const memberId = this.dataset.memberId;
+            const memberName = this.closest('.modal-content').querySelector('.modal-body strong').textContent;
+            console.log('Tentative de suppression du membre:', memberId);
+            
+            if (!memberId) {
+                showToast('Impossible de supprimer le membre : identifiant non trouvé.', false);
+                return;
+            }
+            
+            try {
+                const data = await makeRequest('/members/delete', 'POST', { 
+                    member_id: parseInt(memberId, 10) 
+                });
+                console.log('Réponse de suppression:', data);
+                
+                if (data.success) {
+                    showToast(`Le membre "${memberName}" a été supprimé avec succès de la bibliothèque.`, true);
+                    const modal = bootstrap.Modal.getInstance(document.getElementById(`deleteModal${memberId}`));
+                    modal.hide();
+                    window.location.reload();
+                } else {
+                    showToast(data.message || 'Impossible de supprimer le membre. Veuillez vérifier qu\'il n\'a pas d\'emprunts en cours.', false);
+                }
+            } catch (error) {
+                console.error('Erreur complète:', error);
+                showToast('Une erreur est survenue lors de la suppression du membre. Veuillez réessayer.', false);
+            }
         });
     });
 </script>

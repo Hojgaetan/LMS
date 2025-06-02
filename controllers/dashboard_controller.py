@@ -30,7 +30,16 @@ def members():
         stats = dashboard_service.get_dashboard_statistics()
         members_data = dashboard_service.get_members_data()
         members_loans_data = dashboard_service.get_members_loans_data()
-        return render_template('members.html', **stats, members=members_data, members_loans_data = members_loans_data)
+        
+        # Debug log
+        print("Members data:", members_data)
+        
+        return render_template('members.html', 
+                             total_members=stats['total_members'],
+                             total_active_members=stats['total_active_members'],
+                             members=members_data,
+                             members_loans_data=members_loans_data)
     except Exception as e:
+        print("Error in members route:", str(e))
         return jsonify({'error': str(e)}), 500
 
