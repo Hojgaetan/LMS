@@ -89,13 +89,46 @@ def add_book():
             'message': f'Erreur serveur: {str(e)}'
         }), 500
 
-@book_blueprint.route('/delete/<int:book_id>', methods=['POST'])
-def delete_book(book_id):
-    success, message = BookService.delete_book(book_id)
-    if success:
-        return jsonify({'success': True, 'message': message})
-    else:
-        return jsonify({'success': False, 'message': message}), 400
+@book_blueprint.route('/delete', methods=['POST'])
+def delete_book():
+    try:
+        data = request.get_json()
+        if not data or 'book_id' not in data:
+            return jsonify({
+                'success': False,
+                'message': 'ID du livre manquant dans la requête'
+            }), 400
+
+        book_id = data['book_id']
+        
+        # Vérifier si le livre existe
+        book = BookService.get_book(book_id)
+        if not book:
+            return jsonify({
+                'success': False,
+                'message': f'Livre avec ID {book_id} non trouvé'
+            }), 404
+
+        # Tenter la suppression
+        success, message = BookService.delete_book(book_id)
+        
+        if success:
+            return jsonify({
+                'success': True,
+                'message': message
+            }), 200
+        else:
+            return jsonify({
+                'success': False,
+                'message': message
+            }), 400
+
+    except Exception as e:
+        logging.exception("Erreur lors de la suppression du livre")
+        return jsonify({
+            'success': False,
+            'message': f'Erreur serveur: {str(e)}'
+        }), 500
 
 @book_blueprint.route('/edit', methods=['POST'])
 def update_book():
@@ -147,7 +180,7 @@ def update_book():
             category_id = category.category_id
 
         # Update book
-        success, message = BookService.update_book(
+        success, result = BookService.update_book(
             book_id=book_id,
             title=title,
             author_id=author_id,
@@ -159,9 +192,16 @@ def update_book():
         )
 
         if success:
-            return jsonify({'success': True, 'message': 'Book updated successfully'}), 200
+            return jsonify({
+                'success': True,
+                'message': 'Book updated successfully',
+                'book_id': result
+            }), 200
         else:
-            return jsonify({'success': False, 'message': message}), 400
+            return jsonify({
+                'success': False,
+                'message': result
+            }), 400
 
     except Exception as e:
         logging.exception("An unexpected error occurred during book update")
@@ -228,4 +268,11 @@ def get_books():
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
+@book_blueprint.route('/total-books', methods=['GET'])
+def total_books():
+    try:
+        total_books = BookService.count_books()
+        return jsonify({'total_books': total_books})
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
 

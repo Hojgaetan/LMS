@@ -288,13 +288,123 @@
     document.querySelectorAll('.delete-book').forEach(button => {
         button.addEventListener('click', function() {
             const bookRow = this.closest('tr');
+            const bookId = bookRow.dataset.bookId;
             const bookTitle = bookRow.querySelector('td:nth-child(1)').textContent;
 
             document.getElementById('deleteBookModalLabel').textContent = `Supprimer le Livre: ${bookTitle}`;
+            // Stocker l'ID du livre à supprimer dans le modal
+            const deleteModal = document.getElementById('deleteBookModal');
+            deleteModal.dataset.bookIdToDelete = bookId;
 
-            const modal = new bootstrap.Modal(document.getElementById('deleteBookModal'));
+            const modal = new bootstrap.Modal(deleteModal);
             modal.show();
         });
+    });
+
+    // Fonction pour mettre à jour les statistiques
+    function updateStatistics() {
+        fetch('/books/total-books')
+            .then(response => response.json())
+            .then(data => {
+                document.querySelector('.card-text.display-4').textContent = data.total_books;
+            })
+            .catch(error => console.error('Erreur lors de la mise à jour des statistiques:', error));
+
+        fetch('/books/total-popular-books')
+            .then(response => response.json())
+            .then(data => {
+                document.querySelectorAll('.card-text.display-4')[1].textContent = data.total_popular_books;
+            })
+            .catch(error => console.error('Erreur lors de la mise à jour des statistiques:', error));
+    }
+
+    // Gestion de la confirmation de suppression
+    const confirmDeleteBtn = document.getElementById('confirmDeleteBook');
+    if (confirmDeleteBtn) {
+        confirmDeleteBtn.addEventListener('click', function() {
+            const deleteModal = document.getElementById('deleteBookModal');
+            const bookId = deleteModal.dataset.bookIdToDelete;
+            
+            if (!bookId) {
+                showAlert('danger', 'Erreur: ID du livre non trouvé');
+                return;
+            }
+
+            // Désactiver le bouton pendant la suppression
+            this.disabled = true;
+            this.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Suppression...';
+
+            fetch('/books/delete', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ book_id: bookId })
+            })
+            .then(response => response.json().then(data => ({
+                status: response.status,
+                data: data
+            })))
+            .then(({ status, data }) => {
+                if (status === 200 && data.success) {
+                    // Retirer la ligne du tableau
+                    const row = document.querySelector(`tr[data-book-id='${bookId}']`);
+                    if (row) {
+                        row.remove();
+                        showAlert('success', data.message);
+                        // Mettre à jour les statistiques
+                        updateStatistics();
+                    }
+                    // Fermer le modal
+                    const modal = bootstrap.Modal.getInstance(deleteModal);
+                    if (modal) {
+                        modal.hide();
+                        // Nettoyer les données du modal
+                        deleteModal.dataset.bookIdToDelete = '';
+                        document.getElementById('deleteBookModalLabel').textContent = 'Supprimer le Livre';
+                    }
+                } else {
+                    throw new Error(data.message || 'Erreur lors de la suppression du livre');
+                }
+            })
+            .catch(error => {
+                showAlert('danger', error.message);
+            })
+            .finally(() => {
+                // Réactiver le bouton
+                this.disabled = false;
+                this.innerHTML = 'Supprimer';
+            });
+        });
+    }
+
+    // Fonction utilitaire pour afficher les alertes
+    function showAlert(type, message) {
+        const alertDiv = document.createElement('div');
+        alertDiv.className = `alert alert-${type} alert-dismissible fade show`;
+        alertDiv.innerHTML = `
+            ${message}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        `;
+        document.querySelector('.container').insertBefore(alertDiv, document.querySelector('.table-responsive'));
+        
+        // Supprimer l'alerte après 5 secondes
+        setTimeout(() => {
+            alertDiv.remove();
+        }, 5000);
+    }
+
+    // Gestionnaire d'événements pour le modal de suppression
+    document.getElementById('deleteBookModal').addEventListener('hidden.bs.modal', function () {
+        // Réinitialiser le bouton de confirmation
+        const confirmBtn = document.getElementById('confirmDeleteBook');
+        if (confirmBtn) {
+            confirmBtn.disabled = false;
+            confirmBtn.innerHTML = 'Supprimer';
+        }
+        // Nettoyer les données du modal
+        this.dataset.bookIdToDelete = '';
+        document.getElementById('deleteBookModalLabel').textContent = 'Supprimer le Livre';
     });
 
     document.getElementById('addBookButton').addEventListener('click', function() {
@@ -365,9 +475,14 @@
                     `;
                     document.querySelector('.container').insertBefore(successAlert, document.querySelector('.table-responsive'));
                     
-                    // Fermeture du modal et rechargement de la page
+                    // Fermeture du modal
                     const modal = bootstrap.Modal.getInstance(document.getElementById('addBookModal'));
                     modal.hide();
+                    
+                    // Mettre à jour les statistiques
+                    updateStatistics();
+                    
+                    // Recharger la page après un court délai
                     setTimeout(() => location.reload(), 1500);
                 } else {
                     throw new Error(data.message);
@@ -452,9 +567,14 @@
                     `;
                     document.querySelector('.container').insertBefore(successAlert, document.querySelector('.table-responsive'));
                     
-                    // Fermeture du modal et rechargement de la page
+                    // Fermeture du modal
                     const modal = bootstrap.Modal.getInstance(document.getElementById('editBookModal'));
                     modal.hide();
+                    
+                    // Mettre à jour les statistiques
+                    updateStatistics();
+                    
+                    // Recharger la page après un court délai
                     setTimeout(() => location.reload(), 1500);
                 } else {
                     throw new Error(data.message);

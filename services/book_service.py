@@ -144,6 +144,29 @@ class BookService:
         if not book:
             return False, f"Book with ID {book_id} not found"
 
+        # Si la quantité est modifiée, mettre à jour la quantité disponible
+        if 'quantity' in kwargs:
+            try:
+                # Convertir les valeurs en entiers
+                old_quantity = int(book.quantity)
+                new_quantity = int(kwargs['quantity'])
+                current_available = int(book.available_quantity)
+                
+                # Calculer la différence entre l'ancienne et la nouvelle quantité
+                quantity_diff = new_quantity - old_quantity
+                
+                # Mettre à jour la quantité disponible en conséquence
+                if quantity_diff > 0:
+                    # Si on ajoute des livres, augmenter la quantité disponible
+                    kwargs['available_quantity'] = current_available + quantity_diff
+                elif quantity_diff < 0:
+                    # Si on retire des livres, s'assurer qu'on ne retire pas plus que ce qui est disponible
+                    if abs(quantity_diff) > current_available:
+                        return False, "Impossible de réduire la quantité en dessous du nombre de livres actuellement disponibles"
+                    kwargs['available_quantity'] = current_available + quantity_diff
+            except ValueError:
+                return False, "La quantité doit être un nombre entier valide"
+
         # Update the book's attributes
         for key, value in kwargs.items():
             if hasattr(book, key):
@@ -178,8 +201,11 @@ class BookService:
             return False, f"Book with ID {book_id} not found"
 
         try:
-            book.delete()
-            return True, f"Book '{book.title}' deleted successfully"
+            # Utiliser la méthode delete statique de la classe Book avec l'ID
+            if Book.delete(book_id):
+                return True, f"Book '{book.title}' deleted successfully"
+            else:
+                return False, "Failed to delete book from database"
         except Exception as e:
             return False, f"Failed to delete book: {str(e)}"
 
