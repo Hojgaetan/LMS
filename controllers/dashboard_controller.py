@@ -57,11 +57,15 @@ def loans():
         stats = dashboard_service.get_dashboard_statistics()
         members_loans_data = dashboard_service.get_members_loans_data()
         overdue_borrowings = borrowing_service.get_overdue_borrowings()
+        
+        # Filtrer les membres qui ont des emprunts en cours
+        active_loans = [loan for loan in members_loans_data if loan.get('loans_count', 0) > 0]
+        
         return render_template(
             "loans.html",
-            total_loans=stats.get("total_books", 0),  # Using total_books as a placeholder
+            total_loans=len(active_loans),  # Nombre total d'emprunts actifs
             overdue_loans=len(overdue_borrowings),
-            loans_data=members_loans_data,
+            loans_data=active_loans,  # Utiliser uniquement les emprunts actifs
             overdue_books=overdue_borrowings
         )
     except Exception as e:
