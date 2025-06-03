@@ -238,7 +238,7 @@ class Book(BaseModel):
         query = f"SELECT COUNT(*) FROM {cls.TABLE_NAME}"
         result = DatabaseConnection.execute_query(query)
         return result[0][0] if result else 0
-    
+
     @classmethod
     def count_popular_books(cls, threshold=10):
         """Count the total number of popular books based on a loan threshold."""

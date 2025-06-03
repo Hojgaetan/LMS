@@ -57,11 +57,11 @@ class DatabaseConnection:
                 cursor.execute(query)
 
             # For UPDATE queries, return the number of rows affected
-            if query.strip().upper().startswith('UPDATE'):
+            if query.strip().upper().startswith("UPDATE"):
                 last_id = cursor.rowcount
             else:
                 last_id = cursor.lastrowid
-                
+
             conn.commit()
             return last_id
         except sqlite3.Error as e:

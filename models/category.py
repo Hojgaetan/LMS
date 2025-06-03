@@ -89,7 +89,7 @@ class Category(BaseModel):
             return False, "Category name is required"
 
         return True, "Category is valid"
-    
+
     @classmethod
     def count(cls):
         """Count the total number of categories."""

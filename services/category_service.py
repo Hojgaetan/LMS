@@ -87,4 +87,3 @@ class CategoryService:
                 if category.name.lower() == name.lower():
                     return category
         return None
-

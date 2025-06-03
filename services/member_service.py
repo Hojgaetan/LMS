@@ -1,5 +1,6 @@
 from models.member import Member
 
+
 class MemberService:
     """Controller for member-related operations."""
 
@@ -21,12 +22,15 @@ class MemberService:
                 print("Membre non trouvé dans le service")  # Log si le membre n'existe pas
                 return False, "Le membre n'a pas été trouvé dans la base de données."
 
-            print("Membre trouvé, données actuelles:", {  # Log des données actuelles
-                'name': member.name,
-                'email': member.email,
-                'phone': member.phone,
-                'address': member.address
-            })
+            print(
+                "Membre trouvé, données actuelles:",
+                {  # Log des données actuelles
+                    "name": member.name,
+                    "email": member.email,
+                    "phone": member.phone,
+                    "address": member.address,
+                },
+            )
 
             # Mettre à jour les champs si fournis
             if name is not None:
@@ -61,6 +65,7 @@ class MemberService:
         except Exception as e:
             print("Erreur dans update_member:", str(e))  # Log de l'erreur
             import traceback
+
             print("Traceback complet:", traceback.format_exc())  # Log du traceback complet
             return False, f"Une erreur est survenue lors de la mise à jour : {str(e)}"
 
@@ -95,22 +100,24 @@ class MemberService:
         member.status = status
         member.save()
         return True, f"Member '{member_id}' status updated to {status}."
-    
+
     def get_members_loans_data(self):
         try:
             members = self.member_model.get_all_members_with_loans()
             members_loans_data = []
             for member in members:
-                members_loans_data.append({
-                    'name': member.name,
-                    'email': member.email,
-                    'loans_count': len(member.loans),
-                    'last_loan_due_date': member.loans[-1].due_date if member.loans else None
-                })
+                members_loans_data.append(
+                    {
+                        "name": member.name,
+                        "email": member.email,
+                        "loans_count": len(member.loans),
+                        "last_loan_due_date": member.loans[-1].due_date if member.loans else None,
+                    }
+                )
             return members_loans_data
         except Exception as e:
             raise Exception(f"Error fetching members loans data: {str(e)}")
-    
+
     @staticmethod
     def count_members():
         """Count the total number of members."""
@@ -143,4 +150,3 @@ class MemberService:
     def get_all_members():
         """Return a list of all members."""
         return Member.find_all()
-

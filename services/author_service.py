@@ -74,4 +74,3 @@ class AuthorService:
         """
         author = Author.find_by_id(author_id)
         return author.name if author else None
-
