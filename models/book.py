@@ -245,12 +245,13 @@ class Book(BaseModel):
         query = f"""
         SELECT COUNT(DISTINCT b.book_id)
         FROM {cls.TABLE_NAME} AS b
-        JOIN loans AS l ON b.book_id = l.book_id
+        JOIN borrowings AS br ON b.book_id = br.book_id
         GROUP BY b.book_id
-        HAVING COUNT(l.book_id) >= ?
+        HAVING COUNT(br.book_id) >= ?
         """
         result = DatabaseConnection.execute_query(query, (threshold,))
-        return result[0][0] if result else 0
+        # The query returns one row per popular book; count rows
+        return len(result) if result else 0
 
     @classmethod
     def count_overdue_books(cls):
@@ -258,8 +259,8 @@ class Book(BaseModel):
         query = f"""
         SELECT COUNT(DISTINCT b.book_id)
         FROM {cls.TABLE_NAME} AS b
-        JOIN loans AS l ON b.book_id = l.book_id
-        WHERE l.due_date < DATE('now') AND l.return_date IS NULL
+        JOIN borrowings AS br ON b.book_id = br.book_id
+        WHERE date(br.due_date) < date('now') AND br.return_date IS NULL
         """
         result = DatabaseConnection.execute_query(query)
         return result[0][0] if result else 0
@@ -275,8 +276,8 @@ class Book(BaseModel):
         query = f"""
         SELECT b.*
         FROM {cls.TABLE_NAME} AS b
-        JOIN loans AS l ON b.book_id = l.book_id
-        WHERE l.due_date < DATE('now') AND l.return_date IS NULL
+        JOIN borrowings AS br ON b.book_id = br.book_id
+        WHERE date(br.due_date) < date('now') AND br.return_date IS NULL
         """
         results = DatabaseConnection.execute_query(query)
 
@@ -368,9 +369,9 @@ class Book(BaseModel):
         query = f"""
         SELECT b.*
         FROM {cls.TABLE_NAME} AS b
-        JOIN loans AS l ON b.book_id = l.book_id
+        JOIN borrowings AS br ON b.book_id = br.book_id
         GROUP BY b.book_id
-        HAVING COUNT(l.book_id) >= ?
+        HAVING COUNT(br.book_id) >= ?
         """
         results = DatabaseConnection.execute_query(query, (threshold,))
 

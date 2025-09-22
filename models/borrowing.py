@@ -149,9 +149,8 @@ class Borrowing(BaseModel):
     @classmethod
     def find_overdue(cls):
         """Find all overdue borrowings."""
-        current_date = datetime.now().strftime("%Y-%m-%d")
-        query = f"SELECT * FROM {cls.TABLE_NAME} WHERE due_date < ? AND return_date IS NULL"
-        results = DatabaseConnection.execute_query(query, (current_date,))
+        query = f"SELECT * FROM {cls.TABLE_NAME} WHERE date(due_date) < date('now') AND return_date IS NULL"
+        results = DatabaseConnection.execute_query(query)
 
         if results:
             # Convert the result tuples to dictionaries using column names

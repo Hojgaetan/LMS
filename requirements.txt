@@ -1,0 +1,6 @@
+# Dépendances de l’application
+Flask>=2.3,<4
+
+# Dépendances de développement (tests)
+pytest>=8,<9
+

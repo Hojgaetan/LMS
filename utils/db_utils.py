@@ -131,6 +131,7 @@ class DatabaseConnection:
             phone TEXT,
             address TEXT,
             registration_date TEXT DEFAULT CURRENT_TIMESTAMP,
+            status TEXT DEFAULT 'active'
         )
         """
         )

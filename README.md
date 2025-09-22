@@ -52,98 +52,123 @@ The Library Management System (LMS) is designed to be scalable, modular, and use
 ## Project Structure
 ```
 LMS/
-│   main.py                  # Main application entry point
-│   book_management.py       # Book management utilities
-│   features.md              # Use case documentation
-│   library.db               # SQLite database
-│   test_book_management.py  # Unit tests
-│   uml_diagram.md           # UML diagrams
+│  app.py                   # Flask app entrypoint (web UI)
+│  main.py                  # CLI entrypoint
+│  book_management.py       # Book management utilities
+│  features.md              # Use case documentation
+│  library.db               # SQLite database (generated)
+│  uml_diagram.md           # UML diagrams
+│  requirements.txt         # Python dependencies
 │
-├── controllers/
-│   ├── book_controller.py
-│   ├── database_controller.py
-│   └── ...
-├── models/
-│   ├── book.py
-│   ├── author.py
-│   ├── category.py
-│   ├── member.py
-│   ├── borrowing.py
-│   └── ...
-├── views/
-│   ├── book_view.py
-│   ├── menu_view.py
-│   └── ...
-├── utils/
-│   └── db_utils.py
-└── README.md                # Project documentation
+├─ controllers/
+│  ├─ book_controller.py
+│  ├─ member_controller.py
+│  ├─ dashboard_controller.py
+│  ├─ database_controller.py
+│  └─ ...
+├─ services/
+│  ├─ book_service.py
+│  ├─ member_service.py
+│  ├─ category_service.py
+│  ├─ author_service.py
+│  ├─ borrowing_service.py
+│  ├─ dashboard_service.py
+│  └─ database_service.py
+├─ models/
+│  ├─ book.py
+│  ├─ author.py
+│  ├─ category.py
+│  ├─ member.py
+│  ├─ borrowing.py
+│  └─ base_model.py
+├─ templates/               # HTML templates for Flask views
+│  ├─ index.html
+│  ├─ books.html
+│  ├─ members.html
+│  ├─ loans.html
+│  └─ ...
+├─ static/
+│  ├─ css/
+│  └─ js/
+├─ views/
+│  ├─ menu_view.py
+│  ├─ book_view.py
+│  └─ ...
+└─ utils/
+   └─ db_utils.py
 ```
 
-## Installation & Setup
+## Installation & Setup (Windows / cmd.exe)
 
-Follow these steps to set up the Library Management System (LMS) on your local machine:
+Suivez ces étapes pour installer et lancer LMS en local.
 
-### 1. Clone the Repository
-Clone the project repository from GitHub and navigate to the project directory:
-```bash
-git clone <repository-url>
+1) Cloner le dépôt
+```
+git clone https://github.com/Hojgaetan/LMS.git
 cd LMS
 ```
 
-### 2. Install Dependencies
-Ensure Python 3.x is installed on your system. Install the required dependencies using `pip`:
-```bash
-pip install -r requirements.txt
+2) Créer un environnement virtuel et l’activer
 ```
-> **Note**: The `requirements.txt` file contains all necessary libraries for the application.
-
-### 3. Initialize the Database
-The SQLite database will be automatically initialized on the first run of the application. No manual setup is required.
-
-### 4. Run the Application
-Start the application by running the following command:
-```bash
-python main.py
-```
-
-> **Tip**: For development purposes, you can use a virtual environment to isolate dependencies:
-```bash
 python -m venv venv
-source venv/bin/activate  # On Linux/Mac
-venv\Scripts\activate     # On Windows
+venv\Scripts\activate
+```
+
+3) Installer les dépendances
+```
 pip install -r requirements.txt
+```
+
+4) Initialiser la base de données (première utilisation)
+- Cette étape crée les tables et insère des données d’exemple si la base n’existe pas encore.
+```
+python -c "from services.database_service import DatabaseService; DatabaseService.initialize_database()"
+```
+- Pour réinitialiser complètement la base (attention: suppression des données), exécutez:
+```
+python -c "from services.database_service import DatabaseService; DatabaseService.reset_database()"
+```
+
+5) Lancer l’application
+- Mode Web (Flask):
+```
+python app.py
+```
+Puis ouvrez http://127.0.0.1:5000/ dans votre navigateur.
+
+- Mode CLI (terminal):
+```
+python main.py
 ```
 
 ---
 
-### Additional Notes:
-- Ensure you have Git installed for cloning the repository.
-- If you encounter issues with dependencies, verify your Python version and ensure compatibility with the libraries listed in `requirements.txt`.
-- For database backups or migrations, refer to the `utils/db_utils.py` file for additional scripts.
+### Conseils
+- Assurez-vous d’utiliser Python 3.10+.
+- Si vous mettez à jour des dépendances, relancez l’installation: `pip install -r requirements.txt`.
+- Le fichier `library.db` est créé à la racine du projet.
 
+### Dépannage
+- Port déjà utilisé pour Flask: changez de port en lançant `python app.py` après avoir défini la variable d’environnement `set FLASK_RUN_PORT=5050` et adaptez l’URL, ou modifiez l’appel `app.run()`.
+- Problèmes de base de données: utilisez la commande de réinitialisation ci-dessus.
+- En cas d’erreur de modules manquants, vérifiez l’activation de l’environnement virtuel.
 
 ## Technologies Used
-
 - 🐍 **Python 3**: Core programming language for building the application.
 - 🗄️ **SQLite**: Lightweight database for persistent storage of library data.
 - 🏗️ **MVC Architectural Pattern**: Ensures separation of concerns and modular design.
-- 🌐 **Flask**: (Optional) For future web-based interface development.
-- 🧪 **Pytest**: Framework for writing and running unit tests.
+- 🌐 **Flask**: Web interface (blueprints, templates, static assets).
+- 🧪 **Pytest**: (optionnel) Framework pour exécuter des tests unitaires si présents.
 - 🛠️ **Git**: Version control system for collaboration and code management.
 - 📄 **Markdown**: Used for project documentation.
 
 ## Usage
-- Interact with the system via the command-line interface.
-- Navigate the main menu to access book, author, category, member, and borrowing management features.
-- Generate reports and perform administrative tasks as needed.
-
-## Extensibility
-The LMS is designed for extensibility. New features, modules, or integrations (e.g., web interface, REST API) can be added with minimal changes to the core architecture.
+- Via l’interface Web: naviguez entre le tableau de bord, les livres, les membres et les prêts.
+- Via le CLI: utilisez le menu principal pour gérer livres, auteurs, catégories, membres et emprunts.
 
 ## Documentation
 - **features.md**: Detailed use cases and functional requirements
 - **uml_diagram.md**: System architecture and class diagrams
-- **test_book_management.py**: Example unit tests
 
 ## Feature Implementation Status
 

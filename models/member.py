@@ -139,8 +139,8 @@ class Member(BaseModel):
         query = f"""
         SELECT COUNT(DISTINCT m.member_id)
         FROM {cls.TABLE_NAME} AS m
-        JOIN loans AS l ON m.member_id = l.member_id
-        WHERE l.return_date IS NULL
+        JOIN borrowings AS br ON m.member_id = br.member_id
+        WHERE br.return_date IS NULL
         """
         result = DatabaseConnection.execute_query(query)
         return result[0][0] if result else 0
