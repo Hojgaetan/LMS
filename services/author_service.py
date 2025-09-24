@@ -47,6 +47,15 @@ class AuthorService:
     def list_authors():
         return Author.all()
 
+    # Alias rétrocompatible pour éviter les erreurs si du code externe utilise encore ce nom.
+    @staticmethod
+    def get_all_authors():
+        """
+        Deprecated: utiliser list_authors().
+        Conserve la compatibilité avec l'ancien code.
+        """
+        return AuthorService.list_authors()
+
     @staticmethod
     def search_authors_by_name(name):
         return Author.find_by_name(name)
