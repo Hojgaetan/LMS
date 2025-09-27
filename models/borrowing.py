@@ -27,14 +27,14 @@ class Borrowing(BaseModel):
         self.member_id = member_id
 
         # Set borrow date with default value if not provided
-        borrow_date = borrow_date or datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        borrow_date = borrow_date or datetime.now().strftime("%Y-%m-%d")
         self.borrow_date = borrow_date
 
         # Calculate due date if not provided
         if not due_date:
-            borrow_datetime = datetime.strptime(self.borrow_date, "%Y-%m-%d %H:%M:%S")
+            borrow_datetime = datetime.strptime(self.borrow_date, "%Y-%m-%d")
             due_datetime = borrow_datetime + timedelta(days=14)
-            due_date = due_datetime.strftime("%Y-%m-%d %H:%M:%S")
+            due_date = due_datetime.strftime("%Y-%m-%d")
         self.due_date = due_date
 
         self.return_date = return_date
@@ -149,9 +149,8 @@ class Borrowing(BaseModel):
     @classmethod
     def find_overdue(cls):
         """Find all overdue borrowings."""
-        current_date = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        query = f"SELECT * FROM {cls.TABLE_NAME} WHERE due_date < ? AND return_date IS NULL"
-        results = DatabaseConnection.execute_query(query, (current_date,))
+        query = f"SELECT * FROM {cls.TABLE_NAME} WHERE date(due_date) < date('now') AND return_date IS NULL"
+        results = DatabaseConnection.execute_query(query)
 
         if results:
             # Convert the result tuples to dictionaries using column names
@@ -182,7 +181,7 @@ class Borrowing(BaseModel):
         if self.status == "returned":
             return False, "Book already returned"
 
-        self.return_date = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        self.return_date = datetime.now().strftime("%Y-%m-%d")
         self.status = "returned"
 
         # Update the book's available quantity

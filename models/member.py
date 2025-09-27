@@ -8,7 +8,18 @@ class Member(BaseModel):
     TABLE_NAME = "members"
     PRIMARY_KEY = "member_id"
 
-    def __init__(self, member_id=None, name=None, email=None, phone=None, address=None, registration_date=None, **kwargs):
+    def __init__(
+        self,
+        member_id=None,
+        name=None,
+        email=None,
+        phone=None,
+        address=None,
+        registration_date=None,
+        password=None,
+        member_type=None,
+        **kwargs,
+    ):
         """Initialize a Member instance."""
         super().__init__(**kwargs)
         self.member_id = member_id
@@ -128,8 +139,8 @@ class Member(BaseModel):
         query = f"""
         SELECT COUNT(DISTINCT m.member_id)
         FROM {cls.TABLE_NAME} AS m
-        JOIN loans AS l ON m.member_id = l.member_id
-        WHERE l.return_date IS NULL
+        JOIN borrowings AS br ON m.member_id = br.member_id
+        WHERE br.return_date IS NULL
         """
         result = DatabaseConnection.execute_query(query)
         return result[0][0] if result else 0
@@ -185,12 +196,21 @@ class Member(BaseModel):
     def validate(self):
         """Validate the member data."""
         if not self.name:
-            return False, "Member name is required"
+            return False, "Le nom du membre est obligatoire."
 
-        if self.email:
-            # Check if email is unique
+        if not self.email:
+            return False, "L'adresse email est obligatoire."
+
+        if not self.phone:
+            return False, "Le numéro de téléphone est obligatoire."
+
+        if not self.address:
+            return False, "L'adresse est obligatoire."
+
+        # Vérifier si l'email est unique uniquement si c'est un nouveau membre ou si l'email a changé
+        if self.email and (not self.member_id or self.email != self._get_attribute("email")):
             existing_member = Member.find_by_email(self.email)
             if existing_member and existing_member.member_id != self.member_id:
-                return False, f"A member with email {self.email} already exists"
+                return False, f"Un membre avec l'adresse email {self.email} existe déjà."
 
-        return True, "Member is valid"
+        return True, "Les informations du membre sont valides."

@@ -101,8 +101,8 @@ class BaseModel:
             values.append(primary_key_value)  # Add the primary key value for the WHERE clause
 
             query = f"UPDATE {self.__class__.TABLE_NAME} SET {set_clause} WHERE {self.__class__.PRIMARY_KEY} = ?"
-            DatabaseConnection.execute_query(query, values)
-            return primary_key_value
+            result = DatabaseConnection.execute_insert(query, values)
+            return result if result is not None else primary_key_value
         else:
             # Insert new record
             columns = ", ".join(attributes.keys())
