@@ -26,7 +26,10 @@ class AuthorService:
         valid, msg = author.validate()
         if not valid:
             return False, msg
-        author.save()
+        try:
+            author.save()
+        except Exception as e:
+            return False, f"Failed to update author: {str(e)}"
         return True, f"Author '{author_id}' updated successfully."
 
     @staticmethod
@@ -34,12 +37,24 @@ class AuthorService:
         author = Author.find_by_id(author_id)
         if not author:
             return False, "Author not found."
-        author.delete()
+        try:
+            author.delete()
+        except Exception as e:
+            return False, f"Failed to delete author: {str(e)}"
         return True, f"Author '{author_id}' deleted successfully."
 
     @staticmethod
     def list_authors():
         return Author.all()
+
+    # Alias rétrocompatible pour éviter les erreurs si du code externe utilise encore ce nom.
+    @staticmethod
+    def get_all_authors():
+        """
+        Deprecated: utiliser list_authors().
+        Conserve la compatibilité avec l'ancien code.
+        """
+        return AuthorService.list_authors()
 
     @staticmethod
     def search_authors_by_name(name):
@@ -54,3 +69,17 @@ class AuthorService:
             int: The total number of authors
         """
         return len(Author.all())
+
+    @staticmethod
+    def get_author_name(author_id):
+        """
+        Get the name of an author by their ID.
+
+        Args:
+            author_id (int): The ID of the author.
+
+        Returns:
+            str: The name of the author, or None if not found.
+        """
+        author = Author.find_by_id(author_id)
+        return author.name if author else None

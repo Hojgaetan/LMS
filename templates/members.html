@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Membres - LMS</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.min.css">
+</head>
+<body>
+{% include 'includes/navbar.html' %}
+<div class="container">
+    <h3 class="mb-4"><i class="bi bi-people me-2"></i>Membres</h3>
+    <div class="d-flex justify-content-end mb-4">
+        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addMemberModal">
+            <i class="bi bi-person-plus me-2"></i>Ajouter un Membre
+        </button>
+    </div>
+    <div class="row text-center mb-4">
+        <div class="col-md-6">
+            <div class="card bg-light">
+                <div class="card-body">
+                    <h5 class="card-title"><i class="bi bi-people me-2"></i>Total Membres</h5>
+                    <p class="card-text display-4">{{ total_members }}</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card bg-light">
+                <div class="card-body">
+                    <h5 class="card-title"><i class="bi bi-person-lines-fill me-2"></i>Membres Actifs</h5>
+                    <p class="card-text display-4">{{ total_active_members }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="table-responsive">
+        <table id="membersTable" class="table table-striped table-hover align-middle">
+            <thead class="table-primary">
+                <tr>
+                    <th><i class="bi bi-person"></i> Nom</th>
+                    <th><i class="bi bi-envelope"></i> Email</th>
+                    <th><i class="bi bi-phone"></i> Téléphone</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for member in members %}
+                <tr>
+                    <td>{{ member.name }}</td>
+                    <td>{{ member.email }}</td>
+                    <td>{{ member.phone }}</td>
+                    <td>
+                        <button class="btn btn-info btn-sm" title="Voir détails" data-bs-toggle="modal" data-bs-target="#detailsModal{{ member.member_id }}"><i class="bi bi-eye"></i></button>
+                        <button class="btn btn-primary btn-sm" title="Modifier" data-bs-toggle="modal" data-bs-target="#editModal{{ member.member_id }}"><i class="bi bi-pencil-square"></i></button>
+                        <button class="btn btn-danger btn-sm" title="Supprimer" data-bs-toggle="modal" data-bs-target="#deleteModal{{ member.member_id }}"><i class="bi bi-trash"></i></button>
+                    </td>
+                </tr>
+
+                <!-- Modal pour modifier un membre -->
+                <div class="modal fade" id="editModal{{ member.member_id }}" tabindex="-1" aria-labelledby="editModalLabel{{ member.member_id }}" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header bg-primary text-white">
+                                <h5 class="modal-title" id="editModalLabel{{ member.member_id }}">
+                                    <i class="bi bi-pencil-square me-2"></i>Modifier le Membre
+                                </h5>
+                                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <form class="edit-member-form" data-member-id="{{ member.member_id }}">
+                                <div class="modal-body">
+                                    <div class="mb-3">
+                                        <label for="edit-name-{{ member.member_id }}" class="form-label">Nom complet <span class="text-danger">*</span></label>
+                                        <input type="text" class="form-control" id="edit-name-{{ member.member_id }}" name="name" value="{{ member.name }}" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="edit-email-{{ member.member_id }}" class="form-label">Email <span class="text-danger">*</span></label>
+                                        <input type="email" class="form-control" id="edit-email-{{ member.member_id }}" name="email" value="{{ member.email }}" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="edit-phone-{{ member.member_id }}" class="form-label">Téléphone <span class="text-danger">*</span></label>
+                                        <input type="tel" class="form-control" id="edit-phone-{{ member.member_id }}" name="phone" value="{{ member.phone }}" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="edit-address-{{ member.member_id }}" class="form-label">Adresse <span class="text-danger">*</span></label>
+                                        <textarea class="form-control" id="edit-address-{{ member.member_id }}" name="address" rows="2" required>{{ member.address }}</textarea>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="bi bi-save me-2"></i>Enregistrer
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Modal pour supprimer un membre -->
+                <div class="modal fade" id="deleteModal{{ member.member_id }}" tabindex="-1" aria-labelledby="deleteModalLabel{{ member.member_id }}" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header bg-danger text-white">
+                                <h5 class="modal-title" id="deleteModalLabel{{ member.member_id }}">
+                                    <i class="bi bi-exclamation-triangle me-2"></i>Confirmer la suppression
+                                </h5>
+                                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <p>Êtes-vous sûr de vouloir supprimer le membre <strong>{{ member.name }}</strong> ?</p>
+                                <p class="text-danger">Cette action est irréversible.</p>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                                <button type="button" class="btn btn-danger delete-member-btn" data-member-id="{{ member.member_id }}">
+                                    <i class="bi bi-trash me-2"></i>Supprimer
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Modal pour ajouter un membre -->
+<div class="modal fade" id="addMemberModal" tabindex="-1" aria-labelledby="addMemberModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title" id="addMemberModalLabel">
+                    <i class="bi bi-person-plus me-2"></i>Ajouter un Membre
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form id="addMemberForm" method="POST" action="/members/add">
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="name" class="form-label">Nom complet <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" id="name" name="name" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="email" class="form-label">Email <span class="text-danger">*</span></label>
+                        <input type="email" class="form-control" id="email" name="email" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="phone" class="form-label">Téléphone <span class="text-danger">*</span></label>
+                        <input type="tel" class="form-control" id="phone" name="phone" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="address" class="form-label">Adresse <span class="text-danger">*</span></label>
+                        <textarea class="form-control" id="address" name="address" rows="2" required></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-save me-2"></i>Enregistrer
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Toast Container -->
+<div class="toast-container position-fixed top-0 end-0 p-3">
+</div>
+
+{% for member in members %}
+<!-- Modal pour les détails du membre -->
+<div class="modal fade" id="detailsModal{{ member.member_id }}" tabindex="-1" aria-labelledby="detailsModalLabel{{ member.member_id }}" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title" id="detailsModalLabel{{ member.member_id }}">
+                    <i class="bi bi-person-circle me-2"></i>Détails du Membre
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h6 class="mb-3"><i class="bi bi-person me-2"></i>Informations Personnelles</h6>
+                        <table class="table table-borderless">
+                            <tr>
+                                <th>Nom :</th>
+                                <td>{{ member.name }}</td>
+                            </tr>
+                            <tr>
+                                <th>Email :</th>
+                                <td>{{ member.email }}</td>
+                            </tr>
+                            <tr>
+                                <th>Téléphone :</th>
+                                <td>{{ member.phone }}</td>
+                            </tr>
+                            <tr>
+                                <th>Date d'inscription :</th>
+                                <td>{{ member.registration_date if member.registration_date else 'Non spécifiée' }}</td>
+                            </tr>
+                        </table>
+                    </div>
+                    <div class="col-md-6">
+                        <h6 class="mb-3"><i class="bi bi-book me-2"></i>Statistiques d'Emprunts</h6>
+                        <table class="table table-borderless">
+                            <tr>
+                                <th>Total des emprunts :</th>
+                                <td>{{ member.total_borrows }}</td>
+                            </tr>
+                            <tr>
+                                <th>Dernier emprunt :</th>
+                                <td>{{ member.last_borrow_date }}</td>
+                            </tr>
+                            <tr>
+                                <th>Statut :</th>
+                                <td>
+                                    {% if member.is_active %}
+                                    <span class="badge bg-success">Actif</span>
+                                    {% else %}
+                                    <span class="badge bg-danger">Inactif</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endfor %}
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
+<script>
+    $(document).ready(function() {
+        $('#membersTable').DataTable();
+    });
+</script>
+
+<script>
+    // Fonction pour afficher les notifications toast
+    function showToast(message, isSuccess = true) {
+        // Créer un nouvel élément toast
+        const toastContainer = document.querySelector('.toast-container');
+        const toastId = 'toast-' + Date.now();
+        const toastHTML = `
+            <div id="${toastId}" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+                <div class="toast-header ${isSuccess ? 'bg-success' : 'bg-danger'} text-white">
+                    <i class="bi ${isSuccess ? 'bi-check-circle' : 'bi-exclamation-circle'} me-2"></i>
+                    <strong class="me-auto">${isSuccess ? 'Succès' : 'Erreur'}</strong>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast" aria-label="Close"></button>
+                </div>
+                <div class="toast-body ${isSuccess ? 'bg-success' : 'bg-danger'} text-white">
+                    ${message}
+                </div>
+            </div>
+        `;
+        
+        // Ajouter le toast au conteneur
+        toastContainer.insertAdjacentHTML('beforeend', toastHTML);
+        
+        // Initialiser et afficher le toast
+        const toastElement = document.getElementById(toastId);
+        const bsToast = new bootstrap.Toast(toastElement, {
+            autohide: true,
+            delay: 10000
+        });
+        
+        // Supprimer le toast du DOM après qu'il soit caché
+        toastElement.addEventListener('hidden.bs.toast', function () {
+            toastElement.remove();
+        });
+        
+        bsToast.show();
+    }
+
+    // Fonction utilitaire pour les requêtes AJAX
+    async function makeRequest(url, method, data) {
+        try {
+            console.log('Envoi de la requête:', { url, method, data });
+            const response = await fetch(url, {
+                method: method,
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify(data)
+            });
+
+            console.log('Statut de la réponse:', response.status);
+            console.log('Headers de la réponse:', Object.fromEntries(response.headers.entries()));
+
+            const contentType = response.headers.get('content-type');
+            if (!contentType || !contentType.includes('application/json')) {
+                const responseText = await response.text();
+                console.error('Réponse non-JSON:', responseText);
+                throw new TypeError("La réponse n'est pas au format JSON!");
+            }
+
+            const jsonData = await response.json();
+            console.log('Données reçues:', jsonData);
+
+            if (!response.ok) {
+                throw new Error(jsonData.message || 'Une erreur est survenue');
+            }
+
+            return jsonData;
+        } catch (error) {
+            console.error('Erreur détaillée:', error);
+            throw error;
+        }
+    }
+
+    // Gestion du formulaire d'ajout de membre
+    document.getElementById('addMemberForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        const formData = {
+            name: document.getElementById('name').value,
+            email: document.getElementById('email').value,
+            phone: document.getElementById('phone').value,
+            address: document.getElementById('address').value
+        };
+
+        try {
+            const data = await makeRequest('/members/add', 'POST', formData);
+            
+            if (data.success) {
+                showToast(`Le membre "${formData.name}" a été ajouté avec succès à la bibliothèque.`, true);
+                const modal = bootstrap.Modal.getInstance(document.getElementById('addMemberModal'));
+                modal.hide();
+                window.location.reload();
+            } else {
+                showToast(data.message, false);
+            }
+        } catch (error) {
+            showToast('Une erreur est survenue lors de l\'ajout du membre. Veuillez réessayer.', false);
+        }
+    });
+
+    // Gestion des formulaires de modification
+    document.querySelectorAll('.edit-member-form').forEach(form => {
+        form.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const memberId = this.dataset.memberId;
+            const memberName = document.getElementById(`edit-name-${memberId}`).value;
+            
+            const formData = {
+                member_id: memberId,
+                name: memberName,
+                email: document.getElementById(`edit-email-${memberId}`).value,
+                phone: document.getElementById(`edit-phone-${memberId}`).value,
+                address: document.getElementById(`edit-address-${memberId}`).value
+            };
+
+            try {
+                const data = await makeRequest('/members/update', 'POST', formData);
+                
+                if (data.success) {
+                    showToast(`Les informations de ${memberName} ont été mises à jour avec succès.`, true);
+                    const modal = bootstrap.Modal.getInstance(document.getElementById(`editModal${memberId}`));
+                    modal.hide();
+                    window.location.reload();
+                } else {
+                    showToast(data.message || 'Une erreur est survenue lors de la modification.', false);
+                }
+            } catch (error) {
+                showToast(error.message || 'Une erreur est survenue lors de la modification des informations du membre.', false);
+            }
+        });
+    });
+
+    // Gestion des boutons de suppression
+    document.querySelectorAll('.delete-member-btn').forEach(button => {
+        button.addEventListener('click', async function() {
+            const memberId = this.dataset.memberId;
+            const memberName = this.closest('.modal-content').querySelector('.modal-body strong').textContent;
+            console.log('Tentative de suppression du membre:', memberId);
+            
+            if (!memberId) {
+                showToast('Impossible de supprimer le membre : identifiant non trouvé.', false);
+                return;
+            }
+            
+            try {
+                const data = await makeRequest('/members/delete', 'POST', { 
+                    member_id: parseInt(memberId, 10) 
+                });
+                console.log('Réponse de suppression:', data);
+                
+                if (data.success) {
+                    showToast(`Le membre "${memberName}" a été supprimé avec succès de la bibliothèque.`, true);
+                    const modal = bootstrap.Modal.getInstance(document.getElementById(`deleteModal${memberId}`));
+                    modal.hide();
+                    window.location.reload();
+                } else {
+                    showToast(data.message || 'Impossible de supprimer le membre. Veuillez vérifier qu\'il n\'a pas d\'emprunts en cours.', false);
+                }
+            } catch (error) {
+                console.error('Erreur complète:', error);
+                showToast('Une erreur est survenue lors de la suppression du membre. Veuillez réessayer.', false);
+            }
+        });
+    });
+</script>
+</body>
+</html>
+
+

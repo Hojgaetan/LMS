@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Dashboard - LMS</title>
-    <link rel="stylesheet" href="/static/css/style.css">
+    <link rel="stylesheet" href="/css/style.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
     <!-- Ajout des styles nécessaires pour DataTables -->
@@ -107,53 +107,63 @@
                 </tbody>
             </table>
         </div>
-
-        <!-- Tableau des rapports d'activité des membres -->
-        <h3 class="mt-4"><i class="bi bi-person-lines-fill me-2"></i>Rapports d'Activité des Membres</h3>
-        <div class="table-responsive">
-            <table class="table table-striped table-bordered align-middle">
-                <thead class="table-primary">
-                    <tr>
-                        <th><i class="bi bi-person"></i> Nom</th>
-                        <th><i class="bi bi-envelope"></i> Email</th>
-                        <th><i class="bi bi-book"></i> Nombre de livres empruntés</th>
-                        <th><i class="bi bi-clock"></i> Dernier emprunt</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for member in members_loans %}
-                    <tr>
-                        <td>{{ member.name }}</td>
-                        <td>{{ member.email }}</td>
-                        <td>{{ member.loans_count }}</td>
-                        <td>{% if member.loans_count %}{{ member.last_loan_due_date }}{% else %} - {% endif %}</td>
-                        <td>
-                            <button class="btn btn-info btn-sm see-detail-member" title="Voir détails"><i class="bi bi-eye"></i></button>
-                        </td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        </div>
     </div>
+        
     <!-- Modal pour afficher les détails d'un livre -->
     <div class="modal fade" id="bookDetailsModal" tabindex="-1" aria-labelledby="bookDetailsModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
+        <div class="modal-dialog modal-lg">
             <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="bookDetailsModalLabel">Détails du Livre</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title" id="bookDetailsModalLabel">
+                        <i class="bi bi-book me-2"></i>Détails du Livre
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <p><strong>Titre:</strong> <span id="bookTitle"></span></p>
-                    <p><strong>Auteur:</strong> <span id="bookAuthor"></span></p>
-                    <p><strong>Catégorie:</strong> <span id="bookCategory"></span></p>
-                    <p><strong>ISBN:</strong> <span id="bookISBN"></span></p>
-                    <p><strong>Année de publication:</strong> <span id="bookPublicationYear"></span></p>
-                    <p><strong>Éditeur:</strong> <span id="bookPublisher"></span></p>
-                    <p><strong>Quantité:</strong> <span id="bookQuantity"></span></p>
-                    <p><strong>Quantité disponible:</strong> <span id="bookAvailableQuantity"></span></p>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6 class="mb-3"><i class="bi bi-info-circle me-2"></i>Informations Générales</h6>
+                            <table class="table table-borderless">
+                                <tr>
+                                    <th>Titre :</th>
+                                    <td><span id="bookTitle"></span></td>
+                                </tr>
+                                <tr>
+                                    <th>Auteur :</th>
+                                    <td><span id="bookAuthor"></span></td>
+                                </tr>
+                                <tr>
+                                    <th>Catégorie :</th>
+                                    <td><span id="bookCategory"></span></td>
+                                </tr>
+                                <tr>
+                                    <th>ISBN :</th>
+                                    <td><span id="bookISBN"></span></td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="col-md-6">
+                            <h6 class="mb-3"><i class="bi bi-geo-alt me-2"></i>Détails Supplémentaires</h6>
+                            <table class="table table-borderless">
+                                <tr>
+                                    <th>Année :</th>
+                                    <td><span id="bookPublicationYear"></span></td>
+                                </tr>
+                                <tr>
+                                    <th>Éditeur :</th>
+                                    <td><span id="bookPublisher"></span></td>
+                                </tr>
+                                <tr>
+                                    <th>Quantité :</th>
+                                    <td><span id="bookQuantity"></span></td>
+                                </tr>
+                                <tr>
+                                    <th>Disponible :</th>
+                                    <td><span id="bookAvailableQuantity"></span></td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
@@ -180,6 +190,9 @@
                 </div>
             </div>
         </div>
+    </div>
+    <!-- Toast Container -->
+    <div class="toast-container position-fixed top-0 end-0 p-3">
     </div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <!-- Ajout des scripts nécessaires pour DataTables -->
@@ -247,3 +260,5 @@
     </script>
 </body>
 </html>
+
+

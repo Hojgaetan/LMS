@@ -54,3 +54,36 @@ class CategoryService:
             int: The total number of categories
         """
         return len(Category.all())
+
+    @staticmethod
+    def get_category_name(category_id):
+        """
+        Get the name of a category by its ID.
+
+        Args:
+            category_id (int): The ID of the category.
+
+        Returns:
+            str: The name of the category, or None if not found.
+        """
+        category = Category.find_by_id(category_id)
+        return category.name if category else None
+
+    @staticmethod
+    def get_category_by_name(name):
+        """
+        Get a category by its exact name.
+
+        Args:
+            name (str): The exact name of the category.
+
+        Returns:
+            Category: The category object if found, None otherwise.
+        """
+        categories = Category.find_by_name(name)
+        if categories:
+            # Return the first exact match
+            for category in categories:
+                if category.name.lower() == name.lower():
+                    return category
+        return None

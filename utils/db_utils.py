@@ -46,7 +46,7 @@ class DatabaseConnection:
 
     @classmethod
     def execute_insert(cls, query, params=None):
-        """Execute an insert query and return the last row id."""
+        """Execute an insert or update query and return the last row id or number of rows affected."""
         conn = cls.get_connection()
         cursor = conn.cursor()
 
@@ -56,7 +56,12 @@ class DatabaseConnection:
             else:
                 cursor.execute(query)
 
-            last_id = cursor.lastrowid
+            # For UPDATE queries, return the number of rows affected
+            if query.strip().upper().startswith("UPDATE"):
+                last_id = cursor.rowcount
+            else:
+                last_id = cursor.lastrowid
+
             conn.commit()
             return last_id
         except sqlite3.Error as e:
@@ -125,7 +130,8 @@ class DatabaseConnection:
             email TEXT UNIQUE,
             phone TEXT,
             address TEXT,
-            registration_date TEXT DEFAULT CURRENT_TIMESTAMP
+            registration_date TEXT DEFAULT CURRENT_TIMESTAMP,
+            status TEXT DEFAULT 'active'
         )
         """
         )
