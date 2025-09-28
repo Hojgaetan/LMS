@@ -1,98 +1,207 @@
 # Contributing to Library Management System (LMS)
 
-Thank you for considering contributing to the Library Management System (LMS)! Contributions are welcome and greatly appreciated. This document outlines the guidelines for contributing to the project.
+Merci de considérer contribuer au Library Management System (LMS) ! Les contributions sont les bienvenues et grandement appréciées. Ce document présente les guidelines pour contribuer au projet.
 
 ---
 
-## How to Contribute
+## 🚀 Démarrage Rapide
 
-### 1. Fork the Repository
-- Click the "Fork" button on the repository page to create a copy of the project in your GitHub account.
+### Nouveau Contributeur ?
+1. 📖 **Lisez d'abord:** [GOOD_FIRST_ISSUES.md](GOOD_FIRST_ISSUES.md) - Liste d'issues parfaites pour débuter
+2. 🛠️ **Configuration:** [DEVELOPMENT.md](DEVELOPMENT.md) - Guide complet pour configurer votre environnement
+3. 💬 **Questions ?** Ouvrez une discussion ou commentez une issue
 
-### 2. Clone the Repository
-- Clone your forked repository to your local machine:
+### Contributeur Expérimenté ?
+- Consultez les issues ouvertes marquées `help wanted`
+- Proposez de nouvelles fonctionnalités via les templates d'issues
+- Aidez à reviewer les PRs d'autres contributeurs
+
+---
+
+## Comment Contribuer
+
+### 1. Choisir une Tâche
+- 🟢 **Débutant :** Consultez [GOOD_FIRST_ISSUES.md](GOOD_FIRST_ISSUES.md)
+- 🟡 **Intermédiaire :** Issues marquées `enhancement` ou `bug`
+- 🔴 **Avancé :** Issues marquées `complex` ou architecture
+
+### 2. Fork et Clone
 ```bash
 git clone <your-forked-repository-url>
 cd LMS
 ```
 
-### 3. Create a Branch
-- Create a new branch for your changes:
+### 3. Configuration de l'Environnement
+Suivez le guide détaillé dans [DEVELOPMENT.md](DEVELOPMENT.md)
+
+### 4. Créer une Branche
 ```bash
-git checkout -b feature/<your-feature-name>
+git checkout -b feature/nom-descriptif
+# ou
+git checkout -b fix/description-bug
 ```
 
-### 4. Make Changes
-- Implement your changes or fix issues.
-- Ensure your code follows the project's coding standards.
-- Write unit tests for any new functionality.
+### 5. Développer
+- Implémentez vos changements
+- Suivez les conventions de code (voir DEVELOPMENT.md)
+- Écrivez ou mettez à jour les tests
+- Testez localement
 
-### 5. Commit Your Changes
-- Use clear and concise commit messages:
+### 6. Commit et Push
 ```bash
-git commit -m "Add feature: <description>"
+git add .
+git commit -m "feat: description de votre changement"
+git push origin feature/nom-descriptif
 ```
 
-### 6. Push Your Changes
-- Push your changes to your forked repository:
-```bash
-git push origin feature/<your-feature-name>
-```
-
-### 7. Submit a Pull Request
-- Go to the original repository and click "New Pull Request."
-- Provide a detailed description of your changes and link any related issues.
+### 7. Créer une Pull Request
+- Utilisez le template de PR fourni
+- Décrivez clairement vos changements
+- Liez l'issue correspondante
 
 ---
 
-## Contribution Guidelines
+## 📋 Guidelines de Contribution
 
-### Code Standards
-- Follow the Python PEP 8 coding style.
-- Use meaningful variable and function names.
-- Write comments to explain complex logic.
+### Standards de Code
+- Suivez le style Python PEP 8
+- Utilisez des noms de variables et fonctions significatifs
+- Commentez le code complexe
+- Respectez la structure MVC du projet
 
-### Testing
-- Ensure all new features are covered by unit tests.
-- Run existing tests to confirm no regressions:
+### Tests
+- Ajoutez des tests pour toute nouvelle fonctionnalité
+- Assurez-vous que tous les tests existants passent :
 ```bash
 pytest
 ```
+- Visez une couverture de code d'au moins 80%
 
 ### Documentation
-- Update the `README.md` file if your changes affect the project's functionality.
-- Add comments to your code for clarity.
+- Mettez à jour le `README.md` si vos changements affectent les fonctionnalités
+- Ajoutez des commentaires dans votre code pour plus de clarté
+- Mettez à jour la documentation technique si nécessaire
 
-### Issues
-- Check the "Issues" tab for tasks or bugs to work on.
-- If you find a bug, create a new issue with detailed steps to reproduce it.
+### Messages de Commit
+Utilisez le format [Conventional Commits](https://www.conventionalcommits.org/) :
+```
+type(scope): description
 
----
-
-## Areas to Contribute
-
-### Feature Development
-- Implement missing features (e.g., Member Management, Borrowing Operations).
-- Enhance existing features (e.g., advanced search functionality).
-
-### Bug Fixes
-- Identify and fix bugs reported in the "Issues" tab.
-
-### Documentation
-- Improve project documentation (e.g., `README.md`, `features.md`).
-- Add examples and usage instructions.
-
-### Code Quality
-- Refactor code to improve readability and maintainability.
-- Add unit tests for untested modules.
+Exemples :
+feat: ajouter fonctionnalité de recherche de membres
+fix: corriger le bug de validation d'email
+docs: mettre à jour le guide d'installation
+style: formater le code selon PEP 8
+test: ajouter tests pour MemberService
+```
 
 ---
 
-## Communication
-- Use the "Discussions" tab for general questions or ideas.
-- For urgent matters, contact the maintainers directly via GitHub.
+## 🎯 Domaines de Contribution
+
+### 💻 Développement de Fonctionnalités
+- Implémentez les fonctionnalités manquantes (voir README.md)
+- Améliorez les fonctionnalités existantes
+- Optimisez les performances
+
+### 🐛 Correction de Bugs
+- Identifiez et corrigez les bugs signalés dans les issues
+- Améliorez la gestion d'erreurs
+- Renforcez la validation des données
+
+### 📚 Documentation
+- Améliorez la documentation du projet
+- Ajoutez des exemples d'utilisation
+- Créez des tutoriels pour les utilisateurs
+
+### 🧪 Tests et Qualité
+- Ajoutez des tests unitaires et d'intégration
+- Améliorez la couverture de code
+- Refactorisez le code pour une meilleure maintenabilité
+
+### 🎨 Interface Utilisateur
+- Améliorez l'expérience utilisateur
+- Optimisez l'accessibilité
+- Modernisez le design
 
 ---
 
-## Thank You!
-Your contributions make LMS better for everyone. We appreciate your time and effort in improving the project!
+## 🏷️ Types d'Issues
+
+Nous utilisons plusieurs labels pour catégoriser les issues :
+
+- 🟢 `good first issue` - Parfait pour les nouveaux contributeurs
+- 🆘 `help wanted` - Nous avons besoin d'aide sur ces sujets
+- 🐛 `bug` - Quelque chose ne fonctionne pas
+- ✨ `enhancement` - Nouvelle fonctionnalité ou amélioration
+- 📚 `documentation` - Améliorations de la documentation
+- 🧪 `testing` - Liés aux tests et à la qualité
+- 🎨 `ui/ux` - Interface utilisateur et expérience
+
+---
+
+## 💬 Communication
+
+### Issues et Discussions
+- Utilisez les **Issues** pour signaler des bugs ou proposer des fonctionnalités
+- Utilisez les **Discussions** pour des questions générales ou des idées
+- Commentez les issues pour indiquer que vous y travaillez
+
+### Demande d'Aide
+- N'hésitez pas à poser des questions dans les commentaires d'issues
+- Demandez de l'aide si vous êtes bloqué
+- La communauté est là pour vous aider !
+
+### Revue de Code
+- Soyez constructif dans vos commentaires
+- Expliquez le "pourquoi" derrière vos suggestions
+- Soyez patient avec les nouveaux contributeurs
+
+---
+
+## ✅ Checklist avant Submission
+
+Avant de soumettre votre PR, vérifiez que :
+
+- [ ] Le code suit les conventions du projet
+- [ ] Tous les tests passent localement
+- [ ] La documentation est mise à jour si nécessaire
+- [ ] Les messages de commit suivent les conventions
+- [ ] Vous avez testé vos changements manuellement
+- [ ] Vous avez décrit clairement vos changements dans la PR
+
+---
+
+## 🎉 Reconnaissance
+
+Tous les contributeurs sont reconnus et célébrés :
+
+- **README.md** : Tous les contributeurs sont listés
+- **Release Notes** : Les contributions majeures sont mises en valeur
+- **Community** : Nous valorisons chaque contribution, petite ou grande
+
+---
+
+## 📖 Ressources Supplémentaires
+
+- 📋 [GOOD_FIRST_ISSUES.md](GOOD_FIRST_ISSUES.md) - Issues pour débuter
+- 🛠️ [DEVELOPMENT.md](DEVELOPMENT.md) - Guide de développement complet
+- 🏗️ [ARCHITECTURE.md](ARCHITECTURE.md) - Architecture du projet (à créer)
+- 🐛 [Templates d'Issues](.github/ISSUE_TEMPLATE/) - Pour signaler des problèmes
+- 🔄 [Template de PR](.github/pull_request_template.md) - Pour vos contributions
+
+---
+
+## 🤝 Code de Conduite
+
+Nous nous engageons à maintenir un environnement accueillant et inclusif. Soyez respectueux, patient et constructif dans toutes vos interactions.
+
+### Nos Valeurs
+- **Respect** : Traitez tous les contributeurs avec respect
+- **Inclusion** : Accueillez les contributeurs de tous niveaux
+- **Collaboration** : Travaillons ensemble vers un objectif commun
+- **Apprentissage** : Partageons nos connaissances et apprenons ensemble
+
+---
+
+**Merci de contribuer au projet LMS ! Votre aide fait la différence ! 🚀**
