@@ -226,6 +226,14 @@ For a detailed description of each use case, see `README.md`.
 - [@pmp-p](https://github.com/pmp-p)
 - Contributors are welcome! Please see the `CONTRIBUTING.md` file for guidelines.
 
+### 🚀 Nouveau Contributeur ?
+Consultez notre guide [**GOOD_FIRST_ISSUES.md**](GOOD_FIRST_ISSUES.md) qui propose des issues parfaites pour débuter et vous familiariser avec le projet !
+
+### 📖 Guides de Contribution
+- 📋 [**GOOD_FIRST_ISSUES.md**](GOOD_FIRST_ISSUES.md) - Issues pour nouveaux contributeurs
+- 🤝 [**CONTRIBUTING.md**](CONTRIBUTING.md) - Guide de contribution complet  
+- 🛠️ [**DEVELOPMENT.md**](DEVELOPMENT.md) - Configuration de l'environnement de développement
+
 ## License
 This project is licensed under the **MIT License**, an open-source license that allows free use, modification, and distribution of the software. 
 
