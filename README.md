@@ -167,7 +167,6 @@ python main.py
 - Via le CLI: utilisez le menu principal pour gérer livres, auteurs, catégories, membres et emprunts.
 
 ## Documentation
-- **features.md**: Detailed use cases and functional requirements
 - **uml_diagram.md**: System architecture and class diagrams
 
 ## Feature Implementation Status
@@ -220,7 +219,7 @@ python main.py
 
 ---
 
-For a detailed description of each use case, see `features.md`.
+For a detailed description of each use case, see `README.md`.
 
 ## Authors & Contributors
 - [@Hojgaetan](https://github.com/Hojgaetan) (Lead project)
