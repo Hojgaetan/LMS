@@ -2,87 +2,129 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard - LMS</title>
-    <link rel="stylesheet" href="/css/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/css/style.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
-    <!-- Ajout des styles nécessaires pour DataTables -->
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.min.css">
-    <!-- Diminish the size of icons by adding a custom class -->
-    <style>
-        .icon-small {
-            font-size: 1.2rem; /* Adjust the size as needed */
-        }
-    </style>
 </head>
 <body>
     {% include 'includes/navbar.html' %}
+    
+    <!-- Hero Section -->
     <div class="container">
-        <div class="row text-center mb-4">
+        <div class="text-center mb-5">
+            <h1 class="display-4 fw-bold mb-3">
+                <i class="bi bi-speedometer2 me-3"></i>
+                Tableau de Bord
+            </h1>
+            <p class="lead text-muted">Gérez votre bibliothèque avec efficacité et style</p>
+        </div>
+        
+        <!-- Statistiques principales -->
+        <div class="row g-4 mb-5">
             <div class="col-md-4">
-                <div class="card bg-light">
+                <div class="card stats-card floating-element">
                     <div class="card-body">
-                        <h5 class="card-title"><i class="bi bi-book me-2 icon-small"></i>Total Livres <i class="bi bi-question-circle icon-small" title="Nombre total de livres disponibles dans la bibliothèque."></i></h5>
+                        <h5 class="card-title">
+                            <i class="bi bi-book me-2"></i>
+                            Total Livres 
+                            <i class="bi bi-question-circle icon-small" title="Nombre total de livres disponibles dans la bibliothèque."></i>
+                        </h5>
                         <p class="card-text display-4">{{ total_books }}</p>
                     </div>
                 </div>
             </div>
             <div class="col-md-4">
-                <div class="card bg-light">
+                <div class="card stats-card floating-element" style="animation-delay: 0.2s;">
                     <div class="card-body">
-                        <h5 class="card-title"><i class="bi bi-tags me-2 icon-small"></i>Catégories <i class="bi bi-question-circle icon-small" title="Nombre total de catégories de livres."></i></h5>
+                        <h5 class="card-title">
+                            <i class="bi bi-tags me-2"></i>
+                            Catégories 
+                            <i class="bi bi-question-circle icon-small" title="Nombre total de catégories de livres."></i>
+                        </h5>
                         <p class="card-text display-4">{{ total_category }}</p>
                     </div>
                 </div>
             </div>
             <div class="col-md-4">
-                <div class="card bg-light">
+                <div class="card stats-card floating-element" style="animation-delay: 0.4s;">
                     <div class="card-body">
-                        <h5 class="card-title"><i class="bi bi-person me-2 icon-small"></i>Auteurs <i class="bi bi-question-circle icon-small" title="Nombre total d'auteurs enregistrés."></i></h5>
+                        <h5 class="card-title">
+                            <i class="bi bi-person me-2"></i>
+                            Auteurs 
+                            <i class="bi bi-question-circle icon-small" title="Nombre total d'auteurs enregistrés."></i>
+                        </h5>
                         <p class="card-text display-4">{{ total_authors }}</p>
                     </div>
                 </div>
             </div>
         </div>
-        <div class="row text-center mb-4">
-            <!-- Carte des livres populaires -->
+        
+        <!-- Statistiques secondaires -->
+        <div class="row g-4 mb-5">
             <div class="col-md-4">
-                <div class="card bg-light">
+                <div class="card stats-card floating-element" style="animation-delay: 0.6s;">
                     <div class="card-body">
-                        <h5 class="card-title"><i class="bi bi-bar-chart me-2 icon-small"></i>Livres Populaires <i class="bi bi-question-circle icon-small" title="Nombre total de livres populaires basés sur les emprunts."></i></h5>
+                        <h5 class="card-title">
+                            <i class="bi bi-bar-chart me-2"></i>
+                            Livres Populaires 
+                            <i class="bi bi-question-circle icon-small" title="Nombre total de livres populaires basés sur les emprunts."></i>
+                        </h5>
                         <p class="card-text display-4">{{total_popular_books}}</p>
                     </div>
                 </div>
             </div>
-            <!-- Carte des membres actifs -->
             <div class="col-md-4">
-                <div class="card bg-light">
+                <div class="card stats-card floating-element" style="animation-delay: 0.8s;">
                     <div class="card-body">
-                        <h5 class="card-title"><i class="bi bi-person-lines-fill me-2 icon-small"></i>Membres Actifs <i class="bi bi-question-circle icon-small" title="Nombre total de membres ayant emprunté des livres récemment."></i></h5>
+                        <h5 class="card-title">
+                            <i class="bi bi-person-lines-fill me-2"></i>
+                            Membres Actifs 
+                            <i class="bi bi-question-circle icon-small" title="Nombre total de membres ayant emprunté des livres récemment."></i>
+                        </h5>
                         <p class="card-text display-4">{{total_active_members}}</p>
                     </div>
                 </div>
             </div>
-            <!-- Carte des livres en retard -->
             <div class="col-md-4">
-                <div class="card bg-light">
+                <div class="card stats-card floating-element" style="animation-delay: 1s;">
                     <div class="card-body">
-                        <h5 class="card-title"><i class="bi bi-exclamation-circle me-2 icon-small"></i>Livres en Retard <i class="bi bi-question-circle icon-small" title="Nombre total de livres dont la date de retour est dépassée."></i></h5>
+                        <h5 class="card-title">
+                            <i class="bi bi-exclamation-circle me-2"></i>
+                            Livres en Retard 
+                            <i class="bi bi-question-circle icon-small" title="Nombre total de livres dont la date de retour est dépassée."></i>
+                        </h5>
                         <p class="card-text display-4">{{total_overdue_books}}</p>
                     </div>
                 </div>
             </div>
         </div>
-        <!-- Tableau des livres -->
-        <h3 class="mb-4"><i class="bi bi-book me-2"></i>Livres</h3>
+        
+        <!-- Section des livres -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h3 class="mb-0">
+                <i class="bi bi-book me-2"></i>
+                Aperçu des Livres
+            </h3>
+            <a href="/books" class="btn btn-primary">
+                <i class="bi bi-arrow-right me-2"></i>
+                Voir tous les livres
+            </a>
+        </div>
+        
         <div class="table-responsive">
             <table id="booksTable" class="table table-striped table-hover align-middle">
                 <thead class="table-primary">
                     <tr>
-                        <th><i class="bi bi-book"></i> Titre</th>
-                        <th><i class="bi bi-person"></i> Auteur</th>
-                        <th><i class="bi bi-tags"></i> Catégorie</th>
-                        <th><i class="bi bi-check-circle"></i> Disponibilite</th>
+                        <th><i class="bi bi-book me-2"></i>Titre</th>
+                        <th><i class="bi bi-person me-2"></i>Auteur</th>
+                        <th><i class="bi bi-tags me-2"></i>Catégorie</th>
+                        <th><i class="bi bi-check-circle me-2"></i>Disponibilité</th>
                         <th>Actions</th>
                     </tr>
                 </thead>
@@ -94,13 +136,21 @@
                         <td>{{ book.category }}</td>
                         <td>
                             {% if book.available_quantity > 0 %}
-                            <span class="badge bg-success">Disponible</span>
+                            <span class="badge bg-success">
+                                <i class="bi bi-check-circle me-1"></i>
+                                Disponible
+                            </span>
                             {% else %}
-                            <span class="badge bg-danger">Emprunté</span>
+                            <span class="badge bg-danger">
+                                <i class="bi bi-x-circle me-1"></i>
+                                Emprunté
+                            </span>
                             {% endif %}
                         </td>
                         <td>
-                            <button class="btn btn-info btn-sm see-detail-book" title="Voir détails"><i class="bi bi-eye"></i></button>
+                            <button class="btn btn-info btn-sm see-detail-book" title="Voir détails">
+                                <i class="bi bi-eye"></i>
+                            </button>
                         </td>
                     </tr>
                     {% endfor %}
@@ -108,21 +158,25 @@
             </table>
         </div>
     </div>
-        
+    
     <!-- Modal pour afficher les détails d'un livre -->
     <div class="modal fade" id="bookDetailsModal" tabindex="-1" aria-labelledby="bookDetailsModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header bg-primary text-white">
                     <h5 class="modal-title" id="bookDetailsModalLabel">
-                        <i class="bi bi-book me-2"></i>Détails du Livre
+                        <i class="bi bi-book me-2"></i>
+                        Détails du Livre
                     </h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
                     <div class="row">
                         <div class="col-md-6">
-                            <h6 class="mb-3"><i class="bi bi-info-circle me-2"></i>Informations Générales</h6>
+                            <h6 class="mb-3">
+                                <i class="bi bi-info-circle me-2"></i>
+                                Informations Générales
+                            </h6>
                             <table class="table table-borderless">
                                 <tr>
                                     <th>Titre :</th>
@@ -143,7 +197,10 @@
                             </table>
                         </div>
                         <div class="col-md-6">
-                            <h6 class="mb-3"><i class="bi bi-geo-alt me-2"></i>Détails Supplémentaires</h6>
+                            <h6 class="mb-3">
+                                <i class="bi bi-bookmark me-2"></i>
+                                Détails Supplémentaires
+                            </h6>
                             <table class="table table-borderless">
                                 <tr>
                                     <th>Année :</th>
@@ -171,42 +228,35 @@
             </div>
         </div>
     </div>
-    <!-- Modal pour afficher les détails d'un membre -->
-    <div class="modal fade" id="memberDetailsModal" tabindex="-1" aria-labelledby="memberDetailsModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="memberDetailsModalLabel">Détails du Membre</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <p><strong>Nom:</strong> <span id="memberName"></span></p>
-                    <p><strong>Email:</strong> <span id="memberEmail"></span></p>
-                    <p><strong>Nombre de livres empruntés:</strong> <span id="memberLoansCount"></span></p>
-                    <p><strong>Dernier emprunt:</strong> <span id="memberLastLoan"></span></p>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
-                </div>
-            </div>
-        </div>
-    </div>
-    <!-- Toast Container -->
+    
+    <!-- Toast Container pour les notifications -->
     <div class="toast-container position-fixed top-0 end-0 p-3">
     </div>
+    
+    <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-    <!-- Ajout des scripts nécessaires pour DataTables -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
-    <!-- Script pour activer DataTables sur les tableaux -->
+    
     <script>
         $(document).ready(function() {
-            $('#booksTable').DataTable();
-            $('#authorsTable').DataTable();
-            $('#loansTable').DataTable();
-            $('#membersTable').DataTable();
+            $('#booksTable').DataTable({
+                language: {
+                    url: '//cdn.datatables.net/plug-ins/1.13.4/i18n/fr-FR.json'
+                },
+                pageLength: 10,
+                responsive: true,
+                order: [[0, 'asc']]
+            });
+            
+            // Initialiser les tooltips
+            var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+            var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+                return new bootstrap.Tooltip(tooltipTriggerEl);
+            });
         });
     </script>
+    
     <script>
         // Script pour afficher les détails du livre dans le modal
         document.querySelectorAll('.see-detail-book').forEach(button => {
@@ -236,29 +286,6 @@
                 modal.show();
             });
         });
-
-        // Script pour afficher les détails du membre dans le modal
-        document.querySelectorAll('.see-detail-member').forEach(button => {
-            button.addEventListener('click', function() {
-                const memberRow = this.closest('tr');
-                const memberDetails = {
-                    name: memberRow.querySelector('td:nth-child(1)').textContent,
-                    email: memberRow.querySelector('td:nth-child(2)').textContent,
-                    loansCount: memberRow.querySelector('td:nth-child(3)').textContent,
-                    lastLoan: memberRow.querySelector('td:nth-child(4)').textContent
-                };
-
-                document.getElementById('memberName').textContent = memberDetails.name;
-                document.getElementById('memberEmail').textContent = memberDetails.email;
-                document.getElementById('memberLoansCount').textContent = memberDetails.loansCount;
-                document.getElementById('memberLastLoan').textContent = memberDetails.lastLoan;
-
-                const modal = new bootstrap.Modal(document.getElementById('memberDetailsModal'));
-                modal.show();
-            });
-        });
     </script>
 </body>
 </html>
-
-
