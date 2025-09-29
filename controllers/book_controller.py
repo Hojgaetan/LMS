@@ -1,4 +1,4 @@
-from flask import Blueprint, jsonify, request
+from flask import Blueprint, jsonify, request, render_template
 from services.book_service import BookService
 from services.author_service import AuthorService
 from services.category_service import CategoryService
@@ -7,6 +7,36 @@ import logging
 logging.basicConfig(level=logging.DEBUG)
 
 book_blueprint = Blueprint('books', __name__)
+
+# Nouvelle route pour afficher la page livres avec les catégories
+@book_blueprint.route('/', methods=['GET'])
+def books_page():
+    try:
+        books = BookService.get_all_books()
+        books_data = []
+        for book in books:
+            author_name = AuthorService.get_author_name(book.author_id) if book.author_id else ''
+            category_name = CategoryService.get_category_name(book.category_id) if book.category_id else ''
+            books_data.append({
+                'id': book.book_id,
+                'title': book.title,
+                'author': author_name or '',
+                'category': category_name or '',
+                'isbn': book.isbn,
+                'publication_year': book.publication_year,
+                'publisher': book.publisher,
+                'quantity': book.quantity,
+                'available_quantity': book.available_quantity
+            })
+        categories = CategoryService.list_categories()
+        total_books = BookService.count_books()
+        # Seuil par défaut pour livres populaires (peut être changé si besoin via query param plus tard)
+        total_popular_books = BookService.count_popular_books(threshold=10)
+        return render_template('books.html', books=books_data, categories=categories, total_books=total_books, total_popular_books=total_popular_books)
+    except Exception as e:
+        logging.exception("Erreur lors de l'affichage de la page livres")
+        # Fallback JSON si problème de rendu
+        return jsonify({'error': str(e)}), 500
 
 @book_blueprint.route('/add', methods=['POST'])
 def add_book():
@@ -216,7 +246,7 @@ def book_details(book_id):
     if not book:
         return jsonify({'error': 'Book not found'}), 404
 
-    author = AuthorService.get_author(book.author_id).name if book.author_id else ''
+    author = AuthorService.get_author_name(book.author_id) if book.author_id else ''
     category = CategoryService.get_category_name(book.category_id) if book.category_id else ''
 
     return jsonify({
@@ -250,14 +280,24 @@ def total_overdue_books():
 @book_blueprint.route('/books', methods=['GET'])
 def get_books():
     try:
-        books = BookService.get_all_books()
+        category_name = request.args.get('category')
+        if category_name:
+            category = CategoryService.get_category_by_name(category_name)
+            if category:
+                books = BookService.search_books(category_id=category.category_id)
+            else:
+                books = []
+        else:
+            books = BookService.get_all_books()
         books_data = []
         for book in books:
+            author_name = AuthorService.get_author_name(book.author_id) if book.author_id else ''
+            category_name = CategoryService.get_category_name(book.category_id) if book.category_id else ''
             books_data.append({
                 'id': book.book_id,
                 'title': book.title,
-                'author': AuthorService.get_author(book.author_id).name if book.author_id else '',
-                'category': CategoryService.get_category_name(book.category_id) if book.category_id else '',
+                'author': author_name or '',
+                'category': category_name or '',
                 'isbn': book.isbn,
                 'publication_year': book.publication_year,
                 'publisher': book.publisher,
@@ -268,6 +308,39 @@ def get_books():
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
+@book_blueprint.route('/api', methods=['GET'])
+def api_books():
+    """Endpoint API utilisé par le filtre dynamique (front) pour récupérer les livres éventuellement filtrés par catégorie."""
+    try:
+        category_name = request.args.get('category')
+        if category_name:
+            category = CategoryService.get_category_by_name(category_name)
+            if category:
+                books = BookService.search_books(category_id=category.category_id)
+            else:
+                books = []
+        else:
+            books = BookService.get_all_books()
+        books_data = []
+        for book in books:
+            author_name = AuthorService.get_author_name(book.author_id) if book.author_id else ''
+            category_label = CategoryService.get_category_name(book.category_id) if book.category_id else ''
+            books_data.append({
+                'id': book.book_id,
+                'title': book.title,
+                'author': author_name or '',
+                'category': category_label or '',
+                'isbn': book.isbn,
+                'publication_year': book.publication_year,
+                'publisher': book.publisher,
+                'quantity': book.quantity,
+                'available_quantity': book.available_quantity
+            })
+        return jsonify({'books': books_data})
+    except Exception as e:
+        logging.exception('Erreur API /books/api')
+        return jsonify({'error': str(e)}), 500
+
 @book_blueprint.route('/total-books', methods=['GET'])
 def total_books():
     try:
@@ -275,4 +348,3 @@ def total_books():
         return jsonify({'total_books': total_books})
     except Exception as e:
         return jsonify({'error': str(e)}), 500
-

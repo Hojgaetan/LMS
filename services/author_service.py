@@ -83,3 +83,8 @@ class AuthorService:
         """
         author = Author.find_by_id(author_id)
         return author.name if author else None
+
+    @staticmethod
+    def get_author(author_id):
+        """Retourne l'objet Author correspondant à l'ID (ou None)."""
+        return Author.find_by_id(author_id)
