@@ -29,6 +29,7 @@ const LoadingSpinner = ({ size = 'md', text = 'Chargement...', fullScreen = fals
           />
         </motion.div>
         {text && <p className="loading-text">{text}</p>}
+        }
       </div>
     </motion.div>
   );
