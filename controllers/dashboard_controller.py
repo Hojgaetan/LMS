@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, jsonify, redirect, url_for
+from flask import Blueprint, render_template, jsonify
 from services.dashboard_service import DashboardService
 from services.borrowing_service import BorrowingService
 
@@ -21,8 +21,12 @@ def dashboard():
 
 @dashboard_blueprint.route("/books", methods=["GET"])
 def books():
-    # Rediriger vers la page gérée par le blueprint des livres (avec filtre catégories)
-    return redirect(url_for('books.books_page'))
+    try:
+        stats = dashboard_service.get_dashboard_statistics()
+        books_data = dashboard_service.get_books_data()
+        return render_template("books.html", **stats, books=books_data)
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 
 @dashboard_blueprint.route("/members", methods=["GET"])

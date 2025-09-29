@@ -12,23 +12,10 @@
 {% include 'includes/navbar.html' %}
 <div class="container">
     <h3 class="mb-4"><i class="bi bi-book me-2"></i>Livres</h3>
-    <!-- Nouveau: filtre catégories -->
-    {% set categories_list = categories if categories is defined else (books | map(attribute='category') | unique) %}
-    <div class="row g-3 align-items-end mb-3">
-        <div class="col-md-4">
-            <label for="filterCategory" class="form-label mb-1"><i class="bi bi-filter me-1"></i>Filtrer par catégorie</label>
-            <select id="filterCategory" class="form-select">
-                <option value="">Toutes les catégories</option>
-                {% for c in categories_list %}
-                    <option value="{{ c.name if c is not string else c }}">{{ c.name if c is not string else c }}</option>
-                {% endfor %}
-            </select>
-        </div>
-        <div class="col-md-8 d-flex justify-content-end">
-            <button class="btn btn-primary" id="addBookButton" title="Ajouter un nouveau livre">
-                <i class="bi bi-plus-circle me-2"></i>Ajouter un livre
-            </button>
-        </div>
+    <div class="d-flex justify-content-end mb-3">
+        <button class="btn btn-primary" id="addBookButton" title="Ajouter un nouveau livre">
+            <i class="bi bi-plus-circle me-2"></i>Ajouter un livre
+        </button>
     </div>
     <!-- Statistiques Clés -->
     <div class="row text-center mb-4">
@@ -174,8 +161,8 @@
                             <label for="editBookCategory" class="form-label">Catégorie <span class="text-danger">*</span></label>
                             <select class="form-control" id="editBookCategory" name="category" required>
                                 <option value="">Sélectionnez une catégorie</option>
-                                {% for c in categories_list %}
-                                    <option value="{{ c.name if c is not string else c }}">{{ c.name if c is not string else c }}</option>
+                                {% for category in books|map(attribute='category')|unique %}
+                                    <option value="{{ category }}">{{ category }}</option>
                                 {% endfor %}
                             </select>
                         </div>
@@ -255,8 +242,8 @@
                             <label for="addBookCategory" class="form-label">Catégorie <span class="text-danger">*</span></label>
                             <select class="form-control" id="addBookCategory" name="category" required>
                                 <option value="">Sélectionnez une catégorie</option>
-                                {% for c in categories_list %}
-                                    <option value="{{ c.name if c is not string else c }}">{{ c.name if c is not string else c }}</option>
+                                {% for category in books|map(attribute='category')|unique %}
+                                    <option value="{{ category }}">{{ category }}</option>
                                 {% endfor %}
                             </select>
                         </div>
@@ -297,129 +284,382 @@
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
 <script>
-(function(){
-    function esc(str){
-        return String(str===undefined||str===null?'':str).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;','\'':'&#39;'}[c]));
-    }
-    let dt = null;
-    const table = document.getElementById('booksTable');
-    const tbody = table.querySelector('tbody');
-    let currentCategory = '';
+    $(document).ready(function() {
+        $('#booksTable').DataTable();
+    });
+    // Script pour afficher les détails du livre dans le modal
+        document.querySelectorAll('.see-detail-book').forEach(button => {
+            button.addEventListener('click', function() {
+                const bookRow = this.closest('tr');
+                const bookDetails = {
+                    title: bookRow.querySelector('td:nth-child(1)').textContent,
+                    author: bookRow.querySelector('td:nth-child(2)').textContent,
+                    category: bookRow.querySelector('td:nth-child(3)').textContent,
+                    isbn: bookRow.dataset.isbn,
+                    publicationYear: bookRow.dataset.publicationYear,
+                    publisher: bookRow.dataset.publisher,
+                    quantity: bookRow.dataset.quantity,
+                    availableQuantity: bookRow.dataset.availableQuantity
+                };
 
-    function initDataTable(){
-        if ($.fn.DataTable.isDataTable('#booksTable')) {
-            $('#booksTable').DataTable().destroy();
-        }
-        dt = $('#booksTable').DataTable({
-            language:{ url:'https://cdn.datatables.net/plug-ins/1.13.4/i18n/fr-FR.json' },
-            pageLength:25
+                document.getElementById('bookTitle').textContent = bookDetails.title;
+                document.getElementById('bookAuthor').textContent = bookDetails.author;
+                document.getElementById('bookCategory').textContent = bookDetails.category;
+                document.getElementById('bookISBN').textContent = bookDetails.isbn;
+                document.getElementById('bookPublicationYear').textContent = bookDetails.publicationYear;
+                document.getElementById('bookPublisher').textContent = bookDetails.publisher;
+                document.getElementById('bookQuantity').textContent = bookDetails.quantity;
+                document.getElementById('bookAvailableQuantity').textContent = bookDetails.availableQuantity;
+
+                const modal = new bootstrap.Modal(document.getElementById('bookDetailsModal'));
+                modal.show();
+            });
+        });
+    // Script pour gérer les actions des boutons Modifier, Supprimer et Ajouter
+    document.querySelectorAll('.edit-book').forEach(button => {
+        button.addEventListener('click', function() {
+            const bookRow = this.closest('tr');
+            const bookDetails = {
+                title: bookRow.querySelector('td:nth-child(1)').textContent,
+                author: bookRow.querySelector('td:nth-child(2)').textContent,
+                category: bookRow.querySelector('td:nth-child(3)').textContent,
+                isbn: bookRow.dataset.isbn,
+                publicationYear: bookRow.dataset.publicationYear,
+                publisher: bookRow.dataset.publisher,
+                quantity: bookRow.dataset.quantity
+            };
+
+            // Stockage de l'ID du livre dans le modal
+            const modal = document.getElementById('editBookModal');
+            modal.dataset.currentBookId = bookRow.dataset.bookId;
+
+            document.getElementById('editBookTitle').value = bookDetails.title;
+            document.getElementById('editBookAuthor').value = bookDetails.author;
+            document.getElementById('editBookCategory').value = bookDetails.category;
+            document.getElementById('editBookISBN').value = bookDetails.isbn;
+            document.getElementById('editBookPublicationYear').value = bookDetails.publicationYear;
+            document.getElementById('editBookPublisher').value = bookDetails.publisher;
+            document.getElementById('editBookQuantity').value = bookDetails.quantity;
+
+            const modalInstance = new bootstrap.Modal(modal);
+            modalInstance.show();
+        });
+    });
+
+    document.querySelectorAll('.delete-book').forEach(button => {
+        button.addEventListener('click', function() {
+            const bookRow = this.closest('tr');
+            const bookId = bookRow.dataset.bookId;
+            const bookTitle = bookRow.querySelector('td:nth-child(1)').textContent;
+
+            document.getElementById('deleteBookModalLabel').textContent = `Supprimer le Livre: ${bookTitle}`;
+            // Stocker l'ID du livre à supprimer dans le modal
+            const deleteModal = document.getElementById('deleteBookModal');
+            deleteModal.dataset.bookIdToDelete = bookId;
+
+            const modal = new bootstrap.Modal(deleteModal);
+            modal.show();
+        });
+    });
+
+    // Fonction pour mettre à jour les statistiques
+    function updateStatistics() {
+        fetch('/books/total-books')
+            .then(response => response.json())
+            .then(data => {
+                document.querySelector('.card-text.display-4').textContent = data.total_books;
+            })
+            .catch(error => console.error('Erreur lors de la mise à jour des statistiques:', error));
+
+        fetch('/books/total-popular-books')
+            .then(response => response.json())
+            .then(data => {
+                document.querySelectorAll('.card-text.display-4')[1].textContent = data.total_popular_books;
+            })
+            .catch(error => console.error('Erreur lors de la mise à jour des statistiques:', error));
+    }
+
+    // Gestion de la confirmation de suppression
+    const confirmDeleteBtn = document.getElementById('confirmDeleteBook');
+    if (confirmDeleteBtn) {
+        confirmDeleteBtn.addEventListener('click', function() {
+            const deleteModal = document.getElementById('deleteBookModal');
+            const bookId = deleteModal.dataset.bookIdToDelete;
+
+            if (!bookId) {
+                showAlert('danger', 'Erreur: ID du livre non trouvé');
+                return;
+            }
+
+            // Désactiver le bouton pendant la suppression
+            this.disabled = true;
+            this.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Suppression...';
+
+            fetch('/books/delete', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ book_id: bookId })
+            })
+            .then(response => response.json().then(data => ({
+                status: response.status,
+                data: data
+            })))
+            .then(({ status, data }) => {
+                if (status === 200 && data.success) {
+                    // Retirer la ligne du tableau
+                    const row = document.querySelector(`tr[data-book-id='${bookId}']`);
+                    if (row) {
+                        row.remove();
+                        showAlert('success', data.message);
+                        // Mettre à jour les statistiques
+                        updateStatistics();
+                    }
+                    // Fermer le modal
+                    const modal = bootstrap.Modal.getInstance(deleteModal);
+                    if (modal) {
+                        modal.hide();
+                        // Nettoyer les données du modal
+                        deleteModal.dataset.bookIdToDelete = '';
+                        document.getElementById('deleteBookModalLabel').textContent = 'Supprimer le Livre';
+                    }
+                } else {
+                    throw new Error(data.message || 'Erreur lors de la suppression du livre');
+                }
+            })
+            .catch(error => {
+                showAlert('danger', error.message);
+            })
+            .finally(() => {
+                // Réactiver le bouton
+                this.disabled = false;
+                this.innerHTML = 'Supprimer';
+            });
         });
     }
 
-    function showLoading(state){
-        const sel = document.getElementById('filterCategory');
-        if(!sel) return;
-        sel.disabled = !!state;
-        if(state){ sel.classList.add('opacity-50'); }
-        else { sel.classList.remove('opacity-50'); }
+    // Fonction utilitaire pour afficher les alertes
+    function showAlert(type, message) {
+        const alertDiv = document.createElement('div');
+        alertDiv.className = `alert alert-${type} alert-dismissible fade show`;
+        alertDiv.innerHTML = `
+            ${message}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        `;
+        document.querySelector('.container').insertBefore(alertDiv, document.querySelector('.table-responsive'));
+
+        // Supprimer l'alerte après 5 secondes
+        setTimeout(() => {
+            alertDiv.remove();
+        }, 5000);
     }
 
-    function buildRowsHTML(books){
-        if(!books.length){
-            return '<tr><td colspan="5" class="text-center text-muted">Aucun livre pour cette catégorie.</td></tr>';
+    // Gestionnaire d'événements pour le modal de suppression
+    document.getElementById('deleteBookModal').addEventListener('hidden.bs.modal', function () {
+        // Réinitialiser le bouton de confirmation
+        const confirmBtn = document.getElementById('confirmDeleteBook');
+        if (confirmBtn) {
+            confirmBtn.disabled = false;
+            confirmBtn.innerHTML = 'Supprimer';
         }
-        return books.map(b=>`<tr data-book-id="${esc(b.id)}" data-isbn="${esc(b.isbn)}" data-publication-year="${esc(b.publication_year)}" data-publisher="${esc(b.publisher)}" data-quantity="${esc(b.quantity)}" data-available-quantity="${esc(b.available_quantity)}">`
-            +`<td>${esc(b.title)}</td>`
-            +`<td>${esc(b.author)}</td>`
-            +`<td>${esc(b.category)}</td>`
-            +`<td>${b.available_quantity>0?'<span class="badge bg-success">Disponible</span>':'<span class="badge bg-danger">Emprunté</span>'}</td>`
-            +`<td>`
-                +`<button class="btn btn-info btn-sm see-detail-book" title="Voir détails"><i class="bi bi-eye"></i></button> `
-                +`<button class="btn btn-warning btn-sm edit-book" title="Modifier"><i class="bi bi-pencil"></i></button> `
-                +`<button class="btn btn-danger btn-sm delete-book" title="Supprimer"><i class="bi bi-trash"></i></button>`
-            +`</td>`
-        +`</tr>`).join('');
-    }
+        // Nettoyer les données du modal
+        this.dataset.bookIdToDelete = '';
+        document.getElementById('deleteBookModalLabel').textContent = 'Supprimer le Livre';
+    });
 
-    function renderBooks(books){
-        // Remplacer le corps du tableau
-        tbody.innerHTML = buildRowsHTML(books);
-        // Réinitialiser DataTables
-        initDataTable();
-    }
+    document.getElementById('addBookButton').addEventListener('click', function() {
+        const modal = new bootstrap.Modal(document.getElementById('addBookModal'));
+        modal.show();
+    });
 
-    function fetchBooks(category){
-        showLoading(true);
-        const url = '/books/api' + (category? ('?category='+encodeURIComponent(category)) : '');
-        console.debug('[Filtre catégories] Chargement:', url);
-        fetch(url)
-            .then(r=>r.json())
-            .then(data=>{
-                if(data.error){ console.error('Erreur API', data.error); return; }
-                renderBooks(data.books||[]);
-            })
-            .catch(err=> console.error('Erreur chargement livres filtrés:', err))
-            .finally(()=> showLoading(false));
-    }
+    // Gestion du formulaire d'ajout de livre
+    document.getElementById('addBookForm').addEventListener('submit', function(event) {
+        event.preventDefault();
 
-    function openDetails(tr){
-        const d = {
-            title: tr.querySelector('td:nth-child(1)').textContent,
-            author: tr.querySelector('td:nth-child(2)').textContent,
-            category: tr.querySelector('td:nth-child(3)').textContent,
-            isbn: tr.dataset.isbn,
-            publicationYear: tr.dataset.publicationYear,
-            publisher: tr.dataset.publisher,
-            quantity: tr.dataset.quantity,
-            availableQuantity: tr.dataset.availableQuantity
-        };
-        document.getElementById('bookTitle').textContent = d.title;
-        document.getElementById('bookAuthor').textContent = d.author;
-        document.getElementById('bookCategory').textContent = d.category;
-        document.getElementById('bookISBN').textContent = d.isbn;
-        document.getElementById('bookPublicationYear').textContent = d.publicationYear;
-        document.getElementById('bookPublisher').textContent = d.publisher;
-        document.getElementById('bookQuantity').textContent = d.quantity;
-        document.getElementById('bookAvailableQuantity').textContent = d.availableQuantity;
-        new bootstrap.Modal(document.getElementById('bookDetailsModal')).show();
-    }
+        // Récupération et validation des données du formulaire
+        const formData = new FormData(this);
+        const jsonData = {};
 
-    // Délégation des événements (un seul binding permanent)
-    tbody.addEventListener('click', function(e){
-        const btn = e.target.closest('button');
-        if(!btn) return;
-        const tr = btn.closest('tr');
-        if(btn.classList.contains('see-detail-book')){
-            openDetails(tr);
-        } else if(btn.classList.contains('edit-book')){
-            const modal = document.getElementById('editBookModal');
-            modal.dataset.currentBookId = tr.dataset.bookId;
-            document.getElementById('editBookTitle').value = tr.querySelector('td:nth-child(1)').textContent;
-            document.getElementById('editBookAuthor').value = tr.querySelector('td:nth-child(2)').textContent;
-            document.getElementById('editBookCategory').value = tr.querySelector('td:nth-child(3)').textContent;
-            document.getElementById('editBookISBN').value = tr.dataset.isbn;
-            document.getElementById('editBookPublicationYear').value = tr.dataset.publicationYear;
-            document.getElementById('editBookPublisher').value = tr.dataset.publisher;
-            document.getElementById('editBookQuantity').value = tr.dataset.quantity;
-            new bootstrap.Modal(modal).show();
-        } else if(btn.classList.contains('delete-book')){
-            const modal = document.getElementById('deleteBookModal');
-            modal.dataset.bookIdToDelete = tr.dataset.bookId;
-            document.getElementById('deleteBookModalLabel').textContent = 'Supprimer le Livre: ' + tr.querySelector('td:first-child').textContent;
-            new bootstrap.Modal(modal).show();
+        // Conversion des données du formulaire en JSON
+        formData.forEach((value, key) => {
+            // Traitement spécial pour la date de publication
+            if (key === 'publication_year') {
+                jsonData[key] = new Date(value).getFullYear();
+            } else if (key === 'category') {
+                // On s'assure d'envoyer le nom de la catégorie
+                const categorySelect = document.getElementById('addBookCategory');
+                jsonData[key] = categorySelect.options[categorySelect.selectedIndex].text;
+            } else {
+                jsonData[key] = value;
+            }
+        });
+
+        // Validation des données
+        if (!jsonData.title || !jsonData.author || !jsonData.category || !jsonData.isbn || !jsonData.publication_year || !jsonData.publisher || !jsonData.quantity) {
+            const errorAlert = document.createElement('div');
+            errorAlert.className = 'alert alert-danger alert-dismissible fade show';
+            errorAlert.innerHTML = `
+                Veuillez remplir tous les champs obligatoires
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            `;
+            document.querySelector('.container').insertBefore(errorAlert, document.querySelector('.table-responsive'));
+            return;
         }
+
+        // Désactivation du bouton pendant l'envoi
+        const submitButton = this.querySelector('button[type="submit"]');
+        submitButton.disabled = true;
+        submitButton.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Envoi en cours...';
+
+        // Envoi des données au serveur
+        fetch('/books/add', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(jsonData)
+        })
+        .then(response => response.json().then(data => ({
+            status: response.status,
+            data: data
+        })))
+        .then(({ status, data }) => {
+            if (status === 201 || status === 200) {
+                if (data.success) {
+                    // Affichage du message de succès
+                    const successAlert = document.createElement('div');
+                    successAlert.className = 'alert alert-success alert-dismissible fade show';
+                    successAlert.innerHTML = `
+                        ${data.message}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    `;
+                    document.querySelector('.container').insertBefore(successAlert, document.querySelector('.table-responsive'));
+
+                    // Fermeture du modal
+                    const modal = bootstrap.Modal.getInstance(document.getElementById('addBookModal'));
+                    modal.hide();
+
+                    // Mettre à jour les statistiques
+                    updateStatistics();
+
+                    // Recharger la page après un court délai
+                    setTimeout(() => location.reload(), 1500);
+                } else {
+                    throw new Error(data.message);
+                }
+            } else {
+                throw new Error(data.message || 'Une erreur est survenue lors de l\'ajout du livre');
+            }
+        })
+        .catch(error => {
+            // Affichage de l'erreur
+            const errorAlert = document.createElement('div');
+            errorAlert.className = 'alert alert-danger alert-dismissible fade show';
+            errorAlert.innerHTML = `
+                ${error.message}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            `;
+            document.querySelector('.container').insertBefore(errorAlert, document.querySelector('.table-responsive'));
+        })
+        .finally(() => {
+            // Réactivation du bouton
+            submitButton.disabled = false;
+            submitButton.innerHTML = 'Ajouter le livre';
+        });
     });
 
-    document.getElementById('filterCategory')?.addEventListener('change', function(){
-        currentCategory = this.value || '';
-        fetchBooks(currentCategory);
-    });
+    // Gestion du formulaire de modification de livre
+    document.getElementById('editBookForm').addEventListener('submit', function(event) {
+        event.preventDefault();
 
-    // Initialisation
-    document.addEventListener('DOMContentLoaded', function(){
-        initDataTable();
+        // Récupération et validation des données du formulaire
+        const formData = new FormData(this);
+        const jsonData = {};
+
+        // Conversion des données du formulaire en JSON
+        formData.forEach((value, key) => {
+            jsonData[key] = value;
+        });
+
+        // Ajout de l'ID du livre
+        const modal = document.getElementById('editBookModal');
+        const bookRow = document.querySelector(`tr[data-book-id="${modal.dataset.currentBookId}"]`);
+        jsonData.id = bookRow.dataset.bookId;
+
+        // Validation des données
+        if (!jsonData.title || !jsonData.author || !jsonData.category || !jsonData.isbn || !jsonData.publication_year || !jsonData.publisher || !jsonData.quantity) {
+            const errorAlert = document.createElement('div');
+            errorAlert.className = 'alert alert-danger alert-dismissible fade show';
+            errorAlert.innerHTML = `
+                Veuillez remplir tous les champs obligatoires
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            `;
+            document.querySelector('.container').insertBefore(errorAlert, document.querySelector('.table-responsive'));
+            return;
+        }
+
+        // Désactivation du bouton pendant l'envoi
+        const submitButton = this.querySelector('button[type="submit"]');
+        submitButton.disabled = true;
+        submitButton.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Enregistrement en cours...';
+
+        // Envoi des données au serveur
+        fetch('/books/edit', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(jsonData)
+        })
+        .then(response => response.json().then(data => ({
+            status: response.status,
+            data: data
+        })))
+        .then(({ status, data }) => {
+            if (status === 200) {
+                if (data.success) {
+                    // Affichage du message de succès
+                    const successAlert = document.createElement('div');
+                    successAlert.className = 'alert alert-success alert-dismissible fade show';
+                    successAlert.innerHTML = `
+                        ${data.message}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    `;
+                    document.querySelector('.container').insertBefore(successAlert, document.querySelector('.table-responsive'));
+
+                    // Fermeture du modal
+                    const modal = bootstrap.Modal.getInstance(document.getElementById('editBookModal'));
+                    modal.hide();
+
+                    // Mettre à jour les statistiques
+                    updateStatistics();
+
+                    // Recharger la page après un court délai
+                    setTimeout(() => location.reload(), 1500);
+                } else {
+                    throw new Error(data.message);
+                }
+            } else {
+                throw new Error(data.message || 'Une erreur est survenue lors de la modification du livre');
+            }
+        })
+        .catch(error => {
+            // Affichage de l'erreur
+            const errorAlert = document.createElement('div');
+            errorAlert.className = 'alert alert-danger alert-dismissible fade show';
+            errorAlert.innerHTML = `
+                ${error.message}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            `;
+            document.querySelector('.container').insertBefore(errorAlert, document.querySelector('.table-responsive'));
+        })
+        .finally(() => {
+            // Réactivation du bouton
+            submitButton.disabled = false;
+            submitButton.innerHTML = 'Enregistrer les modifications';
+        });
     });
-})();
 </script>
 </body>
 </html>
