@@ -5,8 +5,45 @@
 ![contributors](https://img.shields.io/github/contributors/Hojgaetan/LMS)
 ![MIT License Badge](https://img.shields.io/badge/license-MIT-green)
 
+> Version courante : **0.1.0** (voir `VERSION` et `CHANGELOG.md`)
+
 ## Overview
 The Library Management System (LMS) is a robust, modular application designed to streamline and automate the management of library resources. Built with a scalable architecture and following the Model-View-Controller (MVC) pattern, LMS provides a comprehensive suite of features for book, author, category, member, and borrowing management, as well as advanced reporting and administrative controls.
+
+## Version & Processus de Release
+
+Les informations de version sont centralisées dans :
+- Fichier `VERSION`
+- Module Python `core/version.py` (expose `__version__` et `get_version()`)
+- Fichier `CHANGELOG.md` (format inspiré de Keep a Changelog + SemVer)
+
+### Première release : 0.1.0
+Inclut l'architecture de base, gestion livres/auteurs/catégories (partielle), interface Web Flask et CLI, initialisation base SQLite et documentation.
+
+### Publier une nouvelle version
+1. Mettre à jour le changelog : éditer `CHANGELOG.md` et ajouter une nouvelle section `[x.y.z] - YYYY-MM-DD`.
+2. Mettre à jour le fichier `VERSION` (ex: `0.2.0`).
+3. (Optionnel) Utiliser le script: `python scripts/bump_version.py --set 0.2.0`.
+4. Vérifier que les tests passent : `pytest -q`.
+5. Committer :
+   ```
+   git add VERSION CHANGELOG.md core/version.py
+   git commit -m "chore(release): bump version to 0.2.0"
+   ```
+6. Créer un tag annoté :
+   ```
+   git tag -a v0.2.0 -m "Release 0.2.0"
+   git push origin main --tags
+   ```
+7. Créer la release GitHub via l'UI en copiant la section correspondante du changelog.
+
+### Récupérer la version dans le code
+```python
+from core.version import __version__  # ou get_version()
+print(__version__)
+```
+
+---
 
 ## Key Features
 

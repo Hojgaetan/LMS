@@ -1,3 +1,5 @@
+from core.version import __version__
+
 class MenuView:
     """View class for displaying menus and handling user input."""
 
@@ -9,7 +11,7 @@ class MenuView:
         Returns:
             str: The user's choice
         """
-        print("\n===== Library Management System =====")
+        print(f"\n===== Library Management System v{__version__} =====")
         print("1. Add New Book")
         print("2. Update Book Information")
         print("3. Remove Book")

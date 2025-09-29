@@ -1,0 +1,81 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+  workflow_dispatch:
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+            python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Run tests
+        run: |
+          pytest -q || (echo "Tests failed" && exit 1)
+
+      - name: Extract version
+        id: version
+        run: echo "version=$(cat VERSION)" >> $GITHUB_OUTPUT
+
+      - name: Check tag matches version
+        run: |
+          FILE_VERSION=$(cat VERSION)
+          TAG_VERSION=${GITHUB_REF_NAME#v}
+          echo "File version: $FILE_VERSION"
+          echo "Tag version: $TAG_VERSION"
+          if [ "$FILE_VERSION" != "$TAG_VERSION" ]; then
+            echo "Tag (v$TAG_VERSION) ne correspond pas au contenu du fichier VERSION ($FILE_VERSION)" >&2
+            exit 1
+          fi
+
+      - name: Generate changelog excerpt
+        id: changelog
+        run: |
+          VERSION=${GITHUB_REF_NAME#v}
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
+          # Extraire la section correspondante dans CHANGELOG.md
+          awk "/^## \[$VERSION\]/ {flag=1;next} /^## \[/ {flag=0} flag {print}" CHANGELOG.md > CHANGELOG_SECTION.txt || true
+          echo 'Changelog section:'
+          cat CHANGELOG_SECTION.txt || true
+          BODY=$(printf "Release v%s\n\n" "$VERSION")
+          if [ -s CHANGELOG_SECTION.txt ]; then
+            BODY+=$(cat CHANGELOG_SECTION.txt)
+          else
+            BODY+="(Aucune entrée spécifique trouvée dans CHANGELOG.md)"
+          fi
+          BODY_ESCAPED=$(echo "$BODY" | sed 's/"/\"/g')
+          echo "body=$BODY_ESCAPED" >> $GITHUB_OUTPUT
+
+      - name: Create GitHub Release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref_name }}
+          release_name: Release ${{ github.ref_name }}
+          body: ${{ steps.changelog.outputs.body }}
+          draft: false
+          prerelease: false
+
+  # (Optionnel) Job futur pour publication PyPI si packaging ajouté
+  # publish:
+  #   needs: build-and-test
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Placeholder
+  #       run: echo "Ajouter packaging (pyproject.toml / setup.cfg) avant publication PyPI"
+
