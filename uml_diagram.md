@@ -1,5 +1,6 @@
 # UML Diagrams for Library Management System
 
+
 ## Class Diagram
 
 ```plantuml
@@ -192,7 +193,32 @@ LibraryManagementSystem ..> BookView: uses >
 ## Package Diagram
 
 ```plantuml
-@startuml
+@startuml@startuml
+actor Bibliothécaire
+actor Membre
+
+rectangle "Système de gestion de bibliothèque" {
+  Bibliothécaire -- (Ajouter un livre)
+  Bibliothécaire -- (Mettre à jour un livre)
+  Bibliothécaire -- (Supprimer un livre)
+  Bibliothécaire -- (Consulter la liste des livres)
+  Bibliothécaire -- (Gérer les auteurs)
+  Bibliothécaire -- (Gérer les catégories)
+  Bibliothécaire -- (Consulter les emprunts)
+  Bibliothécaire -- (Gérer les membres)
+  Bibliothécaire -- (Initialiser/réinitialiser la base de données)
+
+  Membre -- (Rechercher un livre)
+  Membre -- (Consulter la liste des livres)
+  Membre -- (Emprunter un livre)
+  Membre -- (Rendre un livre)
+  Membre -- (Consulter ses emprunts)
+}
+
+(Ajouter un livre) .> (Gérer les auteurs) : <<include>>
+(Ajouter un livre) .> (Gérer les catégories) : <<include>>
+(Emprunter un livre) .> (Consulter la liste des livres) : <<include>>
+@enduml
 
 package "Models" {
   [BaseModel]
@@ -226,6 +252,37 @@ Controllers ..> Utils: uses
 LibraryManagementSystem ..> Controllers: uses
 LibraryManagementSystem ..> Views: uses
 
+@enduml
+```
+
+## Use Case Diagram
+
+```plantuml
+@startuml
+actor Bibliothécaire
+actor Membre
+
+rectangle "Système de gestion de bibliothèque" {
+  Bibliothécaire -- (Ajouter un livre)
+  Bibliothécaire -- (Mettre à jour un livre)
+  Bibliothécaire -- (Supprimer un livre)
+  Bibliothécaire -- (Consulter la liste des livres)
+  Bibliothécaire -- (Gérer les auteurs)
+  Bibliothécaire -- (Gérer les catégories)
+  Bibliothécaire -- (Consulter les emprunts)
+  Bibliothécaire -- (Gérer les membres)
+  Bibliothécaire -- (Initialiser/réinitialiser la base de données)
+
+  Membre -- (Rechercher un livre)
+  Membre -- (Consulter la liste des livres)
+  Membre -- (Emprunter un livre)
+  Membre -- (Rendre un livre)
+  Membre -- (Consulter ses emprunts)
+}
+
+(Ajouter un livre) .> (Gérer les auteurs) : <<include>>
+(Ajouter un livre) .> (Gérer les catégories) : <<include>>
+(Emprunter un livre) .> (Consulter la liste des livres) : <<include>>
 @enduml
 ```
 
