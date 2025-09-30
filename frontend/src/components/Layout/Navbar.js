@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Navbar as BootstrapNavbar, Nav, NavDropdown, Container } from 'react-bootstrap';
-import { LinkContainer } from 'react-router-bootstrap';
+import { NavLink, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import './Navbar.css';
 
@@ -9,6 +9,8 @@ const Navbar = () => {
 
   const handleToggle = () => setExpanded(!expanded);
   const handleSelect = () => setExpanded(false);
+
+  const navLinkClass = ({ isActive }) => `nav-link-custom${isActive ? ' active' : ''}`;
 
   return (
     <motion.div
@@ -24,8 +26,8 @@ const Navbar = () => {
         onToggle={handleToggle}
       >
         <Container fluid>
-          <LinkContainer to="/">
-            <BootstrapNavbar.Brand className="navbar-brand-custom">
+          <Link to="/" className="navbar-brand-custom" onClick={handleSelect}>
+            <BootstrapNavbar.Brand as="span" className="navbar-brand-custom">
               <motion.div
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
@@ -35,46 +37,36 @@ const Navbar = () => {
                 <span className="brand-text">Library MS</span>
               </motion.div>
             </BootstrapNavbar.Brand>
-          </LinkContainer>
+          </Link>
 
           <BootstrapNavbar.Toggle aria-controls="basic-navbar-nav" />
           
           <BootstrapNavbar.Collapse id="basic-navbar-nav">
-            <Nav className="ms-auto" onSelect={handleSelect}>
-              <LinkContainer to="/">
-                <Nav.Link className="nav-link-custom">
-                  <i className="bi bi-speedometer2 me-2"></i>
-                  Tableau de Bord
-                </Nav.Link>
-              </LinkContainer>
-              
-              <LinkContainer to="/books">
-                <Nav.Link className="nav-link-custom">
-                  <i className="bi bi-book me-2"></i>
-                  Livres
-                </Nav.Link>
-              </LinkContainer>
-              
-              <LinkContainer to="/members">
-                <Nav.Link className="nav-link-custom">
-                  <i className="bi bi-people me-2"></i>
-                  Membres
-                </Nav.Link>
-              </LinkContainer>
-              
-              <LinkContainer to="/loans">
-                <Nav.Link className="nav-link-custom">
-                  <i className="bi bi-arrow-left-right me-2"></i>
-                  Emprunts
-                </Nav.Link>
-              </LinkContainer>
-              
-              <LinkContainer to="/reports">
-                <Nav.Link className="nav-link-custom">
-                  <i className="bi bi-bar-chart me-2"></i>
-                  Rapports
-                </Nav.Link>
-              </LinkContainer>
+            <Nav className="ms-auto">
+              <Nav.Link as={NavLink} to="/" className={navLinkClass} onClick={handleSelect} end>
+                <i className="bi bi-speedometer2 me-2"></i>
+                Tableau de Bord
+              </Nav.Link>
+
+              <Nav.Link as={NavLink} to="/books" className={navLinkClass} onClick={handleSelect}>
+                <i className="bi bi-book me-2"></i>
+                Livres
+              </Nav.Link>
+
+              <Nav.Link as={NavLink} to="/members" className={navLinkClass} onClick={handleSelect}>
+                <i className="bi bi-people me-2"></i>
+                Membres
+              </Nav.Link>
+
+              <Nav.Link as={NavLink} to="/loans" className={navLinkClass} onClick={handleSelect}>
+                <i className="bi bi-arrow-left-right me-2"></i>
+                Emprunts
+              </Nav.Link>
+
+              <Nav.Link as={NavLink} to="/reports" className={navLinkClass} onClick={handleSelect}>
+                <i className="bi bi-bar-chart me-2"></i>
+                Rapports
+              </Nav.Link>
 
               <NavDropdown 
                 title={
@@ -86,16 +78,16 @@ const Navbar = () => {
                 id="account-dropdown"
                 className="nav-dropdown-custom"
               >
-                <NavDropdown.Item href="#register">
+                <NavDropdown.Item as={NavLink} to="/register" onClick={handleSelect}>
                   <i className="bi bi-person-plus me-2"></i>
                   Inscription
                 </NavDropdown.Item>
-                <NavDropdown.Item href="#login">
+                <NavDropdown.Item as={NavLink} to="/login" onClick={handleSelect}>
                   <i className="bi bi-box-arrow-in-right me-2"></i>
                   Connexion
                 </NavDropdown.Item>
                 <NavDropdown.Divider />
-                <NavDropdown.Item href="#profile">
+                <NavDropdown.Item as={NavLink} to="/profile" onClick={handleSelect}>
                   <i className="bi bi-gear me-2"></i>
                   Paramètres
                 </NavDropdown.Item>
