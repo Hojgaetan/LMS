@@ -31,7 +31,7 @@ class LibraryManagementSystem:
         self.book_view.display_authors(authors)
 
         # Get all categories and display them
-        categories = self.category_service.get_all_categories()
+        categories = self.category_service.list_categories()
         self.book_view.display_categories(categories)
 
         # Get book details from user
@@ -149,11 +149,11 @@ class LibraryManagementSystem:
 
     def add_new_category(self):
         """Handle the add new category functionality."""
-        from controllers.category_controller import CategoryController
+        from services.category_service import CategoryService
         from views.category_view import CategoryView
 
         name, description = CategoryView.display_add_category_menu()
-        success, message = CategoryController.add_category(name, description)
+        success, message = CategoryService.add_category(name, description)
         CategoryView.display_message(message)
 
     def update_category(self):
