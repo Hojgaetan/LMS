@@ -99,23 +99,23 @@ class LibraryManagementSystem:
 
     def add_new_author(self):
         """Handle the add new author functionality."""
-        from controllers.author_controller import AuthorController
+        from controllers.author_controller import AuthorService
         from views.author_view import AuthorView
 
         name, biography = AuthorView.display_add_author_menu()
-        success, message = AuthorController.add_author(name, biography)
+        success, message = AuthorService.add_author(name, biography)
         AuthorView.display_message(message)
 
     def update_author(self):
         """Handle the update author functionality."""
-        from controllers.author_controller import AuthorController
+        from services.author_service import AuthorService
         from views.author_view import AuthorView
 
         author_id, name, biography = AuthorView.display_update_author_menu()
         if not author_id.isdigit():
             AuthorView.display_message("Invalid author ID.")
             return
-        success, message = AuthorController.update_author(int(author_id), name or None, biography or None)
+        success, message = AuthorService.update_author(int(author_id), name or None, biography or None)
         AuthorView.display_message(message)
 
     def delete_author(self):
@@ -132,10 +132,10 @@ class LibraryManagementSystem:
 
     def list_authors(self):
         """Handle the list authors functionality."""
-        from controllers.author_controller import AuthorController
+        from services.author_service import AuthorService
         from views.author_view import AuthorView
 
-        authors = AuthorController.list_authors()
+        authors = AuthorService.list_authors()
         AuthorView.display_authors(authors)
 
     def search_authors(self):
