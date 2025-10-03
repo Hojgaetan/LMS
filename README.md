@@ -261,6 +261,7 @@ For a detailed description of each use case, see `README.md`.
 ## Authors & Contributors
 - [@Hojgaetan](https://github.com/Hojgaetan) (Lead project)
 - [@pmp-p](https://github.com/pmp-p)
+- [@snex-21](https://github.com/snex-21)
 - Contributors are welcome! Please see the `CONTRIBUTING.md` file for guidelines.
 
 ### 🚀 Nouveau Contributeur ?
