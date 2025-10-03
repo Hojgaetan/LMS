@@ -226,7 +226,7 @@ python main.py
 | Update Category Information | ❌ To be completed      | Aucun formulaire ou modal trouvé pour cette fonctionnalité.              |
 | Browse Books by Category    | ⚠️ Partially implemented | Recherche par catégorie disponible, mais pas entièrement fonctionnelle.  |
 | **Member Management**       |                         |                                                                           |
-| Register New Members         | ❌ To be completed      | Aucun formulaire ou modal trouvé pour cette fonctionnalité.              |
+| Register New Members         | ✅ Implemented      | Formulaire d'inscription opérationnel et testé.              |
 | Update Member Information    | ❌ To be completed      | Fonctionnalité non implémentée.                                          |
 | View Member History          | ❌ To be completed      | Fonctionnalité non implémentée.                                          |
 | Manage Member Status         | ❌ To be completed      | Fonctionnalité non implémentée.                                          |
