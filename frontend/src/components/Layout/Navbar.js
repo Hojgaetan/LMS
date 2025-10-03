@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Navbar as BootstrapNavbar, Nav, NavDropdown, Container } from 'react-bootstrap';
 import { NavLink, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
@@ -6,9 +6,32 @@ import './Navbar.css';
 
 const Navbar = () => {
   const [expanded, setExpanded] = useState(false);
+  const navRef = useRef(null);
 
   const handleToggle = () => setExpanded(!expanded);
   const handleSelect = () => setExpanded(false);
+
+  const updateNavHeight = () => {
+    if (navRef.current) {
+      const h = navRef.current.offsetHeight;
+      // Met à jour la variable CSS globale
+      document.documentElement.style.setProperty('--navbar-height', h + 'px');
+    }
+  };
+
+  useEffect(() => {
+    // Initialisation
+    updateNavHeight();
+    // Écoute le resize
+    window.addEventListener('resize', updateNavHeight);
+    return () => window.removeEventListener('resize', updateNavHeight);
+  }, []);
+
+  useEffect(() => {
+    // Recalcule après expansion/collapse (attendre la fin d'animation Bootstrap)
+    const t = setTimeout(updateNavHeight, 300);
+    return () => clearTimeout(t);
+  }, [expanded]);
 
   const navLinkClass = ({ isActive }) => `nav-link-custom${isActive ? ' active' : ''}`;
 
@@ -24,6 +47,7 @@ const Navbar = () => {
         fixed="top"
         expanded={expanded}
         onToggle={handleToggle}
+        ref={navRef}
       >
         <Container fluid>
           <Link to="/" className="navbar-brand-custom" onClick={handleSelect}>
