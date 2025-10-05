@@ -1,10 +1,10 @@
 from flask import Blueprint, jsonify
-from services.category_service import CategoryService
+from services import CategoryService
 
-book_category_blueprint = Blueprint("book_category", __name__)
+category_blueprint = Blueprint("categories", __name__)
 
 
-@book_category_blueprint.route("/total-category", methods=["GET"])
+@category_blueprint.route("/total-category", methods=["GET"])
 def total_categories():
     try:
         total_category = CategoryService.count_categories()

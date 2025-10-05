@@ -15,6 +15,25 @@ class CategoryService:
         return True, f"Category '{name}' added successfully."
 
     @staticmethod
+    def get_or_create_category(name, description=None):
+        """Retourne l'ID d'une catégorie existante (match insensible à la casse) ou la crée.
+        Returns: (success: bool, result: int | str) -> id ou message d'erreur
+        """
+        existing = Category.find_by_name(name)
+        if existing:
+            for c in existing:
+                if c.name.lower() == name.lower():
+                    return True, c.category_id
+            return True, existing[0].category_id
+        created_ok, msg = CategoryService.add_category(name=name, description=description)
+        if not created_ok:
+            return False, msg
+        post = Category.find_by_name(name)
+        if post:
+            return True, post[0].category_id
+        return False, "Category creation failed (ID not retrievable)."
+
+    @staticmethod
     def update_category(category_id, name=None, description=None):
         category = Category.find_by_id(category_id)
         if not category:

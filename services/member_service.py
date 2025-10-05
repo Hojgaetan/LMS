@@ -14,6 +14,11 @@ class MemberService:
         return True, f"Member '{name}' added successfully."
 
     @staticmethod
+    def get_member(member_id):
+        """Retourne un membre par ID ou None."""
+        return Member.find_by_id(member_id)
+
+    @staticmethod
     def update_member(member_id, name=None, email=None, phone=None, address=None, status=None):
         try:
             print("Début de la mise à jour du membre:", member_id)  # Log de début

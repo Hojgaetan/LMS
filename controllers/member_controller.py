@@ -1,5 +1,5 @@
 from flask import Blueprint, jsonify, request
-from services.member_service import MemberService
+from services import MemberService
 from models.member import Member
 from datetime import datetime
 
@@ -177,4 +177,3 @@ def delete_member():
             'success': False,
             'message': f'Erreur serveur: {str(e)}'
         }), 500
-

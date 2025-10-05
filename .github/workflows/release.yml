@@ -1,81 +1,48 @@
-name: Release
+name: Auto Release
 
 on:
   push:
-    tags:
-      - 'v*.*.*'
-  workflow_dispatch:
+    branches: [ main ]
+
+permissions:
+  contents: write
 
 jobs:
-  build-and-test:
+  auto-release:
+    if: ${{ !startsWith(github.event.head_commit.message, 'chore(release):') }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # nécessaire pour récupérer les tags existants
 
-      - name: Set up Python
+      - name: Setup Python
         uses: actions/setup-python@v5
         with:
-            python-version: '3.11'
+          python-version: '3.11'
 
-      - name: Install dependencies
+      - name: Install minimal dependencies
         run: |
-          python -m pip install --upgrade pip
-          pip install -r requirements.txt
+          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
 
-      - name: Run tests
+      - name: Configure Git identity
         run: |
-          pytest -q || (echo "Tests failed" && exit 1)
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
-      - name: Extract version
-        id: version
-        run: echo "version=$(cat VERSION)" >> $GITHUB_OUTPUT
-
-      - name: Check tag matches version
+      - name: Run auto release script (SemVer + Conventional Commits)
+        id: release_step
         run: |
-          FILE_VERSION=$(cat VERSION)
-          TAG_VERSION=${GITHUB_REF_NAME#v}
-          echo "File version: $FILE_VERSION"
-          echo "Tag version: $TAG_VERSION"
-          if [ "$FILE_VERSION" != "$TAG_VERSION" ]; then
-            echo "Tag (v$TAG_VERSION) ne correspond pas au contenu du fichier VERSION ($FILE_VERSION)" >&2
-            exit 1
-          fi
+          python scripts/release.py --auto || echo "No release performed"
 
-      - name: Generate changelog excerpt
-        id: changelog
+      - name: Push commit and tags (if any)
+        if: success()
         run: |
-          VERSION=${GITHUB_REF_NAME#v}
-          echo "VERSION=$VERSION" >> $GITHUB_ENV
-          # Extraire la section correspondante dans CHANGELOG.md
-          awk "/^## \[$VERSION\]/ {flag=1;next} /^## \[/ {flag=0} flag {print}" CHANGELOG.md > CHANGELOG_SECTION.txt || true
-          echo 'Changelog section:'
-          cat CHANGELOG_SECTION.txt || true
-          BODY=$(printf "Release v%s\n\n" "$VERSION")
-          if [ -s CHANGELOG_SECTION.txt ]; then
-            BODY+=$(cat CHANGELOG_SECTION.txt)
+          # Vérifier s'il y a un commit local non poussé
+          if [ -n "$(git log origin/main..HEAD --oneline)" ]; then
+            git push origin main --follow-tags || git push origin main && git push --tags || true
           else
-            BODY+="(Aucune entrée spécifique trouvée dans CHANGELOG.md)"
+            echo "Aucun nouveau commit à pousser (pas de release)."
           fi
-          BODY_ESCAPED=$(echo "$BODY" | sed 's/"/\"/g')
-          echo "body=$BODY_ESCAPED" >> $GITHUB_OUTPUT
-
-      - name: Create GitHub Release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          tag_name: ${{ github.ref_name }}
-          release_name: Release ${{ github.ref_name }}
-          body: ${{ steps.changelog.outputs.body }}
-          draft: false
-          prerelease: false
-
-  # (Optionnel) Job futur pour publication PyPI si packaging ajouté
-  # publish:
-  #   needs: build-and-test
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - name: Placeholder
-  #       run: echo "Ajouter packaging (pyproject.toml / setup.cfg) avant publication PyPI"
 

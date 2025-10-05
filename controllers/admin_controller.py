@@ -1,4 +1,4 @@
-from services.admin_service import AdminService
+from services import AdminService
 
 
 class AdminController:

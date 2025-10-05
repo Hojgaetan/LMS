@@ -1,6 +1,5 @@
 from flask import Blueprint, render_template, jsonify
-from services.dashboard_service import DashboardService
-from services.borrowing_service import BorrowingService
+from services import DashboardService, BorrowingService
 
 dashboard_blueprint = Blueprint("dashboard", __name__)
 

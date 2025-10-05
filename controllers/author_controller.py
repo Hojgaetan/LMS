@@ -1,5 +1,5 @@
 from flask import Blueprint, jsonify
-from services.author_service import AuthorService
+from services import AuthorService
 
 author_blueprint = Blueprint("authors", __name__)
 

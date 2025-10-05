@@ -1,5 +1,11 @@
 from flask import Flask
-from controllers.dashboard_controller import dashboard_blueprint
+from controllers import (
+    dashboard_blueprint,
+    book_blueprint,
+    member_blueprint,
+    author_blueprint,
+    category_blueprint,
+)
 
 
 class AppFactory:
@@ -13,9 +19,10 @@ class AppFactory:
         app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///lms.db"
 
         # Register blueprints
-        # app.register_blueprint(book_blueprint, url_prefix='/books')
-        # app.register_blueprint(member_blueprint, url_prefix='/members')
-        # app.register_blueprint(author_blueprint, url_prefix='/authors')
         app.register_blueprint(dashboard_blueprint, url_prefix="/")
+        app.register_blueprint(book_blueprint, url_prefix="/books")
+        app.register_blueprint(member_blueprint, url_prefix="/members")
+        app.register_blueprint(author_blueprint, url_prefix="/authors")
+        app.register_blueprint(category_blueprint, url_prefix="/categories")
 
         return app

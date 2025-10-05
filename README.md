@@ -20,26 +20,92 @@ Les informations de version sont centralisées dans :
 ### Première release : 0.1.0
 Inclut l'architecture de base, gestion livres/auteurs/catégories (partielle), interface Web Flask et CLI, initialisation base SQLite et documentation.
 
-### Publier une nouvelle version
-1. Mettre à jour le changelog : éditer `CHANGELOG.md` et ajouter une nouvelle section `[x.y.z] - YYYY-MM-DD`.
-2. Mettre à jour le fichier `VERSION` (ex: `0.2.0`).
-3. (Optionnel) Utiliser le script: `python scripts/bump_version.py --set 0.2.0`.
-4. Vérifier que les tests passent : `pytest -q`.
-5. Committer :
+### Nouveau : Release Automatique (GitHub Actions + Conventional Commits)
+Un workflow CI (`.github/workflows/release.yml`) exécute automatiquement une publication locale (bump version + MAJ `CHANGELOG.md` + tag Git) à chaque `push` sur `main` si :
+- Le dernier commit n'est pas déjà un commit de release (`chore(release): vX.Y.Z`)
+- Il existe au moins un commit depuis le dernier tag
+
+Le script utilisé : `scripts/release.py`
+
+#### Détection automatique du type de bump (--auto)
+Heuristique basée sur les messages (Conventional Commits simplifiés) :
+- `BREAKING CHANGE` ou `feat!` / `fix!` / `refactor!` / `perf!` → bump MAJOR
+- Commit commençant par `feat` → bump MINOR
+- Commit commençant par `fix`, `refactor`, `perf` → bump PATCH
+- Sinon (si changements) → PATCH
+
+#### Exemples de messages recommandés
+- `feat: ajout de la recherche avancée de livres`
+- `fix: correction du calcul de la disponibilité`
+- `refactor: simplification du menu CLI`
+- `perf: optimisation de la requête des livres populaires`
+- `feat!: changement du format d'export (BREAKING)`
+
+#### Que fait le workflow ?
+1. Récupère les tags (`fetch-depth: 0`)
+2. Exécute : `python scripts/release.py --auto`
+3. Si une nouvelle version est calculée :
+   - Met à jour `VERSION`
+   - Insère un squelette de section dans `CHANGELOG.md` si absent
+   - Ajoute un lien de référence en bas (compare GitHub)
+   - Crée commit `chore(release): vX.Y.Z` + tag annoté `vX.Y.Z`
+   - Pousse commit + tag (à l'étape suivante)
+
+#### Cas où aucune release n'est créée
+- Aucun commit depuis le précédent tag
+- Messages ne produisant pas de bump ET version déjà à jour explicitement définie
+
+### Utilisation Locale (script d'automatisation)
+```
+# Bump automatique (détection heuristique des commits)
+python scripts/release.py --auto
+
+# Forcer un type de bump
+python scripts/release.py --bump minor
+python scripts/release.py --bump patch
+python scripts/release.py --bump major
+
+# Fixer une version précise
+python scripts/release.py --set 1.2.0
+
+# Mode simulation
+python scripts/release.py --auto --dry-run
+
+# Sans mise à jour du changelog
+python scripts/release.py --auto --no-changelog
+```
+Le script crée : commit + tag. Il reste à pousser :
+```
+git push origin main --follow-tags
+```
+
+### Méthode Manuelle (fallback)
+1. Déterminer la nouvelle version `X.Y.Z` (SemVer)
+2. Mettre à jour `VERSION`
+3. Ajouter une section dans `CHANGELOG.md` :
    ```
-   git add VERSION CHANGELOG.md core/version.py
-   git commit -m "chore(release): bump version to 0.2.0"
+   ## [X.Y.Z] - YYYY-MM-DD
+   ### Ajouté
+   - ...
+   ### Modifié
+   - ...
+   ### Corrigé
+   - ...
    ```
-6. Créer un tag annoté :
+4. Commit :
    ```
-   git tag -a v0.2.0 -m "Release 0.2.0"
-   git push origin main --tags
+   git add VERSION CHANGELOG.md
+   git commit -m "chore(release): vX.Y.Z"
    ```
-7. Créer la release GitHub via l'UI en copiant la section correspondante du changelog.
+5. Tag :
+   ```
+   git tag -a vX.Y.Z -m "Release X.Y.Z"
+   git push origin main --follow-tags
+   ```
 
 ### Récupérer la version dans le code
 ```python
-from core.version import __version__  # ou get_version()
+from core.version import __version__, get_version
 print(__version__)
 ```
 

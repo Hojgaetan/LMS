@@ -15,6 +15,35 @@ class AuthorService:
         return True, f"Author '{name}' added successfully."
 
     @staticmethod
+    def get_or_create_author(name, biography=None):
+        """Return existing author id or create a new one.
+        Returns: (success: bool, result: int | str) -> id ou message d'erreur
+        """
+        # Recherche exacte (case insensitive)
+        existing = Author.find_by_name(name)
+        if existing:
+            # On privilégie une correspondance exacte
+            for a in existing:
+                if a.name.lower() == name.lower():
+                    return True, a.author_id
+            # Sinon on prend le premier
+            return True, existing[0].author_id
+        # Créer si absent
+        created_ok, msg = AuthorService.add_author(name=name, biography=biography)
+        if not created_ok:
+            return False, msg
+        # Rechercher à nouveau pour récupérer l'ID
+        created_list = Author.find_by_name(name)
+        if created_list:
+            return True, created_list[0].author_id
+        return False, "Author creation failed (ID not retrievable)."
+
+    @staticmethod
+    def get_author(author_id: int):
+        """Retourne l'objet Author ou None."""
+        return Author.find_by_id(author_id)
+
+    @staticmethod
     def update_author(author_id, name=None, biography=None):
         author = Author.find_by_id(author_id)
         if not author:
@@ -83,4 +112,3 @@ class AuthorService:
         """
         author = Author.find_by_id(author_id)
         return author.name if author else None
-
